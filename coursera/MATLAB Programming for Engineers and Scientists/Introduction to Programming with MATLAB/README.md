@@ -135,8 +135,8 @@ If we have extra value than the `%` sign it will repeat from the beginning like 
 >>plot(x1,y1,'g*')
 >>figure(3)
 >>grid
->>title('A sine Plot and a cosine Plot);
->>xlabel('The argument of sine and cosine)
+>>title('A sine Plot and a cosine Plot');
+>>xlabel('The argument of sine and cosine')
 >>ylabel('The value for sine or cosine')
 >>legend('sine','cosine')
 >>axis([-2 12 -1.5 1.5])\
