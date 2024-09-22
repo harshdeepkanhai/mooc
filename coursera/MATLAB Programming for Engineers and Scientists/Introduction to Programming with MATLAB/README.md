@@ -354,3 +354,35 @@ end
 ![precedence](precedence.png)
 
 ![precedence2](precedence2.png)
+
+### Nested If-Statements
+
+![Nested if-statements 1](nested_if_statements1.png)
+
+![Nested if-statements 2](nested_if_statements2.png)
+
+![Nested if-statements 3](nested_if_statements3.png)
+
+### Variable Number of Function Arguments
+
+![Polymorphic functions](polymorphic_functions.png)
+
+![Number of arguments](number_of_arguments.png)
+
+![Example: multiplication table](multiplication_table.png)
+
+![Example](example_1.png)
+
+```MATLAB
+function [table, summa] = multable(n, m)
+    if nargin < 2
+        m = n;
+    end
+    
+    table = (1:n)' * (1:m);
+    
+    if nargout ==2
+        summa = sum(table(:));
+    end
+end
+```
