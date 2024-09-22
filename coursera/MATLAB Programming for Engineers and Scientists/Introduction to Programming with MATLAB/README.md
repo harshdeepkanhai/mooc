@@ -244,3 +244,113 @@ end
 ![if-elseif statement summary](if_elseif_summary.png)
 
 ![if-elseif-else statement summary](if_elseif_else_summary.png)
+
+
+### Relational and Logical Operators
+
+![Relational operators](relational_operators.png)
+
+
+```MATLAB
+>> 10 == 20
+>> 3 == (35-32)
+>> x = (16 * 64 > 1000) + 9
+>> x = 16 * 64 > 1000 + 9
+```
+
+```MATLAB
+function if_test(x)
+    if x
+        fprintf('%d is true!\n', x);
+    else
+        fprintf('%d is false!\n',x);
+    end
+end
+```
+
+```MATLAB
+>> [4 -1 7 5 3] .* [5 -9 6 5 -3]
+>> [4 -1 7 5 3] > [5 -9 6 5 -3]
+>> [4 -1 7 5 3] <= 4
+>> sum([14 9 3 14 8 3] == 14)
+```
+
+![Logical operators](logical_operators.png)
+
+![Truth Table 1](truth_table_1.png)
+
+
+![Truth Table 2](truth_table_2.png)
+
+```MATLAB
+function a = order3(x,y,z)
+    if x <=y && y <= z
+        a = 1;
+    elseif x >= y && y >= z
+        a = -1;
+    else
+        a = 0;
+    end
+end
+```
+
+```MATLAB
+function a = not_smallest(x,y,z)
+    if x >= y || x >= z
+        a = 1;
+    else
+        a= 0;
+    end
+end
+```
+
+```MATLAB
+>> 1 && 2
+>> pi && -1234
+>> 0 && 1
+>> 23 && 0
+>> 0 & 0
+>> 1 || 2
+>> pi || -1234
+>> 0 || 1
+>> 23 || 0
+>> 0 || 0
+
+>> a = 1
+>> b = 2
+>> c = 0
+>> d = ~(a && b) || (b && c)
+>> d = ~(a && b) || (b || c)
+
+>> b * (0<b && b<10)
+
+>> total = 0
+>> b = 5;
+>> total = total + b * (0 < b && b < 10)
+>> b = 3;
+>> total = total + b * (0 < b && b < 10)
+>> b = 11;
+>> total = total + b * (0 < b && b < 10)
+
+>> [1 pi 0 -2]
+>> ~[1 pi 0 -2]
+
+>> [1 -3 0 9 0] && [pi 0 0 2 3]  % gives error
+
+>> [1 -3 0 9 0] & [pi 0 0 2 3]
+
+>> [1 -3 0 9 0] | [pi 0 0 2 3]
+
+>> 2 & [0 1; 2 3]
+>> 2 | [0 1; 2 3]
+
+>> 1.4 < sqrt(2) & [pi >3 -1 > 1 ]
+
+>> (1.4 < sqrt(2)) & [pi >3 -1 > 1 ]
+
+>> 1.4 < (sqrt(2) & [pi >3 -1 > 1 ])
+```
+
+![precedence](precedence.png)
+
+![precedence2](precedence2.png)
