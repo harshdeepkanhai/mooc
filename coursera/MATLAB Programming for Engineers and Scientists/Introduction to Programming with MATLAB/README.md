@@ -147,3 +147,56 @@ If we have extra value than the `%` sign it will repeat from the beginning like 
 ### Debugging
 
 ![Debugging](debugging.png)
+
+
+## Module 6
+
+### Selection
+![control Flow](control_flow.png)
+
+![if-statement](if_statement.png)
+
+```MATLAB
+function guess_my_number(x)
+    if x == 2
+        fprintf('Congrats! You guessed my number!\n');
+    end
+end
+```
+
+![Schematic of an if-statement](schematic_if.png)
+
+![Condition: true](condition_true.png)
+
+![Condition: false](condition_false.png)
+
+![if-else-statement](if_else_statement.png)
+
+![if-else-statement2](if_else_statement_2.png)
+
+![Condition: true](condition_true_if_else.png)
+
+![Condition: false](condition_false_if_else.png)
+
+
+```MATLAB
+function guess_my_number(x)
+    if x == 2
+        fprintf('Congrats! You guessed my number!\n');
+    else
+        fprintf('Not right, but a good guess.\n');
+    end
+end
+```
+
+```MATLAB
+function guess_my_number(x)
+    if x == 42
+        fprintf('Congrats! You guessed my number!\n');
+    elseif x < 42
+        fprintf('Too small. Try again\n');
+    else
+        fprintf('Too big. Try again.\n');
+    end
+end
+```
