@@ -507,3 +507,109 @@ end
 >> snarky_multable(3.5)
 >> snarky_multable([7 8])
 ```
+
+## Module 7
+
+### For-Loops
+
+![Loops](loops.png)
+
+![Schematic of a loop](schematic_of_a_loop.png)
+
+![Execution of a loop](execution_of_a_loop.png)
+
+![for-loop](for_loop.png)
+
+```MATLAB
+function sumintup(N)
+    total = 0;
+    for n = 1:N
+        total = total + n;
+    end
+    fprintf('total equals %d\n', total);
+end
+```
+
+![Parts of a for-loop](parts_of_a_for_loop.png)
+
+![example loop1](example_loop_1.png)
+
+![example loop1 revisited](example_loop_1_revisited.png)
+
+![Observations](observations_loop.png)
+
+```MATLAB
+function rand_check
+    N = 5;
+    list = rand(1,N); % assigns a row vector of random numbers
+    for x = list
+        if x > 0.5
+            fprintf('Random number %f is large.\n',x)
+        else
+            fprintf('Random number %f is small.\n',x)
+        end
+    end
+end
+```
+
+
+```MATLAB
+function loop_test(N)
+    total = 0;
+    for n = 1:N
+        n
+        n = n + 1;
+        total = total + n;
+    end
+    fprintf('Total: %d\n', total);
+end
+```
+
+```MATLAB
+>> u = [5 4 8 8 2];
+>> v = [5 5 7 8 8];
+>> w = u - v
+>> for ii = 1:length(u)
+w(ii) = u(ii) - v(ii);
+end
+>> w
+```
+
+```MATLAB
+function f = fibo(n)
+    if (~isscalar(n) || n < 1 || n ~= fix(n))
+        error('n must be a positive integer!');
+    end
+    f(1) = 1;
+    f(2) = 1;
+    for ii = 3:n
+        f(ii) = f(ii-2) + f(ii-1);
+    end
+end
+```
+
+```MATLAB
+>> A = randi(10,3,4)
+>> P = A.*A
+```
+
+```MATLAB
+[row, col] = size(A);
+for r = 1:row
+    fprintf('Working on row %d...\n',r);
+    for c = 1:col
+        P(r,c) = A(r,c) * A(r,c);
+        fprintf('(%d %d)\n',r,c);
+    end
+end
+```
+
+```MATLAB
+N = 7;
+for mm = 1:N
+    for nn = 1:mm
+        fprintf('*');
+    end
+    fprintf('\n');
+end
+```
