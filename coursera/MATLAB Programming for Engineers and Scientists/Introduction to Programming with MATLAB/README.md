@@ -613,3 +613,34 @@ for mm = 1:N
     fprintf('\n');
 end
 ```
+
+### While-Loops
+
+![while-loop](while_loop.png)
+
+![while-loop example](while_loop_example.png)
+
+![while-loop example1](while_loop_example_1.png)
+
+![General form](general_form_while.png)
+
+```MATLAB
+function [n, total] = possum(limit)
+    total = 0;
+    n = 0;
+    while total <= limit
+        n = n + 1;
+        total = total + n;
+    end
+    fprintf('sum: %d count: %d\n', total, n);
+end
+```
+
+```MATLAB
+function y = approx_sqrt(x)
+y = x;
+    while abs(y^2 - x) > 1e-7 * x
+        y = (x/y + y)/ 2;
+    end
+end
+```
