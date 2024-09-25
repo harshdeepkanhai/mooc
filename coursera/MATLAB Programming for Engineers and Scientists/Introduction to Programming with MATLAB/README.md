@@ -717,5 +717,63 @@ for ii = 1:size(A,1)
         break;
     end
 end
-
 ```
+
+### Logical indexing
+
+![Logical indexing 1](logical_indexing_1.png)
+
+![Logical indexing 2](logical_indexing_2.png)
+
+![Logical indexing 3](logical_indexing_3.png)
+
+![Logical indexing 4](logical_indexing_4.png)
+
+![Logical indexing 5](logical_indexing_5.png)
+
+```MATLAB
+>> [4 -1 7 5 3] > [5 -9 6 5 -3]
+>> c = [2>1, 2<1, ~(3>2 && 4>5)]
+>> holmes = logical([1 -2 0 0 9.12 -2])
+>> a = 1:3
+>> a(c)
+>> rng(0);
+>> r = randi(10,1,6)
+>> holmes
+>> r(holmes)
+>> v = [56, 34, -2, 7, 29, 53, 30, -3, 5, 45]
+>> keepers = v >= 0
+>> w = v(keepers)
+>> w = v(v >= 0)
+>> confidence = [100, 97, 11, 12, 76, 76, 80, 9, 4, 98]
+>> v_10 = v(confidence >= 10)
+>> v_20 = v(confidence >= 20)
+>> v0 = [50 35 -8 5 30 49 30 0 10 50]
+>> v_bigger = v(v > v0)
+>> v
+>> v(v<0)=0 %% changes the array
+>> v = [56, 34, -2, 7, 29, 53, 30, -3, 5, 45]
+>> v(v<0) = [100, 200]
+>> v = [56, 34, -2, 7, 29, 53, 30, -3, 5, 45]
+>> v(v<0) = v(v<0) + 100
+>> A = [1 2 3;4 5 6]
+>> B = A(A>2)
+>> A
+>> A_column_major = A(:)
+>> A_column_major(A_column_major>2)
+>> B = A(A>0)
+>> rng(0); A = randn(5)
+>> A(A<0) = 0
+>> rng(0); A = randn(5)
+>> A(A<0) = 101:108
+>> rng(0); A = randn(5);
+>> A(A<0) = (101:108)'
+>> A(A > 0.1) = 101:107
+>> rng(0); A = randn(5);
+>> A(A > 0.1) = sqrt(A(A > 0.1))
+>> A = [89 82 11 53; 33 5 59 42]
+>> B = [34 44 52 64; 62 73 58 99]
+>> A((A>B)) = A(A>B) - B(A>B)
+```
+
+### 
