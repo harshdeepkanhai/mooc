@@ -776,4 +776,44 @@ end
 >> A((A>B)) = A(A>B) - B(A>B)
 ```
 
-### 
+### Preallocation
+
+```MATLAB
+>> tic; sum(1:1e3) ; toc
+>> tic; sum(1:1e6) ; toc
+>> tic; sum(1:1e8) ; toc
+>> tic; sum(1:1e3) ; toc
+```
+
+```MATLAB
+function noprealloc
+    N = 5000;
+    for ii = 1:N
+        for jj = 1:N
+            A(ii, jj) = ii * jj;
+        end
+    end
+end
+```
+
+```MATLAB
+>> tic; noprealloc; toc
+```
+
+```MATLAB
+function prealloc
+    N = 5000;
+    A = zeros(N,N);
+    for ii = 1:N
+        for jj = 1:N
+            A(ii, jj) = ii * jj;
+        end
+    end
+end
+```
+
+```MATLAB
+>> tic; prealloc; toc
+```
+
+- Memory alloacation takes time
