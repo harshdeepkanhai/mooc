@@ -817,3 +817,132 @@ end
 ```
 
 - Memory alloacation takes time
+
+## Module 8
+
+### Introduction to Data Types
+
+![The Limitation of Computers](limitation_of_computers.png)
+
+![Data Types](data_types.png)
+
+```MATLAB
+>> clear
+>> x = 23
+>> class(x)
+>> class(0)
+>> class(sqrt(-1))
+>> y = 1:8
+>> rng(0); z = rand(3,4)
+>> whos
+>> ans
+>> class('Sup?')
+>> class(3 < 4>)
+```
+
+![Numerical Types](numerical_types.png)
+
+![Range of Values](range_of_values.png)
+
+![Useful functions](useful_functions.png)
+
+![Operators](operators.png)
+
+```MATLAB
+>> x = single(98.76)
+>> n = int8(-16)
+>> m = uint16(1234)
+>> whos
+>> k = uint8(500)
+>> k = uint8(256)
+>> k = unit8(-1)
+>> class(k)
+>> k = 2
+>> class(k)
+>> k = 'It makes sense.'
+>> class(k)
+>> clc
+>> intmax('uint8')
+>> intmin('uint8')
+>> intmin('uint32')
+>> intmin('int32')
+>> realmax('double')
+>> realmin('single')
+```
+
+### Strings
+
+![Strings](strings.png)
+
+![ASCII code](ascii_code.png)
+
+![Exercise](exercise_string.png)
+
+```MATLAB
+function char_codes
+for ii = 33:126
+    fprintf('%s',ii);
+end
+fprintf('%s',10); % new line character
+```
+```MATLAB
+>> MOOC_title = 'MATLAB for Smarties'
+>> length(MOOC_title)
+>> MOOC_title(1)
+>> MOOC_title(1:6)
+>> MOOC_title(end-8:end)
+>> txt1 = 'colonel'
+>> txt2 = 'kernel'
+>> txt1 == txt2 % gives error
+>> a = MOOC_title(1:6)
+>> b = a(end:-1:1)
+>> a == b
+>> clc
+>> message = 'Let''s skip class today!'
+>> code = double(message)
+>> secret = char(code + 3)
+>> secret
+>> char(secret - 3)
+>> friends = ['Bill'; 'Mary'; 'John']
+>> line1 = '12345678'
+>> line2 = 'abcdefgh'
+>> txt = [line1; line2]
+>> txt'
+>> poem = ['TIGER, tiger, burning bright'; 'In the forests of the night'] % gives error
+>> 
+```
+
+![String functions](string_functions.png)
+
+```MATLAB
+>> MOOC_title
+>> findstr(MOOC_title, 'LAB')
+>> findstr(MOOC_title, 'lab')
+>> findstr('Team', 'I')
+>> findstr(MOOC_title, 'r')
+>> lang = 'MATLAB'
+>> strcmp(MOOC_title, lang)
+>> strcmp(MOOC_title(1:6), lang)
+>> strcmpi(MOOC_title(1:6), 'Matlab') % ignores case
+>> pi_number = 3.1416
+>> pi_digits = '3.1416'
+>> size(pi_number)
+>> size(pi_digits)
+>> class(pi_number)
+>> class(pi_digits)
+>> pi_number + 1
+>> pi_digits + 1 % mixed mode arithmetic
+>> double(pi_digits) + 1
+>> double(pi_digits)
+>> str2num(pi_digits)
+>> str2num(pi_digits) + 1
+>> num2str(pi_number)
+>> ans + 1
+>> clc
+>> r = 12
+>> fprintf('The area of a circle with radius %.2f is %.2f!\n', r, pi*r^2);
+>> sprintf('The area of a circle with radius %.2f is %.2f!\n', r, pi*r^2);
+>> str = sprintf('The area of a circle with radius %.2f is %.2f!\n', r, pi*r^2);
+>> str
+>> class(str)
+```
