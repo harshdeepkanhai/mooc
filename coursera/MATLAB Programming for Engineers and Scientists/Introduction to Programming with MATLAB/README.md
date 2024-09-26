@@ -946,3 +946,47 @@ fprintf('%s',10); % new line character
 >> str
 >> class(str)
 ```
+
+### Structs
+
+![Structs](structs.png)
+
+![Structs in action](structs_in_action.png)
+
+![Structs](structs2.png)
+
+![Struct functions](struct_functions.png)
+
+```MATLAB
+>> account.number = 1234567
+>> account.balance = 5000
+>> account.owner.name = 'Joe Smith'
+>> account.owner.email = 'joe@matlabmooc.com'
+>> class(account)
+>> class(account.number)
+>> class(account.balance)
+>> class(account.onwer)
+>> account.owner
+>> account(2).number = 7654321
+>> account(2).owner
+>> account(2).balance
+>> account(2).balance = 1000
+>> account(2).owner.name = 'Jane Farmer'
+>> account(1)
+>> account(2)
+>> account(2).owner.name
+>> account(1).owner.name
+>> length(account(1).owner.name)
+>> length(account(2).owner.name)
+>> account(1).owner.age = 23
+>> account(2).owner.age % gives error
+>> clc
+>> account(1:2).owner
+>> isfield(account(2).owner,'age')
+>> isfield(account(1).owner,'age')
+>> rmfield(account(1).owner,'age')
+>> account(1).owner
+>> account(1).owner = rmfield(account(1).owner,'age')
+>> account(1).owner
+>> course = struct('Area', 'CS', 'number', 103, 'title', 'Introductory Programming for Engineers and Scientists')
+```
