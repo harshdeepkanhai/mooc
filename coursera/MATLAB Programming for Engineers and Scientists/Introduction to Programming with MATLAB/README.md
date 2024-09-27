@@ -990,3 +990,62 @@ fprintf('%s',10); % new line character
 >> account(1).owner
 >> course = struct('Area', 'CS', 'number', 103, 'title', 'Introductory Programming for Engineers and Scientists')
 ```
+
+### Cells
+
+![Pointers](pointers.png)
+
+![Cells](cells.png)
+
+```MATLAB
+%% The Ultimate Legend of Big John
+page{1} = 'You could find him on the field almost any day.';
+page{2} = 'Tall, dark hair, and eyes of steel gray.';
+page{3} = 'They say he pulled a Frisbee ''bout half a mile,';
+page{4} = 'And when he''d stick in the corner, you could almost catch a smile';
+page{5} = 'On Big John.';
+%% Print it
+fprintf('\n');
+for ii = 1:length(page)
+    fprintf('%s\n',page{ii});
+end
+fprintf('\n');
+```
+
+```MATLAB
+>> whos
+>> page{1}
+>> page{2}
+>> class(page)
+>> class(page{1})
+>> size(page{1})
+>> class(page{4})
+>> size(page{4})
+
+```
+
+![Cell array example](cell_array_example1.png)
+
+![Cell array example 2](cell_array_example2.png)
+
+![Cell array example 3](cell_array_example3.png)
+
+```MATLAB
+>> c{1} = pi
+>> c{2} = 'Cell or not cell?'
+>> c{1}
+>> c{2}
+>> c(1)
+>> c(2)
+>> c1 = {[1 2], [10, 20]}
+>> c2 = c1
+>> c1{1,1}
+>> c2{1,1}
+>> c1{1,2}
+>> c2{1,2}
+>> c1{1,1} = 'strawberries'
+>> c2{1,1}
+>> c1{1,1}
+```
+
+![Cell functions](cell_functions.png)
