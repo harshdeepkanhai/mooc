@@ -1049,3 +1049,97 @@ fprintf('\n');
 ```
 
 ![Cell functions](cell_functions.png)
+
+### The String Type (in 2017a)
+
+```MATLAB
+>> fruit = 'strawberries'
+>> class(fruit)
+>> size(fruit)
+>> new_fruit = "strawberries" % new string type
+>> class(new_fruit)
+>> fprintf('The value of pi is %f\n', pi)
+>> fprintf("The value of pi is %f\n", pi)
+>> inane_refrain = 'The rain in Spain stays mainly in the plain'
+>> strfind(inane_refrain, 'in')
+>> riddle = "Bushy-headed trainer in an artform mainly planar"
+>> strfind(riddle, 'in')
+>> regexp(riddle, 'a[a-z]+r')
+>> upper('Matlab')
+>> upper("Matlab")
+```
+
+```MATLAB
+function out = my_str_function(in)
+    out = in(end:-1:1);
+end
+```
+
+```MATLAB
+>> my_str_function(fruit)
+>> my_str_function(new_fruit)
+>> in = char(new_fruit)
+>> out = my_str_function(in)
+>> string(out)
+>> string(my_str_function(char(new_fruit)))
+>> string('There''s a place for us.')
+>> Andy_Serkis = "The way he says,, ""My precious"" makes my skin crawl!"
+>> new_stack = ["ace";"king";"queen"]
+>> stack = ['ace';'king';'queen'] % gives error 
+>> ragged_array = [1 2 3; 1 2 3 4; 1 2 3 4 5] % gives error 
+>> old_stack = char(new_stack)
+>> str_1 = "key"; str_2 = "boar"; str_3 = "ding!";
+>> [str_1, str_2, str_3]
+>> chars_1 = 'key'; chars_2 = 'boar'; chars_3 = 'ding!';
+>> [chars_1, chars_2, chars_3] % shows all concatenated
+>> nums_1 = [1, 2, 3]; nums_2 = [12, 0, 1, -2]; nums_3 = [7, 7, 7, 7];
+>> [nums_1, nums_2, nums_3] % concatenated
+>> str_1 + str_2 + str_3 % concatenate
+>> "three" - "one" % gives error
+```
+
+```MATLAB
+>> string(17), string(-1.123456), string(3.0e8), string(pi)
+>> code_number = uint16(477)
+>> string(code_number)
+>> string(true), string(false)
+>> string([34, 0, -4, 18] > [0, 0, 0, 0])
+>> logical("true") % gives error
+>> double("17"), double("-1.123456"), double("3.0e8"), double("pi")
+>> format long
+>> double("17"), double("-1.123456"), double("3.0e8"), double("pi")
+>> format short
+>> double("17")
+>> double('17')
+>> str2num('17')
+>> str2double('17')
+>> str2double("17")
+>> if randn >0, unknown = '17'; else unknown = "17"; end
+>> str2double(unknown)
+>> double(string(unknown))
+>> int8("17") % gives error
+>> int8(double("17"))
+>> string({ 1776, logical(1776), 'independence'})
+>>
+```
+
+```MATLAB
+>> MOOC_title = 'MATLAB for Smarties';
+>> MOOC_title(1:6)
+>> MOOC_title_new_string = "MATLAB for Smarties";
+>> MOOC_title_new_string(1:6) % gives error
+>> x = 174;
+>> x(2) % gives error
+>> s = "independence"
+>> extractBetween(s, 3, 8)
+>> temp = char(s)
+>> string(temp(3:8))
+>> tasty = "Boston beans? Recipe: beans, salt pork, molasses, low heat."
+>> temp = char(tasty)
+>> riddle_answer = string(temp([1:2, 8, 14, 15, 42, 45:46]));
+>> extractBetween("independence", "in", "ence")
+```
+
+```MATLAB
+>> doc
+```
