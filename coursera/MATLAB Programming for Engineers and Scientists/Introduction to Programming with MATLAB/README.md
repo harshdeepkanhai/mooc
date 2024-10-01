@@ -1143,3 +1143,44 @@ end
 ```MATLAB
 >> doc
 ```
+
+### The Datetime and Duratiom Types (in 2014b)
+
+```MATLAB
+>> datetime
+>> datetime("yesterday"), datetime("today"), datetime("tomorrow") 
+>> datetime("now")
+>> 
+```
+
+```MATLAB
+function open_webpage
+    url = input('Enter the url: ', 's');
+    if isempty(url)
+        fprintf("No url entered, so quitting.\n");
+        return;
+    end
+    search_time = datetime; % same as datetime("now")
+    status = web(url);
+    if status == 0 % started web browser
+        fprintf("At %s, you opened the web page at \n", search_time);
+    fprintf("%s\n", url);
+    else
+        fprintf("Could not start web browser\n");
+    end
+    [~, weekday_name] = weekday(search_time, 'long');
+    fprintf("Have a great %s!\n", weekday_name);
+end
+```
+
+#### Duration
+
+```MATLAB
+>> hours(2.5)
+>> days(2.5)
+>> right_now = datetime("now")
+>> three_years_from_now = right_now + years(3)
+>> three_days_from_now = right_now + days(3)
+>> three_days_ago = right_now - days(3)
+>> 
+```
