@@ -1182,5 +1182,89 @@ end
 >> three_years_from_now = right_now + years(3)
 >> three_days_from_now = right_now + days(3)
 >> three_days_ago = right_now - days(3)
+>> down_with_the_wall = datetime(1989, 11, 9)
+>> Armistice_WWI = datetime(1918, 11, 11, 11, 0, 0)
+>> timezones
+>> Armistice_WWI.TimeZone = "Europe/London"
+>> Armistice_WWI_Nashville = Armistice_WWI
+>> Armistice_WWI_Nashville.TimeZone
+>> Armistice_WWI_Nashville.TimeZone = "America/Chicago"
+>> Armistice_WWI = datetime(1918, 11, 11, 11) % gives error
+>> fieldnames(Armistice_WWI)
+>> class(Armistice_WWI)
+>> Treaty_of_Versailles = Armistice_WWI + days(228)
+>> Treaty_of_Versailles.Format = 'dd-MMMM-yyyy'
+>> Treaty_of_Versailles.Format = 'dd/MM/yyyy'
+>> Treaty_of_Versailles.Format = 'eeee, MMMM dd, yyyy'
+>> Treaty_of_Versailles + years(100)
+>> Treaty_of_Versailles + calyears(100)
+>> year(Treaty_of_Versailles)
+>> day(Treaty_of_Versailles)
+>> month(Treaty_of_Versailles)
+>> day(Treaty_of_Versailles)
+>> quarter(Treaty_of_Versailles)
+>> fieldnames(Armistice_WWI)
+>> Armistice_WWI.Year, Armistice_WWI.Day, Armistice_WWI.Hour
+>> [y, mo, d] = ymd(Armistice_WWI)
+>> [h, min, s] = hms(Armistice_WWI)
+>> long_movie = duration(3, 7, 43)
+>> half_movie = long_movie / 2
+>> 2 * half_movie
+>> long_movie - half_movie
+>> long_movie + 1
+>> double(long_movie) % gives error
+>> seconds(long_movie)
+>> days(long_movie)
+>> start_7_years_war = datetime(1756, 5, 17)
+>> end_7_years_war = datetime(1763, 2, 15)
+>> duration_7_years_war = end_7_years_war - start_7_years_war
+>> year_count = years(duration_7_years_war)
+>> missing_days = days(datetime(1763, 5, 17) - datetime(1763, 2, 15))
+>> missing_days = days(datetime(1764, 5, 17) - datetime(1764, 2, 15))
+>> class(missing_days)
+>> days(2.5)
+>> days_duration = days(2.5)
+>> double(days_duration) % gives error
+```
+
+```MATLAB
+>> start_session = datetime(2018, 9, 10)
+>> end_session = datetime(2018, 11, 19)
+>> rng(0)
+>> dates = start_session - days(30) + days(randi(100,5,2))
+>> during_session = start_session <= dates & dates <= end_session
+>> string(during_session)
+>> string(start_session)
+>> string(dates)
+>> string(days(2.5))
+>> 
+```
+
+```MATLAB
+function cal_str = make_calendar(n_month, n_year)
+    % MAKE_CALENDAR(MONTH,YEAR) one-month calendar with month-year heading
+    %   CALENDAR = MAKE_CALENDAR(...) CALENDAR is a column of strings
+    dt = datetime(n_year, n_month, 1); % 3rd arg, day, is arbitary
+    dt.Format = 'MMMM yyyy'; % format of calendar's title
+    title_str = string(dt);  % calendar's title
+    cal_num = calendar(dt);  % days of month in a double array
+    cal_str = strings(11,1); % pre-allocation
+    left = blanks(floor(14-strlength(title_str)/2)); % padding to center title
+    right = blanks(ceil(14-strlength(title_str)/2)); % padding to center title
+    cal_str([1,3,11]) = " -------------------------- "; % decoration
+    cal_str(2) = sprintf('%s', left, title_str, right); % centered title
+    cal_str(4) = " Su  Mo  Tu  We  Th  Fr  Sa ";               % days-of-week headings
+    for ii = 1:6 % loops through rows of cal_num
+        temp = sprintf("%3s ", string(cal_num(ii,:)));
+        cal_str(ii+4) = strrep(temp, " 0", "  "); % replaces 0 with blank
+    end
+end
+```
+
+```MATLAB
+>> make_calendar(19, 2024)
+>> datetime(2018,3,27):days(14):datetime(2018,5,13)
+>> datetime(2018,3,27):14:datetime(2018,5,13)
+>> days(1):3:days(19)
 >> 
 ```
