@@ -1297,3 +1297,29 @@ end
 >> load my_data_file
 >> load my_data_file s a
 ```
+
+### Excel Files
+
+![Excel files](excel_files.png)
+
+![Reading Excel files](reading_excel_files.png)
+
+![Numerical](numerical.png)
+
+![Text](text.png)
+
+![All data: cell array](all_data.png)
+
+
+```MATLAB
+>> temps = xlsread('Nashville_climate_data.xlsx')
+>> [temps text] = xlsread('Nashville_climate_data.xlsx')
+>> [~, text] = xlsread('Nashville_climate_data.xlsx')
+>> [~, ~, everything] = xlsread('Nashville_climate_data.xlsx')
+>> num =  xlsread('Nashville_climate_data.xlsx',1,'D15')
+>> num =  xlsread('Nashville_climate_data.xlsx',1,'D15:E17')
+```
+
+- `xlswrite` test on your own
+
+### 
