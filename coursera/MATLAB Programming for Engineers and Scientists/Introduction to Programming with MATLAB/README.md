@@ -1268,3 +1268,32 @@ end
 >> days(1):3:days(19)
 >> 
 ```
+
+## Module 9
+
+### File Input/Output
+![File Input/Output](file_input_output.png)
+
+```MATLAB
+>> pwd
+>> ls
+>> contents = ls;
+>> contents
+>> whos contents
+>> cd('Directory Name')
+>> cd('..')
+>> ls
+>> ls('Directory Name')
+>> ls 'Directory Name'
+>> help sqrt
+>> help('sqrt')
+>> cd('../..')
+>> mkdir('Directory_name')
+>> rmdir('Directory_name')
+>> whos
+>> save
+>> load
+>> save my_data_file data s a
+>> load my_data_file
+>> load my_data_file s a
+```
