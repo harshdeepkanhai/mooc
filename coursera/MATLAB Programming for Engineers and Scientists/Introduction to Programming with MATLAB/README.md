@@ -1398,3 +1398,160 @@ fclose(fid);
 ```
 
 ![Reading text files 2](reading_text_files2.png)
+
+### Binary Files
+
+![Binary files](binary_files.png)
+
+![Writing binary files](writing_binary_files.png)
+
+![Reading binary files](reading_binary_files.png)
+
+
+```MATLAB
+function write_array_bin(A,filename)
+    fid = fopen(filename,'w+');
+    if fid < 0
+        error('error opening file %s\n', filename);
+    end
+
+    fwrite(fid,A,'double');
+
+    fclose(fid);
+```
+
+```MATLAB
+>> rng(0); Data = randn(10,12);
+>> write_array_bin(Data, 'datafile.dat')
+```
+
+```MATLAB
+function view_text_file(filename)
+    fid = fopen(filename,'rt');
+    if fid < 0
+        error('error opening file %s\n', filename);
+    end
+
+    % Read file as a set of strings, one string per line:
+    oneline = fgets(fid);
+    while ischar(oneline)
+        fprintf('%s',oneline) % display one line
+        oneline = fgets(fid);
+    end
+    fprintf('\n');
+    fclose(fid);
+```
+
+```MATLAB
+>> view_text_file('datafile.dat') % gives garbage value
+```
+
+```MATLAB
+function A = read_bin_file(filename,data_type)
+    fid = fopen(filename,'r');
+    if fid < 0
+        error('error opening file %s\n',filename);
+    end
+
+    A = fread(fid,inf,data_type);
+
+    fclose(fid);
+```
+
+```MATLAB
+>> X = read_bin_file('datafile.dat', 'double');
+>> whos
+```
+
+```MATLAB
+function write_dims_array_bin(A,filename)
+    %WRITE_DIMS_ARRAY_BIN   Write dimensioned array in binary
+    %   WRITE_DIMS_ARRAY_BIN(A,'FNAME') writes the number of
+    %   dimensions of A, then a list of the dimensions, 
+    %   and then the elements of A into the file named
+    %   'fname', encoded as a doubles.
+    fid = fopen(filename,'w+');
+    if fid < 0
+        error('error opening file %s\n', filename);
+    end
+    dims = size(A);
+    fwrite(fid,length(dims),'double');
+    fwrite(fid,dims,'double');
+    fwrite(fid,A,'double');
+    fclose(fid);
+```
+
+```MATLAB
+function A = read_dims_array_bin(filename)
+    %READ_DIMS_ARRAY_BIN   Read dimensioned array in binary
+    %   A = READ_DIMS_ARRAY_BIN('FNAME',N) reads from 
+    %   a file of doubles named 'fname' into an array. The 
+    %   file must contain the number of dimensions of the 
+    %   array, then the dimensions, and then the elements.
+    fid = fopen(filename,'r');
+    if fid < 0
+        error('error opening file %s\n',filename);
+    end
+    n = fread(fid,1,'double');
+    dims = fread(fid,n,'double');
+    A = fread(fid,'double');
+    A = reshape(A,dims');
+    fclose(fid);
+```
+
+```MATLAB
+>> write_dims_array_bin(Data, 'dims_array.dat')
+>> Y = read_dims_array_bin('dims_array.dat');
+>> whos
+>> isequal(Y, Data)
+```
+```MATLAB
+>> Beta = randn(6,2,5);
+>> write_dims_array_bin(Beta, 'betafile.dar');
+>> B = read_dims_array_bin('betafile.dar');
+>> whos
+>> isequal(B, Beta)
+```
+
+```MATLAB
+function custom_write_bin(d1,d2,d3,d4,filename)
+    fid = fopen(filename,'w+');
+    if fid < 0
+    fprintf('error opening file\n');
+    return;
+    end
+    n1 = length(d1(:));
+    n2 = length(d2(:));
+    n3 = length(d3(:));
+    fwrite(fid,[n1,n2,n3],'int16');
+    fwrite(fid,d1,'char');
+    fwrite(fid,d2,'single');
+    fwrite(fid,d3,'int32');
+    fwrite(fid,d4,'single');
+    fclose(fid);
+```
+
+```MATLAB
+function [o1,o2,o3,o4] = custom_read_bin(filename)
+    fid = fopen(filename,'r');
+    if fid < 0
+    fprintf('error opening file\n');
+    return;
+    end
+    nums = fread(fid,3,'int16');
+    o1 = char(fread(fid,nums(1),'char'))';
+    o2 = fread(fid,nums(2),'single');
+    o3 = fread(fid,nums(3),'int32');
+    o4 = fread(fid,'single'); % fread(fid,'single=>int64') input=>output
+    fclose(fid);
+```
+
+```MATLAB
+>> header = 'Data requested on Pi Day(3/14/15)';
+>> Vega = [8, 7, -145];
+>> VLA = [1000, 2000, 700, 0, 48];
+>> W9GF0 = [1.45e8, 34e6, 4e7, -1e8];
+>> custom_write_bin(header, Vega, VLA, W9GF0, 'Arecibo.dat')
+>> [o1, o2, o3, o4] =custom_read_bin('Arecibo.dat')
+>> class(o2), class(o3), class(o4) % we get all double
+```
