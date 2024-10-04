@@ -1182,5 +1182,376 @@ end
 >> three_years_from_now = right_now + years(3)
 >> three_days_from_now = right_now + days(3)
 >> three_days_ago = right_now - days(3)
+>> down_with_the_wall = datetime(1989, 11, 9)
+>> Armistice_WWI = datetime(1918, 11, 11, 11, 0, 0)
+>> timezones
+>> Armistice_WWI.TimeZone = "Europe/London"
+>> Armistice_WWI_Nashville = Armistice_WWI
+>> Armistice_WWI_Nashville.TimeZone
+>> Armistice_WWI_Nashville.TimeZone = "America/Chicago"
+>> Armistice_WWI = datetime(1918, 11, 11, 11) % gives error
+>> fieldnames(Armistice_WWI)
+>> class(Armistice_WWI)
+>> Treaty_of_Versailles = Armistice_WWI + days(228)
+>> Treaty_of_Versailles.Format = 'dd-MMMM-yyyy'
+>> Treaty_of_Versailles.Format = 'dd/MM/yyyy'
+>> Treaty_of_Versailles.Format = 'eeee, MMMM dd, yyyy'
+>> Treaty_of_Versailles + years(100)
+>> Treaty_of_Versailles + calyears(100)
+>> year(Treaty_of_Versailles)
+>> day(Treaty_of_Versailles)
+>> month(Treaty_of_Versailles)
+>> day(Treaty_of_Versailles)
+>> quarter(Treaty_of_Versailles)
+>> fieldnames(Armistice_WWI)
+>> Armistice_WWI.Year, Armistice_WWI.Day, Armistice_WWI.Hour
+>> [y, mo, d] = ymd(Armistice_WWI)
+>> [h, min, s] = hms(Armistice_WWI)
+>> long_movie = duration(3, 7, 43)
+>> half_movie = long_movie / 2
+>> 2 * half_movie
+>> long_movie - half_movie
+>> long_movie + 1
+>> double(long_movie) % gives error
+>> seconds(long_movie)
+>> days(long_movie)
+>> start_7_years_war = datetime(1756, 5, 17)
+>> end_7_years_war = datetime(1763, 2, 15)
+>> duration_7_years_war = end_7_years_war - start_7_years_war
+>> year_count = years(duration_7_years_war)
+>> missing_days = days(datetime(1763, 5, 17) - datetime(1763, 2, 15))
+>> missing_days = days(datetime(1764, 5, 17) - datetime(1764, 2, 15))
+>> class(missing_days)
+>> days(2.5)
+>> days_duration = days(2.5)
+>> double(days_duration) % gives error
+```
+
+```MATLAB
+>> start_session = datetime(2018, 9, 10)
+>> end_session = datetime(2018, 11, 19)
+>> rng(0)
+>> dates = start_session - days(30) + days(randi(100,5,2))
+>> during_session = start_session <= dates & dates <= end_session
+>> string(during_session)
+>> string(start_session)
+>> string(dates)
+>> string(days(2.5))
 >> 
+```
+
+```MATLAB
+function cal_str = make_calendar(n_month, n_year)
+    % MAKE_CALENDAR(MONTH,YEAR) one-month calendar with month-year heading
+    %   CALENDAR = MAKE_CALENDAR(...) CALENDAR is a column of strings
+    dt = datetime(n_year, n_month, 1); % 3rd arg, day, is arbitary
+    dt.Format = 'MMMM yyyy'; % format of calendar's title
+    title_str = string(dt);  % calendar's title
+    cal_num = calendar(dt);  % days of month in a double array
+    cal_str = strings(11,1); % pre-allocation
+    left = blanks(floor(14-strlength(title_str)/2)); % padding to center title
+    right = blanks(ceil(14-strlength(title_str)/2)); % padding to center title
+    cal_str([1,3,11]) = " -------------------------- "; % decoration
+    cal_str(2) = sprintf('%s', left, title_str, right); % centered title
+    cal_str(4) = " Su  Mo  Tu  We  Th  Fr  Sa ";               % days-of-week headings
+    for ii = 1:6 % loops through rows of cal_num
+        temp = sprintf("%3s ", string(cal_num(ii,:)));
+        cal_str(ii+4) = strrep(temp, " 0", "  "); % replaces 0 with blank
+    end
+end
+```
+
+```MATLAB
+>> make_calendar(19, 2024)
+>> datetime(2018,3,27):days(14):datetime(2018,5,13)
+>> datetime(2018,3,27):14:datetime(2018,5,13)
+>> days(1):3:days(19)
+>> 
+```
+
+## Module 9
+
+### File Input/Output
+![File Input/Output](file_input_output.png)
+
+```MATLAB
+>> pwd
+>> ls
+>> contents = ls;
+>> contents
+>> whos contents
+>> cd('Directory Name')
+>> cd('..')
+>> ls
+>> ls('Directory Name')
+>> ls 'Directory Name'
+>> help sqrt
+>> help('sqrt')
+>> cd('../..')
+>> mkdir('Directory_name')
+>> rmdir('Directory_name')
+>> whos
+>> save
+>> load
+>> save my_data_file data s a
+>> load my_data_file
+>> load my_data_file s a
+```
+
+### Excel Files
+
+![Excel files](excel_files.png)
+
+![Reading Excel files](reading_excel_files.png)
+
+![Numerical](numerical.png)
+
+![Text](text.png)
+
+![All data: cell array](all_data.png)
+
+
+```MATLAB
+>> temps = xlsread('Nashville_climate_data.xlsx')
+>> [temps text] = xlsread('Nashville_climate_data.xlsx')
+>> [~, text] = xlsread('Nashville_climate_data.xlsx')
+>> [~, ~, everything] = xlsread('Nashville_climate_data.xlsx')
+>> num =  xlsread('Nashville_climate_data.xlsx',1,'D15')
+>> num =  xlsread('Nashville_climate_data.xlsx',1,'D15:E17')
+```
+
+- `xlswrite` test on your own
+
+### Text Files
+
+![Text files](text_files.png)
+
+![Opening text files](opening_text_files.png)
+
+
+```MATLAB
+function write_temp_precip_txt(filename)
+Title_1 = 'Climate Data for Nashville, TN';
+Title_2 = '(Average highs (F), lows (F), and precip (in)';
+Label_1 = ' High ';
+Label_2 = ' Low  ';
+Label_3 = 'Precip';
+Mo_1 = {'Jan','Feb','March','April','May','June'};
+Mo_2 = {'July','Aug','Sep','Oct','Nov','Dec'};  
+Data_1 = [
+   46	28	3.98
+   51	31	3.7
+   61	39	4.88
+   70	47	3.94
+   78	57	5.08
+   85	65	4.09];
+Data_2 = [
+   89	69	3.78
+   88	68	3.27
+   82	61	3.58
+   71	49	2.87
+   59	40	4.45
+   49	31	4.53];
+fid = fopen(filename,'w+t');
+if fid < 0
+   fprintf('error opening file\n');
+   return;
+end
+fprintf(fid,'%s\n',Title_1);
+fprintf(fid,'%s\n',Title_2);
+fprintf(fid,'\n');
+fprintf(fid,'       %s%s%s\n',Label_1,Label_2,Label_3);
+for ii = 1:6
+   fprintf(fid,'%5s: ',Mo_1{ii});
+   fprintf(fid,'%5.2f,%5.2f,%5.2f\n',Data_1(ii,:));  
+end
+fprintf(fid,'\n');
+fprintf(fid,'       %s%s%s\n',Label_1,Label_2,Label_3);
+for ii = 1:6
+   fprintf(fid,'%5s: ',Mo_2{ii});
+   fprintf(fid,'%5.2f,%5.2f,%5.2f\n',Data_2(ii,:));  
+end
+fclose(fid);
+```
+
+```MATLAB
+>> write_temp_precip_txt('Climate.txt')
+```
+
+![Reading text files](reading_text_files.png)
+
+```MATLAB
+function view_text_file(filename)
+fid = fopen(filename,'rt');
+if fid < 0
+    error('error opening file %s\n', filename);
+end
+
+% Read file as a set of strings, one string per line:
+oneline = fgets(fid);
+while ischar(oneline)
+    fprintf('%s',oneline) % display one line
+    oneline = fgets(fid);
+end
+fprintf('\n');
+fclose(fid);
+```
+
+![Reading text files 2](reading_text_files2.png)
+
+### Binary Files
+
+![Binary files](binary_files.png)
+
+![Writing binary files](writing_binary_files.png)
+
+![Reading binary files](reading_binary_files.png)
+
+
+```MATLAB
+function write_array_bin(A,filename)
+    fid = fopen(filename,'w+');
+    if fid < 0
+        error('error opening file %s\n', filename);
+    end
+
+    fwrite(fid,A,'double');
+
+    fclose(fid);
+```
+
+```MATLAB
+>> rng(0); Data = randn(10,12);
+>> write_array_bin(Data, 'datafile.dat')
+```
+
+```MATLAB
+function view_text_file(filename)
+    fid = fopen(filename,'rt');
+    if fid < 0
+        error('error opening file %s\n', filename);
+    end
+
+    % Read file as a set of strings, one string per line:
+    oneline = fgets(fid);
+    while ischar(oneline)
+        fprintf('%s',oneline) % display one line
+        oneline = fgets(fid);
+    end
+    fprintf('\n');
+    fclose(fid);
+```
+
+```MATLAB
+>> view_text_file('datafile.dat') % gives garbage value
+```
+
+```MATLAB
+function A = read_bin_file(filename,data_type)
+    fid = fopen(filename,'r');
+    if fid < 0
+        error('error opening file %s\n',filename);
+    end
+
+    A = fread(fid,inf,data_type);
+
+    fclose(fid);
+```
+
+```MATLAB
+>> X = read_bin_file('datafile.dat', 'double');
+>> whos
+```
+
+```MATLAB
+function write_dims_array_bin(A,filename)
+    %WRITE_DIMS_ARRAY_BIN   Write dimensioned array in binary
+    %   WRITE_DIMS_ARRAY_BIN(A,'FNAME') writes the number of
+    %   dimensions of A, then a list of the dimensions, 
+    %   and then the elements of A into the file named
+    %   'fname', encoded as a doubles.
+    fid = fopen(filename,'w+');
+    if fid < 0
+        error('error opening file %s\n', filename);
+    end
+    dims = size(A);
+    fwrite(fid,length(dims),'double');
+    fwrite(fid,dims,'double');
+    fwrite(fid,A,'double');
+    fclose(fid);
+```
+
+```MATLAB
+function A = read_dims_array_bin(filename)
+    %READ_DIMS_ARRAY_BIN   Read dimensioned array in binary
+    %   A = READ_DIMS_ARRAY_BIN('FNAME',N) reads from 
+    %   a file of doubles named 'fname' into an array. The 
+    %   file must contain the number of dimensions of the 
+    %   array, then the dimensions, and then the elements.
+    fid = fopen(filename,'r');
+    if fid < 0
+        error('error opening file %s\n',filename);
+    end
+    n = fread(fid,1,'double');
+    dims = fread(fid,n,'double');
+    A = fread(fid,'double');
+    A = reshape(A,dims');
+    fclose(fid);
+```
+
+```MATLAB
+>> write_dims_array_bin(Data, 'dims_array.dat')
+>> Y = read_dims_array_bin('dims_array.dat');
+>> whos
+>> isequal(Y, Data)
+```
+```MATLAB
+>> Beta = randn(6,2,5);
+>> write_dims_array_bin(Beta, 'betafile.dar');
+>> B = read_dims_array_bin('betafile.dar');
+>> whos
+>> isequal(B, Beta)
+```
+
+```MATLAB
+function custom_write_bin(d1,d2,d3,d4,filename)
+    fid = fopen(filename,'w+');
+    if fid < 0
+    fprintf('error opening file\n');
+    return;
+    end
+    n1 = length(d1(:));
+    n2 = length(d2(:));
+    n3 = length(d3(:));
+    fwrite(fid,[n1,n2,n3],'int16');
+    fwrite(fid,d1,'char');
+    fwrite(fid,d2,'single');
+    fwrite(fid,d3,'int32');
+    fwrite(fid,d4,'single');
+    fclose(fid);
+```
+
+```MATLAB
+function [o1,o2,o3,o4] = custom_read_bin(filename)
+    fid = fopen(filename,'r');
+    if fid < 0
+    fprintf('error opening file\n');
+    return;
+    end
+    nums = fread(fid,3,'int16');
+    o1 = char(fread(fid,nums(1),'char'))';
+    o2 = fread(fid,nums(2),'single');
+    o3 = fread(fid,nums(3),'int32');
+    o4 = fread(fid,'single'); % fread(fid,'single=>int64') input=>output
+    fclose(fid);
+```
+
+```MATLAB
+>> header = 'Data requested on Pi Day(3/14/15)';
+>> Vega = [8, 7, -145];
+>> VLA = [1000, 2000, 700, 0, 48];
+>> W9GF0 = [1.45e8, 34e6, 4e7, -1e8];
+>> custom_write_bin(header, Vega, VLA, W9GF0, 'Arecibo.dat')
+>> [o1, o2, o3, o4] =custom_read_bin('Arecibo.dat')
+>> class(o2), class(o3), class(o4) % we get all double
 ```
