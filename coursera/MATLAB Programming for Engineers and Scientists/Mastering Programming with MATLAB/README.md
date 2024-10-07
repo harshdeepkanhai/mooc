@@ -245,3 +245,297 @@ function database = sol_voters(database,varargin)
     database = tmp;
 end
 ```
+
+### Function Handles and Nested Functions
+
+![Uses of function handles](uses_of_function_handles.png)
+
+```MATLAB
+>> trig = @sin
+>> x = trig(pi/2)
+>> plot(trig(0:0.01:2*pi));
+>> close all
+>> x = trig
+>> x(pi/2)
+>> x = pi
+>> mypi = @pi
+>> x = mypi
+>> y = mypi()
+>> xpt = [@sin @cos @plot] % gives error
+>> xpt = {@sin @cos @plot}
+>> xpt{2}(0)
+>> xpt{3}(xpt{1}(-pi:0.01:pi))
+```
+
+```MATLAB
+>> fplot(@sin,[0 2*pi])
+>> plot(0:0.01:2*pi,sin(0:0.01:2*pi))
+>> fplot(@tan, [0, pi])
+>> fplot(@tan,[0,pi],"MeshDensity",30)
+>> plot(0:0.01:pi, tan(0:0.01:pi))
+>> plot(0:0.001:pi, tan(0:0.001:pi))
+>> close; clear;clc
+```
+
+```MATLAB
+>> poly = @(x) 2*x.^3-x.^2+2*x - 12 % anonymous function
+>> poly(1)
+>> poly(0:5)
+>> plot(-10:10, poly(-10:10))
+>> fplot(poly,[-10,10])
+>> close
+>> xfn = @(x,y) x+y;
+>> xfn(1,2)
+>> x= 1000; y= 2000;
+>> xfn(10,12)
+>> x, y
+>> c = 10;
+>> f = @(x) c*x
+>> f(3)
+>> c = 11;
+>> f(3)
+>> clear c
+>> f(3)
+>> clear; clc
+```
+
+```MATLAB
+>> trig = @sin
+>> fplot(@(x) x + sin(x), [-5,5])
+>> clear; close; clc
+>> smax = @(A) max(A.^2)
+>> [mx ind] = smax([1 2; 3 4])
+>> smax(1:10)
+>> xyz = @(x,y) deal(x*y, x+y)
+>> [p, s] = xyz(10, 20)
+>> clear; clc
+>> 
+```
+**Nested Function**
+```MATLAB
+function [y1, y2] = first_nested_example(x)
+    c = 10;
+    sub(c,x);
+    y1 = inner(x);
+    
+    function out = inner(in)
+        out = c*in;
+    end
+    
+    c = 11;
+    sub(c,x)
+    y2 = inner(x);
+end
+ 
+function sub(in1,in2)
+    fprintf('Multiplying %d times %d\n',in1,in2)
+end
+```
+
+```MATLAB
+>> [a1 b1] = first_nested_example(3)
+```
+
+```MATLAB
+function circle_area = assignment_rule(r)
+ 
+    calculate_area
+    fprintf('Area of circle with radius %.1f = %.1f\n',r,circle_area)
+    
+    function calculate_area
+        circle_area = pi*r^2;
+    end  
+end
+```
+
+All input and output arguments of a function are accessible to the nested function
+
+```MATLAB
+>> assignment_rule(4)
+```
+Nested Nested Function
+
+```MATLAB
+function A
+    xA = 1;
+    function B
+        xB = 2;
+        function C
+            xC = 3;
+            show('C','xA',xA)
+            show('C','xB',xB)
+            show('C','xC',xC)
+        end % C
+        show('B','xA',xA)
+        show('B','xB',xB);
+        C
+        D
+    end % B
+    function D
+        xD = 4;
+        show('D','xA',xA);
+        show('D','xD',xD);
+    end % D
+    show('A','xA',xA)
+    B
+    D
+end % A
+function show(funct,name,value)
+    fprintf('in %s: %s = %d\n',funct,name,value);
+end
+```
+
+```MATLAB
+>> A
+>> 
+```
+sibling function can call each other but can't share variable
+
+
+```MATLAB
+>> c = 10;
+>> f = @(x)  c*x
+>> f(3)
+>> c = 11;
+>> f(3)
+>> clear c
+>> f(3)
+```
+
+```MATLAB
+function fh = get_anon_handle(c)
+    
+    fh = @(x) c*x;
+    
+end
+```
+
+```MATLAB
+>> f10 = get_anon_handle(10)
+>> f11 = get_anon_handle(11)
+>> f10(3)
+>> f11(3)
+```
+
+Function that returns a nested function
+
+```MATLAB
+function fh = get_polynomial_handle(p)
+ 
+    function polynomial = poly(x)
+        polynomial = 0;
+        for ii = 1:length(p)
+            polynomial = polynomial + p(ii).*x.^(ii-1);
+        end
+    end
+    
+    fh = @poly;
+end
+```
+
+```MATLAB
+>> pc = get_polynomial_handle([-4, -1, 3, 1])
+>> pc(1)
+>> pq = get_polynomial_handle([-1, 0, 7])
+>> pq(1)
+>> pc(1)
+>> fplot(pc,[-3,2]); hold on; fplot(pq,[-3,2])
+```
+
+ancestor and descendant can share variable(nonlocal scope)
+
+**Nesting function** was first defined in `ALGOL`
+
+#### Problem 1: Autograder
+
+Here is you chance to write an autograder! Specifically, write a function called grader that tests two functions (one is supposed to be the student's solution and the other the
+reference solution provided by the instructor) by calling them repeatedly with various input arguments and comparing the results. For simplicity, we assume that both functions 
+take exactly one input argument. The inputs to the grader function are two function handles followed by a variable number of additional input arguments. The function must call the 
+two functions with each of the supplied input agruments one by one. If the results match for all test cases, that is, for each input argument, the grader function returns logical true.
+Otherwise, it returns false. Note that in order to ensure that the comparison works for arrays and not just scalars, you should use the isequal function as opposed to the == operator.
+Here are a few sample runs using built-in functions:
+
+```MATLAB
+>> grader(@sin,@max,0)
+ans =
+  logical
+   1
+>> grader(@sin,@max,0,1)
+ans =
+  logical
+   0
+>> grader(@cos,@cos,-pi,0,pi,[0:0.1:1])
+ans =
+  logical
+   1
+```
+
+```MATLAB
+function output = grader(f1,f2,varargin)
+    for ii = 1:length(varargin)
+        if ~isequal(f1(varargin{ii}),f2(varargin{ii}))
+            output = false;
+            return
+        end
+    end
+    output = true;
+end
+```
+
+```MATLAB
+function pass = sol_grader(fn1,fn2,varargin)
+    pass = false;
+    for ii = 1:length(varargin)
+        if ~isequal(fn1(varargin{ii}),fn2(varargin{ii}))
+            return;
+        end
+    end
+    pass = true;
+end
+```
+
+#### Problem 2: Fun with Polynomials
+
+Remember the example from the video that showed how to return a function handle to a nested function that computed the value of a polynomial? Here it is:
+
+```MATLAB
+function fh = get_polynomial_handle(p)
+    function polynomial = poly(x)
+        polynomial = 0;
+        for ii = 1:length(p)
+            polynomial = polynomial + p(ii) .* x.^(ii-1);
+        end
+    end    
+    fh = @poly;
+end
+```
+It takes a vector of coefficients p, defines a function that returns the value of the polynomial given the scalar input x, and returns a function handle to it. Here is an example run:
+
+```MATLAB
+>> p = get_polynomial_handle(1:5)
+p =
+  function_handle with value:
+    @get_polynomial_handle/poly
+>> p(1)
+ans =
+    15
+```
+Your task is simple: modify the code above so that it does not use any loops.
+
+```MATLAB
+function fh = poly_fun(p)
+    function polynomial = poly(x)
+        polynomial = sum(p .* x.^(0:length(p)-1));
+    end    
+    fh = @poly;
+end
+```
+
+```MATLAB
+function fh = poly_fun(p)
+    function polynomial = poly(x)
+        polynomial = sum(p .* x.^(0 : length(p)-1));
+    end 
+    fh = @poly;
+end
+```
