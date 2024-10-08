@@ -532,7 +532,7 @@ end
 ```
 
 ```MATLAB
-function fh = poly_fun(p)
+function fh = sol_poly_fun(p)
     function polynomial = poly(x)
         polynomial = sum(p .* x.^(0 : length(p)-1));
     end 
@@ -630,3 +630,55 @@ Create a function called **edgy** that takes an original image input, and produc
 Here is an example input and output ([click here for the image](https://lcms-files.mathworks.com/content/file/754005eb-371a-445c-8842-83026aa34d6c/CocaCola.png?versionId=QCBjo05K.y_4OF0DYGcBVICG50OorXg2)):
 
 ![Input](https://lcms-files.mathworks.com/content/images/9bd1aa7a-2576-4831-ab81-0fbaa3c8d2fc.png) ![Output](https://lcms-files.mathworks.com/content/images/fb3f6a4d-7149-4b5f-b71a-ca9607139ebd.png)
+
+```MATLAB
+function edge = edgy(figure)
+    cc = double(figure);
+    sx = [-1 0 1; -2 0 2; -1 0 1];
+    sy = [1 2 1; 0 0 0; -1 -2 -1];
+    B = cc;
+    for ii = 2:(size(B,1)-1)
+        for jj = 2:(size(B,2)-1)
+            A = cc((ii-1):(ii+1),(jj-1):(jj+1));
+                x = sx.*A;
+                x = sum(sum(x));
+                y = sy.*A;
+                y = sum(sum(y));
+                pixValue = uint8(sqrt(x.^2 + y.^2));
+                B(ii,jj) = pixValue;
+        end
+    end
+    B = uint8(B);
+    edge = B(2:end-1,2:end-1);
+end
+```
+
+```MATLAB
+function out = sol_edgy(in)
+    % Get the size of the input image
+    [r, c] = size(in);
+    
+    % Create an output array that is two rows and columns smaller
+    out = zeros(r-2,c-2);
+    
+    % Use the size of the new array for looping
+    [r, c] = size(out);
+    
+    % Convert to double for doing calculations
+    in = double(in);
+    
+    % Create the horizontal and vertical edge detector filters
+    ex = [-1 0 1; -2 0 2; -1 0 1];
+    ey = [1 2 1; 0 0 0; -1 -2 -1];
+    for ii = 1:r
+        for jj = 1:c
+            sx = in(ii:ii+2,jj:jj+2) .* ex;
+            sy = in(ii:ii+2,jj:jj+2) .* ey;
+            % Calculate the output pixel value
+            out(ii,jj) = sqrt(sum(sum(sx(:)))^2 + sum(sum(sy(:)))^2);
+        end
+    end
+    % Convert back to uint8
+    out = uint8(out);
+end
+```
