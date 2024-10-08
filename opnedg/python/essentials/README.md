@@ -1,12 +1,12 @@
 # Python Essentials
 
 
-## 4.1.1.1 Functions
+### 4.1.1.1 Functions
 
 
-## 4.1.1.4 Writing functions
+### 4.1.1.4 Writing functions
 
-### Your first function
+#### Your first function
 How do you make such a function?
 
 You need to define it. The word define is significant here.
@@ -76,3 +76,128 @@ We start here.
 Enter a value: 
 We end here.
 ```
+
+### 4.1.1.5 Functions
+
+#### How functions work
+Look at the picture below:
+![function](https://edube.org/uploads/media/default/0001/01/f3a3fa6991f0ecb817a2a09c1aac0b45dba5579a.png)
+
+
+
+### PE1 -- Module 4 Quiz
+
+- A function definition starts with the keyword:
+    - `function`
+    - `fun`
+    - `def`
+
+    **Ans**: `def`
+
+- A function definition:
+    - cannot be placed among other code
+    - may be placed anywhere inside the code after the first invocation
+    - must be placed before the first invocation
+
+    **Ans**: must be placed before the first invocation
+
+- A function parameter is a kind of variable accessible:
+    - only inside the function
+    - only after the function definition's completion
+    - anywhere in the code
+
+    **Ans**: only inside the function
+
+- A way of passing arguments in which  the order of  the arguments determines the initial parameter's value is referred to as:
+    - positional
+    - ordered
+    - sequential
+
+    **Ans**: positional
+
+- Which of the following statements are true ? (Select two answers)
+    - The `return` keyword may cause the function to return a value
+    - The `return` keyword forces the function's execution to terminate
+    - The `return` keyword forces the function to restart its execution
+
+    **Ans**: The `return` keyword may cause the function to return a value, The `return` keyword forces the function's execution to terminate
+
+- The `None` keyword designates:
+    - an empty instruction
+    - a `None` value
+    - a function which doesn't return a value
+
+    **Ans**: a `None` value
+
+- A variable defined outside a function:
+    - may not be accessed in any way inside the function
+    - may be read, but not written (something more is needed to do so)
+    - may be freely accessed inside the function
+
+    **Ans**: may be read, but not written (something more is needed to do so)
+
+- If a list is passed into a function as an argument, deleting any of its elements inside the function using the `del` instruction:
+    - will cause a runtime error
+    - will not affect the argument
+    - will affect the argument
+
+    **Ans**: will affect the argument
+
+- What is the output of the following snippet ?
+    ```python
+    def fun(in=2, out=3):
+        return in * out
+
+    print(fun(3))
+    ```
+    - `6`
+    - the snippet is errorneous (invalid syntax)
+    - `9`
+
+    **Ans**: the snippet is errorneous (invalid syntax)
+
+- What is the output of the following snippet ?
+    ```python
+    tup = (1, ) + (1, )
+    tup = tup + tup
+    print(len(tup))
+    ```
+    - `4`
+    - `2`
+    - the snippet is errorneous (invalid syntax)
+
+    **Ans**: `4`
+
+- What is the output of the following program if the user enter `kangaroo` at the first prompt and `0` at the second prompt?
+    ```python
+    try:
+        first_prompt = input("Enter the first value: ")
+        a = len(first_prompt)
+        second_prompt = input("Enter the second value: ")
+        b = len(second_prompt) * 2
+        print(a/b)
+    except ZeroDivisionError:
+        print("Do not divide by zero!")
+    except ValueError:
+        print("Wrong value.")
+    except:
+        print("Error.Error.Error.")
+    ```
+    - `Do not divide by zero!`
+    - `Error.Error.Error.`
+    - `4.0`
+    - `Wrong value.`
+
+    **Ans**: `4.0`
+
+- What is the expected behavior of the following program if the user enters `0` ?
+    ```python
+    value = input("Enter a value: ")
+    print(10/value)
+    ```
+    - The program will raise the `TypeError` exception.
+    - The program will output `0` to the console.
+    - The program will raise the `ValueError` exception.
+    - The program will raise the `ZeroDivisionError` exception.
+
+    **Ans**: The program will raise the `TypeError` exception.

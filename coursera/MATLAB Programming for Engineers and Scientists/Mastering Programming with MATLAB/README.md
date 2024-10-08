@@ -539,3 +539,68 @@ function fh = poly_fun(p)
     fh = @poly;
 end
 ```
+## Module 3
+
+### Mixed Mode Arithmetic
+
+![MATLAB Numeric Data Types](matlab_numeric_data_types.png)
+
+```MATLAB
+>> 4 * pi
+>> int8(200) + int8(300) % retuns 127
+>> -3
+>> 
+```
+
+![Binary Arithmetic Operations](bin_arth_op.png)
+
+```MATLAB
+>> [1 2 3; 3 4 5] * [6;7;8]
+>> [6;7;8] * [1 2 3; 3 4 5] % gives error
+>> [1 2 3; 4 5 6; 7 8 9] ^ 11
+>> [1 2 3; 4 5 6] ^ 11 % gives error
+>> 
+```
+
+![Binary Arithmetic Operations](bin_arth_op2.png)
+
+![Binary Arithmetic Operations](bin_arth_op3.png)
+
+- Rules `B` through `E` only work with two dimensional arrays
+- Rule `A` and `F` work for any number of dimension
+
+![Binary Arithmetic Operations](bin_arth_op4.png)
+
+![Binary Arithmetic Operations](bin_arth_op5.png)
+
+- Can't raise integer to fractional power
+
+- the type of output of an operation is that which takes least space and time
+```MATLAB
+>> n = int16(9876)
+>> x = 12
+>> x + n
+>> n*x, n/x, n^x
+>> x/n
+>> x/9876
+>> clear; clc
+>> M = imread('matlab.png');
+>> imshow(M)
+>> whos
+>> D = M/3;
+>> imshow(D)
+>> D = double(M)/3; % this operation is called widening
+>> whos
+>> D = M/uint8(3); % Narrowing
+>> whos
+>> clear; clc
+>> a = int8(17)
+>> b = double(a)/2
+>> c = double(a/2)
+>> f = int8(2)
+>> b = double(a)/f
+>> c = double(a/f)
+```
+![Rules of Mixed Mode Arithmetic](rules_of_mixed_mode_arithmetic.png)
+
+
