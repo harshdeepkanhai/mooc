@@ -871,3 +871,120 @@ function s = sol_mixit(S,w)
     end
 end
 ```
+
+### Linear Equations
+
+![Simultaneous Linear Algebraic Equations](linear_equation1.png)
+
+![Simultaneous Linear Algebraic Equations2](linear_equation2.png)
+
+![Two Simultaneous Equations1](two_simultaneous_equations1.png)
+
+![Two Simultaneous Equations2](two_simultaneous_equations2.png)
+
+![Two Simultaneous Equations3](two_simultaneous_equations3.png)
+
+```MATLAB
+>> A =  [4 5; 3 -2]
+>> b = [6; 14]
+>> A = 5; b = 10;
+>> x = b/A
+>> x = A\b
+>> A = [4 5; 3 -2]; b = [6; 14];
+>> x = A\b
+>> A * x
+>> x = A/b % error
+>> x = b/A % error
+>> x = b\A % gives wrong answer
+>> rng(0)
+>> A = rand(20,20);
+>> b = rand(20,1);
+>> x = A\b;
+>> e = A*x-b;
+>> max(abs(e))
+```
+`mldivide` same as `\`
+
+![Two Inconsistent Equations](two_inconsistent_equations.png)
+
+```MATLAB
+>> A = [4 5; 4 5]
+>> b = [6; 12]
+>> x = A\b % Warning: Matrix is singular to working precision.
+>> x1 = 0:0.01:10;
+>> x2 = (6 - 4*x1)/5;
+>> plot(x1, x2);grid on 
+>> x2 = (12 - 4*x1)/5;
+>> hold on; plot(x1,x2);
+```
+
+```MATLAB
+>> x1 = 0:0.01:10;
+>> x2 = (6 - 4*x1)/5;
+>> hold off; plot(x1,x2); grid on
+>> x2 = (14 - 3*x1)/(-2);
+>> hold on; plot(x1, x2);
+>> A =[4 5; 3 -2]; b= [6; 14]
+>> x = A\b
+>> plot(x(1),x(2),'*');
+```
+
+![Overdetermined Equations](overdetermined_equations1.png)
+
+```MATLAB
+>> x2 = (-7*x1 +19) /2;
+>> plot(x1,x2);  % three different intersections
+>> A = [4 5; 3 -2; 7 2]
+>> b = [6; 14; 19]
+>> x = A\b
+>> plot(x(1),x(2),"*")
+>> e = A*x -b  % find error in solution
+>> sse = sum(e.^2) % sum of squared errors
+>> eps % matlab special function
+```
+
+![Underdetermined Equations](underdetermined_equations1.png)
+
+```MATLAB
+>> A = [2 10]; b = 4;
+>> x = A\b
+>> A = [2 3 -6 7; 3 -2 4 9]; b = [5; 14];
+>> x = A\b
+```
+
+![Ill-conditioned vs Well-conditioned](ill_conditioned_well_conditoned.png)
+
+```MATLAB
+>> A1 = [27.3 59.4; 63.2 33.4]
+>> cond(A1) % well-conditioned
+>> A2 = [41.9 59.1; 57.5 81.1]
+>> cond(A2) % ill-conditioned
+>> b1 = [78.1; 91.1];
+>> x1 = A1\b1
+>> b1_err = b1 + [1.0; 0.73]
+>> pct_b1_err = 100*norm(b1_err-b1)/norm(b1)
+>> x1_err = A1\b1_err
+>> pct_x1_err = 100*norm(x1_err-x1)/norm(x1)
+>> cond(A1)
+>> 2.9640 * 1.0318
+
+
+>> b2 = [58.9; 80.8];
+>> x2 = A2\b2
+>> b2_err = b2 + [1.0; 0.73]
+>> pct_b2_err = 100*norm(b2_err-b2)/norm(b2)
+>> x2_err = A2\b2_err
+>> pct_x2_err = 100*norm(x2_err-x2)/norm(x2)
+>> cond(A2)
+>> cond(A2) * pct_b2_err
+
+
+```
+if we get ill-conditioned then we should add one more equation
+
+![Ill-conditioned vs Well-conditioned](ill_conditioned_well_conditoned2.png)
+
+```MATLAB
+>> A3 = [41.9 59.1; 57.5 81.1; 69.9 31.7]
+>> cond(A3)
+```
