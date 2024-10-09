@@ -988,3 +988,52 @@ if we get ill-conditioned then we should add one more equation
 >> A3 = [41.9 59.1; 57.5 81.1; 69.9 31.7]
 >> cond(A3)
 ```
+
+#### Problem 1: Electrical Circuits
+
+See the image of a passive electrical circuit below. Write a function called **voltage** that computes the voltages at junctions A, B and C. The function has two inputs, V for the voltage of the supply in volts and R, a vector of the values of the resistors in ohm. $R_1$ in the figure is R(1), that is, the first element of the vector R. In general, $R_N$ is R(N). The output of the function is a three-element column vector with the voltage levels at junctions A, B and C, respectively.
+
+To compute the voltage levels, we can use  [Kirchhoff's first law](https://en.wikipedia.org/wiki/Kirchoff%27s_first_law) that states that the sum of current flowing in and out of a junction must be zero. So, for example, here is the equation for junction A:
+
+$\frac{V-A}{R_1} - \frac{A-B}{R_7} - \frac{A}{R_2} = 0 $
+
+The current across a resistor is the voltage difference divided by the resistance, i.e,$i_N = \frac{V_{in}-V_{out}}{R_N}$ . You have to be careful that you use the correct sign for inflow and outflow. In the above equation, we assumed that $A > B$, so the current flows out, hence, the negative sign. But if the assumption was wrong, that will still work since $A - B$ will then be negative, so overall, it will turn into a positive inflow value.
+
+You need to write the remaining two equations for junctions B and C and rearrange the equations to get the canonical form so that we can use MATLAB's support for solving linear equations.
+
+Good values to check your function with:
+ - $R_1 = 0$ means that A must be at V level. Same for $R_3 and $R-5$ for B and C, respectively.
+ - $R_2 = 0$ makes $A = 0$. Same for $R_4$ and $R_6$ for B and C, respectively.
+ - If $\frac{R_1}{R_2} = \frac{R_3}{R_4} = \frac{R_5}{R_6}$ then A,B and C will be at the same level independent of $R_7$ and $R_8$.
+
+ ![Circuit](https://lcms-files.mathworks.com/content/images/2707301e-f2e3-4ec1-96fd-aee9a301a8ef.png)
+
+ ```MATLAB
+function sol = voltage(V,R)
+    M =[R(2)*R(7)+R(1)*R(2)+R(1)*R(7),-R(1)*R(2),0;
+        -R(3)*R(4)*R(8),R(4)*R(7)*R(8)+R(3)*R(4)*R(8)+R(3)*R(4)*R(7)+R(3)*R(7)*R(8),-R(3)*R(4)*R(7);
+        0,-R(5)*R(6),R(6)*R(8)+R(5)*R(6)+R(5)*R(8)];
+    y =V*[R(2)*R(7);R(4)*R(7)*R(8);R(6)*R(8)];
+    sol=M\y;
+end
+```
+
+```MATLAB
+function sol = sol_voltage(V,R)
+    % Create the coeffecients matrix
+    M = [ R(2)*R(7) + R(1)*R(2) + R(1)*R(7), -R(1)*R(2),                                                        0;
+          -R(3)*R(4)*R(8),                   R(4)*R(7)*R(8) + R(3)*R(4)*R(8) + R(3)*R(4)*R(7) + R(3)*R(7)*R(8), -R(3)*R(4)*R(7);
+          0,                                 -R(5)*R(6),                                                        R(6)*R(8) + R(5)*R(6) + R(5)*R(8) ];
+    
+    y = V * [R(2)*R(7); R(4)*R(7)*R(8); R(6)*R(8)];
+    % Use the backslash operator to solve the system of linear equations
+    sol = M \ y;
+end
+```
+
+```MATLAB
+>> R = [1,2,4,5,13,4,8,1];
+>> V = 10;
+>> voltage(V,R)
+```
+
