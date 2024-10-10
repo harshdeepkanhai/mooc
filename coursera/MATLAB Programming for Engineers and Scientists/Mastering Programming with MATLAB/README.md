@@ -1086,3 +1086,10 @@ grid on
 hold on
 plot([-5 5],a*[-5 5]+b,'lineWidth',2);
 ```
+
+### Live Scripts
+
+![Scripts vs Functions](scripts_vs_functions.png)
+
+![Live Scripts](live_scripts.png)
+
