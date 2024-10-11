@@ -1098,3 +1098,326 @@ plot([-5 5],a*[-5 5]+b,'lineWidth',2);
 #### Live Scripts Quiz
 
 ![Live Scripts Quiz](live_scripts_quiz.png)
+
+
+### Error Handling
+
+```MATLAB
+function diff = indexing(N)
+    rng(0);
+    v = randi(100, 1, N);
+    diff = [];
+    for ii = 1: length(v)
+        diff(end+1) = v(ii+1) - v(ii);
+    end
+end
+```
+
+```MATLAB
+>> indexing(10) % gives error
+```
+
+```MATLAB
+function diff = indexing(N)
+    rng(0);
+    v = randi(100, 1, N);
+    diff = [];
+    for ii = 1: length(v) - 1
+        diff(end+1) = v(ii+1) - v(ii);
+    end
+end
+```
+
+```MATLAB
+>> indexing(10) % gives error
+```
+
+```MATLAB
+function h = my_harmonic(n)
+    if ~isscalar(n) || n < 1 || n ~= floor(n)
+        error('Positive integer input expected...');
+    end
+    h = 1;
+    for ii = 2:n
+        h = h + 1/ii;
+    end
+end
+```
+
+```MATLAB
+>> my_harmonic(0) % gives error
+>> my_harmonic(2.3) % gives error
+>> my_harmonic([2, 3]) % gives error
+>> 
+```
+
+
+```MATLAB
+function h = harmonic_chain(n)
+    h = sub_harmonic(n);
+end
+
+function h = sub_harmonic(n)
+    h = my_harmonic(n);
+end
+```
+
+```MATLAB
+>> harmonic_chain(2.3) % gives error
+```
+
+```MATLAB
+function h = my_harmonic_v2(n)
+    if ~isscalar(n)
+        n = n(1)l % convert to scalar
+    end
+    n = max(1, round(abs(n))); % convert to integer
+    h = 1;
+    for ii = 2:n
+        h = h + 1/ii;
+    end
+end
+```
+
+```MATLAB
+>> my_harmonic_v2(2.3)
+>> my_harmonic_v2([2,3])
+```
+
+![Exception Handling](exception_handling.png)
+
+```MATLAB
+function h = robust_harmonic_chain(n)
+    h = sub_harmonic(n);
+end
+
+function h = sub_harmonic(n)
+    try
+        h = my_harmonic(n);
+    catch
+        h = [];
+    end
+end
+```
+
+```MATLAB
+>> harmonic_chain(2.3) % gives error
+>> robust_harmonic_chain(2.3)
+```
+
+```MATLAB
+function h = robust_harmonic_chain(n)
+    h = sub_harmonic(n);
+end
+
+function h = sub_harmonic(n)
+    try
+        h = my_harmonic(n);
+    catch
+        h = [];
+        warning('Wrong input provided');
+    end
+end
+```
+
+```MATLAB
+>> robust_harmonic_chain_v2(2.3) % gives output and a warning
+```
+
+```MATLAB
+>> rng(0); x = randi(10,5,4), y = randi(10,4,6)
+>> x*y
+```
+
+```MATLAB
+functon out = element_prod(X,Y,r,n,c)
+    % ELEMENT_PROD two-element product for matrix multiplication
+    %   element_prod(X,Y,r,n,c) = X(r,n)*Y(n,c), where n is the index that
+    %   must be summed over to produce the element at row r and column c
+    %   of the product of matrices X and Y.
+
+    % Version 1
+    out = X(r,n) * Y(n,c);
+end
+```
+
+```MATLAB
+function C = matmul(A,B)
+    [rowA, colA] = size(A);
+    [rowB, colB] = size(B);
+    if ~ismatrix(A) || ~ismatrix(B)
+        error('Function matmul requires matrices...')
+    elseif colA ~= rowB
+        error('Inner dimensions must agree!')
+    end
+    C = zeros(rowA, colB);
+    for ii = 1:rowA
+        for jj = 1:colB
+            for kk = 1:colA
+                C(ii,jj) = C(ii,jj) + element_prod(A,   B, ii, jj, kk);
+            end
+        end
+    end
+end
+```
+
+```MATLAB
+>> matmul(x,y) % gives error
+```
+
+```MATLAB
+functon out = element_prod(X,Y,r,n,c)
+    % ELEMENT_PROD two-element product for matrix multiplication
+    %   element_prod(X,Y,r,n,c) = X(r,n)*Y(n,c), where n is the index that
+    %   must be summed over to produce the element at row r and column c
+    %   of the product of matrices X and Y.
+
+    % Version 2
+    try
+        out = X(r,n) * Y(n,c);
+    catch ME
+        if isequal(ME.identifier, 'MATLAB:badsubscript')
+            [Xsize] = size(X); [Ysize] = size(Y);
+            m1 = sprintf('Accessed X(%d,%d) and Y(%d,%d), but\n',r,n,n,c);
+            m2 = sprintf(' sizes = X[%d,%d] and Y[%d,%d], but\n',Xsize, Ysize);
+            error([m1, m2]);
+        end
+    end
+end
+```
+
+
+```MATLAB
+>> matmul(x,y) % gives error
+>> MException.last % shows the last exception type
+>> matmul(x,y) % shows our created error message
+```
+
+```MATLAB
+functon out = element_prod(X,Y,r,n,c)
+    % ELEMENT_PROD two-element product for matrix multiplication
+    %   element_prod(X,Y,r,n,c) = X(r,n)*Y(n,c), where n is the index that
+    %   must be summed over to produce the element at row r and column c
+    %   of the product of matrices X and Y.
+
+    % Version 3
+    try
+        out = X(r,n) * Y(n,c);
+    catch ME
+        if isequal(ME.identifier, 'MATLAB:badsubscript')
+            [Xsize] = size(X); [Ysize] = size(Y);
+            m1 = sprintf('Accessed X(%d,%d) and Y(%d,%d), but\n',r,n,n,c);
+            m2 = sprintf(' sizes = X[%d,%d] and Y[%d,%d], but\n',Xsize, Ysize);
+            error('HDK:element_prod:badsubscript',[m1, m2]);
+        end
+    end
+end
+```
+
+```MATLAB
+>> matmul(x,y) % throws an error
+>> MException.last % shows the correct identifier
+```
+
+
+```MATLAB
+functon out = element_prod(X,Y,r,n,c)
+    % ELEMENT_PROD two-element product for matrix multiplication
+    %   element_prod(X,Y,r,n,c) = X(r,n)*Y(n,c), where n is the index that
+    %   must be summed over to produce the element at row r and column c
+    %   of the product of matrices X and Y.
+
+    % Version 4
+    try
+        out = X(r,n) * Y(n,c);
+    catch ME
+        if isequal(ME.identifier, 'MATLAB:badsubscript')
+            [Xsize] = size(X); [Ysize] = size(Y);
+            m1 = sprintf('Accessed X(%d,%d) and Y(%d,%d), but\n',r,n,n,c);
+            m2 = sprintf(' sizes = X[%d,%d] and Y[%d,%d], but\n',Xsize, Ysize);
+            MyE = MException('HDK:element_prod:badsubscript',[m1, m2]);
+            thow(MyE);
+        end
+    end
+end
+```
+
+```MATLAB
+>> matmul(x,y) % throws an error
+>> MException.last % shows the correct identifier
+```
+
+```MATLAB
+>> Xcell = {1,2;3,4}, Ycell ={5,6;7,8}
+>> Xcell(1,2) * Ycell(2,1) % gives an error
+>> element_prod(Xcell,Ycell,1,2,1)
+>> 
+```
+
+```MATLAB
+functon out = element_prod(X,Y,r,n,c)
+    % ELEMENT_PROD two-element product for matrix multiplication
+    %   element_prod(X,Y,r,n,c) = X(r,n)*Y(n,c), where n is the index that
+    %   must be summed over to produce the element at row r and column c
+    %   of the product of matrices X and Y.
+
+    % Version 5
+    try
+        out = X(r,n) * Y(n,c);
+    catch ME
+        if isequal(ME.identifier, 'MATLAB:badsubscript')
+            [Xsize] = size(X); [Ysize] = size(Y);
+            m1 = sprintf('Accessed X(%d,%d) and Y(%d,%d), but\n',r,n,n,c);
+            m2 = sprintf(' sizes = X[%d,%d] and Y[%d,%d], but\n',Xsize, Ysize);
+            MyE = MException('HDK:element_prod:badsubscript',[m1, m2]);
+            thow(MyE);
+        else
+            rethrow(ME); % when error is not caught above
+        end
+    end
+end
+```
+
+```MATLAB
+>> Xcell = {1,2;3,4}, Ycell ={5,6;7,8}
+>> Xcell(1,2) * Ycell(2,1) % gives an error
+>> element_prod(Xcell,Ycell,1,2,1) % now throws an error
+```
+Assertions
+
+```MATLAB
+function assert_example
+    % do some computation
+    x = abs(randn);
+    % do some more computation
+    assert(x >= 0);
+    % keep working
+end
+```
+
+```MATLAB
+>> assert_example
+```
+
+```MATLAB
+function assert_example
+    % do some computation
+    x = abs(randn);
+    % do some more computation
+    assert(x >= 0);
+    % keep working
+end
+
+function x = abs(x)
+    x = -1 * x; % incorrect implementation
+end
+```
+
+```MATLAB
+>> assert_example % Assertion failed error
+```
+
+![Sumamry of Error Handling](summary_of_error_handling1.png)
+
+![Sumamry of Error Handling2](summary_of_error_handling2.png)
+
