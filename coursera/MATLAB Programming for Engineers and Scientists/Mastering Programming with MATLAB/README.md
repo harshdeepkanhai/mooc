@@ -1421,3 +1421,95 @@ end
 
 ![Sumamry of Error Handling2](summary_of_error_handling2.png)
 
+
+## Module 4
+
+### Algorithmic Complexity
+
+![Fibonacci Series](fibonacci_series.png)
+
+```MATLAB
+function f = fibo(n)
+    if n <= 2
+        f = 1;
+    else
+        f = fibo(n-2) + fibo(n-1);
+    end
+end
+```
+
+```MATLAB
+>> for ii = 1:6, fibo(ii), end
+>> fibo(10)
+>> fibo(20)
+>> fibo(30)
+>> fibo(38)
+>> fibo(39)
+>> fibo(50)
+```
+
+```MATLAB
+function [f, cnt] = fibocnt(n)
+    persistent count;   % must specify persistent
+    if isempty(count)   % first time it is set to [] by MATLAB
+        count = 1;      % so we set it to 1
+    else
+        count = count + 1;  % subsequent times, we increment by 1
+    end
+    if n <= 2
+        f = 1;
+    else
+        f = fibocnt(n-2) + fibocnt(n-1);
+    end
+    cnt = count;       % a pesistent variable cannot be an output argument
+end
+```
+
+```MATLAB
+>> [f c] = fibocnt(2)
+>> clear fibocnt
+>> [f c] = fibocnt(3)
+>> clear fibocnt
+>> [f c] = fibocnt(5)
+>> clear fibocnt
+>> [f c] = fibocnt(25)
+>> clear fibocnt
+>> [f c] = fibocnt(35)
+>> clear fibocnt
+```
+
+```MATLAB
+function f = fibo_list(n)
+    if n <= 2
+        f = ones(1,n);
+    else
+        f = fibo_list(n-1);
+        f = [f f(end-1)+f(end)];
+    end
+end
+```
+
+```MATLAB
+>> fibo_list(42)
+```
+
+```MATLAB
+function f = fibo_last(n)
+    f = fibo_list(n);
+    f = f(end);
+end
+
+function f = fibo_list(n)
+    if n <= 2
+        f = ones(1,n);
+    else
+        f = fibo_list(n-1);
+        f = [f f(end-1)+f(end)];
+    end
+end
+```
+
+```MATLAB
+>> fibo_last(50)
+>> tic;fibo_last(50), toc
+```
