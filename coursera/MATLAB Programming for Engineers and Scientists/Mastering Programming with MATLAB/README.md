@@ -1586,3 +1586,222 @@ plot(N,t,N,t,'r*');
 ```
 
 MATLAB inbuilt function flip is implemented in another language
+
+![Algorithm Complexity2](algorithmic_complexity2.png)
+
+
+### Algorithm Complexity 3
+
+![Complexity](complexity.png)
+
+The branch of Computer Science dedicated to the study of algorithmic complexity:
+    
+- Complexity Theory
+- Analysis of Algorithms
+- Algorithms
+
+```MATLAB
+>> sum(1:100)
+```
+![MATLAB sum function](matlab_sum_function.png)
+
+![Gauss sum solution](gauss_sum_solution.png)
+
+```MATLAB
+>> n = 100
+>> (n + 1) * n /2
+```
+
+![Searching for a number in a vector](searching_for_a_number_in_a_vector.png)
+
+![Searching for a number in a vector 2](searching_for_a_number_in_a_vector2.png)
+
+```MATLAB
+>> v = randi(100, 1, 20)
+>> find(v==28,1)
+```
+
+```MATLAB
+function index = my_search(v,e)
+    index = 0;
+    for ii = 1:length(v)
+        if v(ii) == e
+            index = ii;
+            return;
+        end
+    end
+end
+```
+
+```MATLAB
+>> my_search(v,98)
+>> my_search(v,900)
+```
+
+![Phone Book](phone_book.png)
+
+![Phone Book](phone_book2.png)
+
+![Binary Search](binary_search.png)
+
+![Binary Search 2](binary_search2.png)
+
+```MATLAB
+function index = binary_search(v,e,first,last)
+    if nargin < 3
+        first = 1;
+        last = length(v);
+    end
+    mid = fix( (first + last)/2 );
+    if ~(first <= last) 
+        index = 0;
+    elseif e == v(mid)
+        index = mid; 
+    elseif e < v(mid)
+        index = binary_search(v,e,first, mid-1);
+    else
+        index = binary_search(v,e,mid+1, last);
+    end
+end
+```
+
+```MATLAB
+>> v = 1:1e8;
+>> t_my_search = timeit(@() my_search(v,0))
+>> t_binary_search = timeit(@() binary_search(v,0))
+>> ratio = t_my_search/t_binary_search
+>> v = 1:1e9;
+>> t_my_search = timeit(@() my_search(v,0))
+>> t_binary_search = timeit(@() binary_search(v,0))
+>> ratio = t_my_search/t_binary_search
+```
+
+![Traveling Salesman Problem](traveling_salesman_problem.png)
+
+![Complexity](complexity2.png)
+
+![Complexity](complexity3.png)
+
+![Complexity](complexity4.png)
+
+![Matrix Multiplication](matrix_multiplication.png)
+
+![Matrix Multiplication](matrix_multiplication2.png)
+
+![Matrix Multiplication](matrix_multiplication3.png)
+
+![Matrix Multiplication](matrix_multiplication4.png)
+
+![Complexity](complexity5.png)
+
+```MATLAB
+function C = matmul(A,B)
+    [rowA, colA] = size(A);
+    [rowB, colB] = size(B);
+    if ~ismatrix(A) || ~ismatrix(B)
+        error('Function matmul works with matrices...');
+    elseif colA ~= rowB
+        error('Inner dimensions must agree!');
+    end
+ 
+    C = zeros(rowA, colB);  
+    for ii = 1:rowA
+         for jj = 1:colB
+             for kk = 1:colA
+                 C(ii,jj) = C(ii,jj) + A(ii,kk) * B(kk,jj);
+             end
+         end
+    end
+end
+```
+
+```MATLAB
+function t = test_matmul(M,matrix_class)
+%TEST_MATMUL matmul run time for MxM matrices
+%   TEST_MATMUL(M) M is a vector of matrix 
+%   dimensions. Run times are returned and
+%   are plotted versus M-cubed along with 
+%   a fit line of the form: a*M^3 + b.
+%
+%   TEST_MATMUL(...,MATRIX_CLASS) MATRIX_CLASS
+%   is a string giving the class of matrices
+%   constructed as input to matmul. Default
+%   is double.
+%
+
+if nargin < 1, M = 100*(1:10); end
+if nargin < 2, matrix_class = "double"; end
+
+max_val = 99; % <= 2 digits for inspecting small matrices
+t = zeros(length(M),1);
+    for ii = 1:length(M)
+        A = randi(max_val,M(ii),matrix_class);
+        B = randi(max_val,M(ii),matrix_class);
+        t(ii) = timeit(@() matmul(A,B));
+        fprintf('M = %d, t = %.4d\n',M(ii),t(ii));
+    end
+    % Fit data to M^3 dependence
+    p = polyfit(M.^3,t,1); % straight-line fit
+    t_fit = polyval(p,M.^3);
+    % Plot time points and straight-line fit
+    plot(M.^3,t,'b*',M.^3,t_fit,'--');
+    grid on
+    title_str = ...
+        sprintf('MxM-matrix-multiplication run time vs M-cubed for %ss',matrix_class);
+    title(title_str);
+    xlabel('M^3');
+    ylabel('time (s)');
+    legend('data','fit','Location','SouthEast')
+end
+```
+
+```MATLAB
+>> test_matmul(100*(1:7));
+>> A = randi(99,700);
+>> B = randi(99,700);
+>> timeit(@() A*B)
+```
+
+```MATLAB
+function t = test_matmul(M,matrix_class)
+%TEST_MATMUL matmul run time for MxM matrices
+%   TEST_MATMUL(M) M is a vector of matrix 
+%   dimensions. Run times are returned and
+%   are plotted versus M-cubed along with 
+%   a fit line of the form: a*M^3 + b.
+%
+%   TEST_MATMUL(...,MATRIX_CLASS) MATRIX_CLASS
+%   is a string giving the class of matrices
+%   constructed as input to matmul. Default
+%   is double.
+%
+
+if nargin < 1, M = 100*(1:10); end
+if nargin < 2, matrix_class = "double"; end
+
+max_val = 99; % <= 2 digits for inspecting small matrices
+t = zeros(length(M),1);
+    for ii = 1:length(M)
+        A = randi(max_val,M(ii),matrix_class);
+        B = randi(max_val,M(ii),matrix_class);
+        t(ii) = timeit(@() A*B);
+        fprintf('M = %d, t = %.4d\n',M(ii),t(ii));
+    end
+    % Fit data to M^3 dependence
+    p = polyfit(M.^3,t,1); % straight-line fit
+    t_fit = polyval(p,M.^3);
+    % Plot time points and straight-line fit
+    plot(M.^3,t,'b*',M.^3,t_fit,'--');
+    grid on
+    title_str = ...
+        sprintf('MxM-matrix-multiplication run time vs M-cubed for %ss',matrix_class);
+    title(title_str);
+    xlabel('M^3');
+    ylabel('time (s)');
+    legend('data','fit','Location','SouthEast')
+end
+```
+
+```MATLAB
+>> test_matmul(100*(1:7));
+```
