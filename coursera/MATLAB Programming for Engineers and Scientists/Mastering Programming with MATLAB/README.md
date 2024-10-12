@@ -1805,3 +1805,275 @@ end
 ```MATLAB
 >> test_matmul(100*(1:7));
 ```
+
+#### Problem 1: Recursion revisited
+
+We spent some time on the my_flip problem, the one about flipiing the elements of a vector. Earlier in this course, you had to solve it recursively. There we called it reversal. Your code may have looked like this:
+```MATLAB
+function v = reversal(v)
+    if length(v) > 1
+        v = [v(end) reversal(v(1:end-1))];
+    end
+end
+```
+This works well for smaller inputs but what if we have a really long vector? MATLAB may run out of stack space and even if not, it will be relatively slow due to the many many function calls. Your mission, should you choose to accept it, is to improve this recursive implementation to make it fast and to make it work on long vectors too. Again, it needs to stay recursive; it just cannot have as many nested recursive calls as the number of elements the list has! (Hint: one of the algorithms we looked at this lesson, even though it is seemingly unrelated, may give you an idea...)
+
+```MATLAB
+function v = reversal(v)
+    if length(v) > 1
+        i = ceil(length(v)/2);
+        v = [reversal(v(i+1:end)) reversal(v(1:i))];
+    end
+end
+```
+
+```MATLAB
+function v = sol_reversal2(v)
+    if length(v) > 1
+        ii = round(length(v) / 2);
+        v = [reversal2(v(ii+1:end)) reversal2(v(1:ii))];
+    end
+end
+```
+
+```MATLAB
+>> y = reversal(1:1e6);
+```
+
+#### Problem 2: Fibonacci profiler
+
+Remember our absolutely inefficient recursive Fibonacci implementation that made many unnecessary recursive calls? Here it is:
+```MATLAB
+function f = fibo(n)
+    if n <= 2
+        f = 1;
+    else
+        f = fibo(n-2) + fibo(n-1);
+    end
+end
+```
+We showed an "instrumented" version that computed the number of recursive function calls using a persistent variable. Another way to try to profile the function calls you make is to save a trace. For example, it can be a vector whose elements capture the order the function was called with the various input arguments. In this problem, you need to modify the function above, so that it  has an additional input argument, a vector v. The vector needs to store the input arguments of the recursive function calls in the order they were made. Let's call the function **fibo_trace**, Here is an example run:
+```MATLAB
+>> [f trace] = fibo_trace(6,[])
+f =
+     8
+trace =
+     6     4     2     3     1     2     5     3     1     2     4     2     3     1     2
+```
+
+The output shows that the function was first called with input argument 6, then it was called again with 4 and then with 2. Is this correct? Yes, because we initially called it with 6, then it called itself with n-2, that is 4, and that instance of the function called itself with (n-2), that is 2. At that point there are no further recursive calls, it simply returned the solution 2 to the previous call (with 4) and it called the function again with (n-1), that is, 3. And so on. 
+Once you have a trace like this, you can identify if the function works as intended or not. You can also use the trace to plot a histogram. See below. Disregard the first bar, but see what the heights of the other bars are and try to figure out what the pattern is. Once you solved the problem, make the histogram yourself with a larger input like 10 or 15. It is fascinating indeed!
+```MATLAB
+>> [f trace] = fibo_trace(10,[]);
+>> histogram(trace)
+```
+![plot](https://lcms-files.mathworks.com/content/images/594aa21f-1fe0-4eca-8530-eae96f768aa7.png)
+
+
+```MATLAB
+function [f, v] = fibo_trace(n,v)
+    v(end+1) = n;
+    if n == 1 || n == 2
+        f = 1;
+    else
+        [f1, v] = fibo_trace(n-2,v); 
+        [f2, v] = fibo_trace(n-1,v);
+        f = f1+f2;
+    end
+end
+```
+
+```MATLAB
+function [f, v] = sol_fibo_trace(n,v)
+    v(end+1) = n;
+    if n == 1 || n == 2
+        f = 1;
+    else
+        [f1, v] = sol_fibo_trace(n-2,v); 
+        [f2, v] = sol_fibo_trace(n-1,v);
+        f = f1+f2;
+    end
+end
+```
+
+
+```MATLAB
+>> [f trace] = fibo_trace(6,[])
+```
+
+#### Problem 3: Maximum clique
+
+Given a social network, find the largest clique, that is, the largest subset of people who all follow each other. The data structure that contains the social network is set up as follows:
+
+People in the social network are identified by unique IDs, consecutive integers from 1 to N. Who follows who is captured in a cell array called sn: the iith element of sn is a vector that contains a list of IDs the person with ID ii follows. You may assume that these lists are ordered in ascending order by ID. Note that the follows relationship is not necessarily symmetrical: if person A follows person B, person B may or may not follow person A. Here is one possible (recursive) implementation:
+
+```MATLAB
+function clique = max_clique(graph,clique)
+    if nargin < 2                                       % originaly we call the function with just the graph
+        clique = [];                                    % hence, the clique is initialized to an empty vector
+    end
+    max_clq = clique;                                   % max_clq will store the current largest clique
+    if isempty(clique)                                  % when we first call the function
+        for ii = 1:length(graph)                        % we need to test potential cliques starting from every possible node
+            clq = max_clique(graph,ii);
+             if length(clq) > length(max_clq)           % if the new one is larger than the current
+                max_clq = clq;                          % we store the new one
+             end
+        end
+    else
+        for node = 1:length(graph)                              % we are in a recursive call now: we test every node as a new member
+            if isempty(find(node == clique))                    % unless it is already in the clique
+                if check_clique(clique,node,graph)              % if adding this node is still a clique
+                    clq = max_clique(graph,[clique node]);      % we call ourself with the new expanded clique
+                    if length(clq) > length(max_clq)            % if what we get is larger the curent max
+                        max_clq = clq;                          % we store the new one
+                    end
+                end
+            end
+        end
+    end
+    clique = max_clq;                                           % return the largest one
+end
+        
+function ok = check_clique(clq,node,graph)                      % adding node to clq still a clique?
+    ok = false;
+    for ii = 1:length(clq)                                      % for every current member
+        if isempty(find(clq(ii) == graph{node})) || ...         % the member must be on the follows list of the new guy
+                isempty(find(node == graph{clq(ii)}))           % the new guy must be on the follows list of the member
+            return;
+        end
+    end
+    ok = true;
+end
+```
+
+Unfortunately, it is too slow and the grader will time out. Your task is to modify the code to speed it up. Remember, the question to ask: am I doing any unncessary work? Call the modified function **max_clique**. (Hint: when we try to expand the current clique, do we really need to consider all the nodes?)
+Here is the original function: [max_clique_orig.m](https://lcms-files.mathworks.com/content/file/8b9a6648-ce9a-4125-b2b8-06884917b367/max_clique_orig.m?versionId=DZf1nIenUab2UuMk7QW7KNBCGf0IqJiq)  And here is the mat file with the example social network: [sn.mat](https://lcms-files.mathworks.com/content/file/14f74f4b-b874-4374-a9cf-eeaba1b11fa7/sn.mat?versionId=vSKliK3WMy1WBvZEUNckbFPraeOYj_qS)
+
+```MATLAB
+function clique = max_clique_orig(graph,clique)
+    if nargin < 2                                       % originaly we call the function with just the graph
+        clique = [];                                    % hence, the clique is initialized to an empty vector
+    end
+    max_clq = clique;                                   % max_clq will store the current largest clique
+    if isempty(clique)                                  % when we first call the function
+        for ii = 1:length(graph)                        % we need to test potential cliques starting from every possible node
+            clq = max_clique(graph,ii);
+             if length(clq) > length(max_clq)           % if the new one is larger than the current
+                max_clq = clq;                          % we store the new one
+             end
+        end
+    else
+        for node = 1:length(graph)                              % we are in a recursive call now: we test every node as a new member
+            if isempty(find(node == clique))                    % unless it is already in the clique
+                if check_clique(clique,node,graph)              % if adding this node is still a clique
+                    clq = max_clique(graph,[clique node]);      % we call ourself with the new expanded clique
+                    if length(clq) > length(max_clq)            % if what we get is larger the curent max
+                        max_clq = clq;                          % we store the new one
+                    end
+                end
+            end
+        end
+    end
+    clique = max_clq;                                           % return the largest one
+end
+        
+function ok = check_clique(clq,node,graph)                      % adding node to clq still a clique?
+    ok = false;
+    for ii = 1:length(clq)                                      % for every current member
+        if isempty(find(clq(ii) == graph{node})) || ...         % the member must be on the follows list of the new guy
+                isempty(find(node == graph{clq(ii)}))           % the new guy must be on the follows list of the member
+            return;
+        end
+    end
+    ok = true;
+end
+```
+
+```MATLAB
+function clique = max_clique(g,clique)
+if nargin < 2
+    clique = [];
+end
+max_clq = clique;
+if isempty(clique)
+    for ii = 1:length(g)
+        clq = max_clique(g,ii);
+        if length(clq) > length(max_clq)
+            max_clq = clq;
+        end
+    end
+else
+    candidates = g{clique(1)};                           % it is enough to check nodes that the first member of the clique follows
+    candidates = candidates(g{clique(1)} > max(clique)); % since nodes are ordered, a potential new member must have a greater ID than current members
+    for ii = 1:length(candidates)
+        if check_clq(clique,candidates(ii),g)
+            clq = max_clique(g,[clique candidates(ii)]);
+            if length(clq) > length(max_clq)
+                max_clq = clq;
+            end
+        end
+    end
+end
+clique = max_clq;
+end
+function ok = check_clq(clq,id,g)
+ok = false;
+if ~isempty(find(id == clq))
+    return;
+end
+for ii = 1:length(clq)
+    if isempty(find(clq(ii) == g{id})) || isempty(find(id == g{clq(ii)}))
+        return;
+    end
+end
+ok = true;
+end
+```
+
+```MATLAB
+function clique = sol_max_clique(g,clique)
+    if nargin < 2
+        clique = [];
+    end
+    max_clq = clique;
+    if isempty(clique)
+        for ii = 1:length(g)
+            clq = sol_max_clique(g,ii);
+             if length(clq) > length(max_clq)
+                max_clq = clq;
+             end
+        end
+    else
+        candidates = g{clique(1)};                           % it is enough to check nodes that the first member of the clique follows
+        candidates = candidates(g{clique(1)} > max(clique)); % since nodes are ordered, a potential new member must have a greater ID than current members
+        for ii = 1:length(candidates)
+            if check_clq(clique,candidates(ii),g)
+                clq = sol_max_clique(g,[clique candidates(ii)]);
+                if length(clq) > length(max_clq)
+                    max_clq = clq;
+                end
+            end
+        end
+    end
+    clique = max_clq;
+end
+        
+function ok = check_clq(clq,id,g)
+    ok = false;
+    if ~isempty(find(id == clq))
+        return;
+    end
+    for ii = 1:length(clq)
+        if isempty(find(clq(ii) == g{id})) || isempty(find(id == g{clq(ii)}))
+            return;
+        end
+    end
+    ok = true;
+end
+```
+
+```MATLAB
+load sn;
+max_clique(sn)
+```
