@@ -1424,7 +1424,7 @@ end
 
 ## Module 4
 
-### Algorithmic Complexity
+### Algorithmic Complexity 1
 
 ![Fibonacci Series](fibonacci_series.png)
 
@@ -1513,3 +1513,76 @@ end
 >> fibo_last(50)
 >> tic;fibo_last(50), toc
 ```
+
+### Algorithmic Complexity 2
+
+```MATLAB
+>> v = 1:10
+>> v_reversed = v(end:-1:1)
+>> v_reversed = flip(v)
+
+```
+
+![Reversing a Vector](reverse_vector.png)
+
+In-Place Reverse a Vector
+
+```MATLAB
+function v = my_flip(v)
+    for ii = 2:length(v)
+        tmp = v(ii);
+        for jj = ii:-1:2
+            v(jj) = v(jj-1);
+        end
+        v(1) = tmp;
+    end
+end
+```
+
+```MATLAB
+>> my_flip(1:10)
+>> my_flip(1:100)
+>> tic; my_flip(1e4); toc
+>> timeit(@() my_flip(1:1e4))
+>> t10 = timeit(@() my_flip(1:1e4))
+>> t100 = timeit(@() my_flip(1:1e5))
+>> t100/t10
+>> t20 = timeit(@() my_flip(1:2e4))
+>> t40 = timeit(@() my_flip(1:4e4))
+>> t20/t10
+>> t40/t10
+```
+![Reversing Vector2](reverse_vector2.png)
+
+Swap 1st and last element
+
+```MATLAB
+function v = fast_flip(v)
+    for ii = 1:ceil(length(v)/2)
+        tmp = v(ii);
+        v(ii) = v(end-ii+1);
+        v(end-ii+1) = tmp;
+    end
+end
+```
+
+```MATLAB
+function test_fast_flip
+% Make a list of vector lengths:
+N = 1e6*(1:10);
+% Measure fast_flip time for a vector of each length: 
+for ii = 1:length(N)
+    t(ii) = timeit(@() fast_flip(1:N(ii)));
+    fprintf('Time for %8d elements = %.4f\n',N(ii),t(ii));
+end
+% Plot time versus input size with a line and asterisks:
+plot(N,t,N,t,'r*');
+```
+
+```MATLAB
+>> test_fast_flip
+>> timeit(@() flip(1:1e7))
+>> edit flip
+```
+
+MATLAB inbuilt function flip is implemented in another language
