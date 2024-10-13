@@ -2077,3 +2077,148 @@ end
 load sn;
 max_clique(sn)
 ```
+### Efficiency in Practice
+
+![Efficiency in Practice](efficiency_in_practice.png)
+
+```MATLAB
+function A = rooting_v1(v,w)
+    A = zeros(length(v),length(w));
+    for ii = 1:length(v)
+        for jj = 1:length(w)
+            A(ii,jj) = nthroot(v(ii),ii) * nthroot(w(jj),jj);
+        end
+    end
+end
+```
+
+![Efficiency in Practice](efficiency_in_practice2.png)
+
+```MATLAB
+>> v = randi(1e6, 1, 1e3);
+>> w = randi(1e6, 1, 1e3);
+>> tic; A1 = rooting_v1(v,w); toc
+```
+
+```MATLAB
+function A = rooting_v2(v,w)
+    A = zeros(length(v),length(w));
+    for ii = 1:length(v)
+        x = nthroot(v(ii),ii);
+        for jj = 1:length(w)
+            A(ii,jj) = x * nthroot(w(jj),jj);
+        end
+    end
+end
+```
+
+```MATLAB
+>> isequal(A1,A2)
+>> tic; A2 = rooting_v2(v,w); toc
+```
+
+```MATLAB
+function A = rooting_v3(v,w)
+    A = zeros(length(v),length(w));  % commenting this line will take more time (Preallocation)
+    rw = zeros(1,length(w));
+    for jj = 1:length(w)
+        rw(jj) = nthroot(w(jj),jj);
+    end
+    for ii = 1:length(v)
+        x = nthroot(v(ii),ii);
+        for jj = 1:length(w)
+            A(ii,jj) = x * rw(jj);
+        end
+    end
+end
+```
+
+```MATLAB
+>> isequal(A1,A3)
+>> tic; A3 = rooting_v3(v,w); toc
+```
+
+```MATLAB
+>> v = randi(1e6, 1, 1e4);
+>> w = randi(1e6, 1, 1e4);
+>> tic; A3 = rooting_v3(v,w); toc
+```
+
+
+```MATLAB
+>> v = randi(1e6, 1, 1e3);
+>> w = randi(1e6, 1, 1e3);
+>> profile off
+>> profile on
+>> A2 =rooting_v2(v,w);
+>> profile viewer
+```
+
+![Efficiency in Practice](efficiency_in_practice3.png)
+
+Social Network
+
+![follows](follows.png)
+
+![follows2](follows2.png)
+
+```MATLAB
+>> clear
+>> load follows
+>> whos
+>> 3000*2999/2
+```
+
+```MATLAB
+function [people, follows] = max_same_follows_v1(following)
+    people = [];
+    num_follows = 0;
+    for ii = 1:length(following)-1
+        for jj = ii+1:length(following)
+            tmp_follows = intersect(following{ii},following{jj});
+            n = length(tmp_follows);
+            if n > num_follows
+                num_follows = n;
+                people = [ii jj];
+                follows = tmp_follows;
+            end
+        end
+    end
+end
+```
+
+```MATLAB
+>> tic; [p1, f1] = max_same_follows_v1(follows);toc
+>> p1, f1
+```
+
+```MATLAB
+function [people, follows] = max_same_follows_v2(following)
+    people = [];
+    num_follows = 0;
+    for ii = 1:length(following)-1
+        if length(following{ii}) <= num_follows  % skip if list
+            continue;                            % is too short
+        end
+        for jj = ii+1:length(following)
+            if length(following{jj}) <= num_follows % skip if list
+                continue;                           % is too short
+            end
+            tmp_follows = intersect(following{ii},following{jj});
+            n = length(tmp_follows);
+            if n > num_follows
+                num_follows = n;
+                people = [ii jj];
+                follows = tmp_follows;
+            end
+        end
+    end
+end
+```
+
+```MATLAB
+>> tic; [p2, f2] = max_same_follows_v2(follows);toc
+>> isequal(p1,p2) && isequal(f1,f2)
+```
+
+![Efficiency in Practice](efficiency_in_practice4.png)
