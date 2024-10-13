@@ -2222,3 +2222,7 @@ end
 ```
 
 ![Efficiency in Practice](efficiency_in_practice4.png)
+
+![Efficiency in Practice Quiz](efficiency_in_practice_quiz1.png)
+
+![Efficiency in Practice Quiz](efficiency_in_practice_quiz2.png)
