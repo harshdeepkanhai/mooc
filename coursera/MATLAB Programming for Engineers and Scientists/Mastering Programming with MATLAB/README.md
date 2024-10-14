@@ -2226,3 +2226,275 @@ end
 ![Efficiency in Practice Quiz](efficiency_in_practice_quiz1.png)
 
 ![Efficiency in Practice Quiz](efficiency_in_practice_quiz2.png)
+
+### Vectorization and Other Speed-Ups
+
+![MATLAB and Implicit Looping](matlab_and_implicit_looping.png)
+
+![Vectorization](vectorization.png)
+
+```MATLAB
+function A = rooting_v3(v,w)
+    A = zeros(length(v),length(w)); % commenting this line will take more time
+    rw = zeros(1,length(w));
+    for jj = 1:length(w)
+        rw(jj) = nthroot(w(jj),jj);
+    end
+    for ii = 1:length(v)
+        x = nthroot(v(ii),ii);
+        for jj = 1:length(w)
+            A(ii,jj) = x * rw(jj);
+        end
+    end
+end
+```
+
+```MATLAB
+>> v = randi(1e6, 1, 1e4);
+>> w = randi(1e6, 1, 1e4);
+>> timeit(@() rooting_v3(v,w))
+```
+
+```MATLAB
+function A = rooting_v4(v,w)
+    A = zeros(length(v),length(w));
+    rv = nthroot(v,1:length(v));
+    rw = nthroot(w,1:length(v));
+    for ii = 1:length(v)
+        for jj = 1:length(w)
+            A(ii,jj) = rv(ii) * rw(jj);
+        end
+    end
+end
+```
+
+```MATLAB
+>> timeit(@() rooting_v4(v,w))
+>> profile on;
+>> rooting_v3(v,w);
+>> profile viewer
+```
+
+```MATLAB
+function A = rooting_v5(v,w)
+    rv = nthroot(v,1:length(v));
+    rw = nthroot(w,1:length(v));
+    A = rv' * rw;
+end
+```
+
+```MATLAB
+>> timeit(@() rooting_v5(v,w))
+>> isequal(rooting_v3(v,w), rooting_v5(v,w))
+```
+
+```MATLAB
+function A = small2zero_v1(A,limit)
+    for ii = 1:size(A,1)
+        for jj = 1:size(A,2)
+            if A(ii,jj) < limit
+                A(ii,jj) = 0;
+            end
+        end
+    end
+end
+```
+
+```MATLAB
+>> A = randi(1e6,1e4);
+>> timeit(@() small2zero_v1(A,50)) 
+```
+
+```MATLAB
+function A = small2zero_v2(A,limit)
+    A(A<limit) = 0;
+end
+```
+
+```MATLAB
+>> timeit(@() small2zero_v2(A,50))
+>> tic; A(A<50)=0;toc
+```
+
+```MATLAB
+>> clc
+>> profile off
+>> profile on
+>>  small2zero_v2(A,50);
+>> profile viewer
+```
+
+![M-File Translation](m_file_translation.png)
+
+![Just-in-Time Compiling](jit.png)
+
+![Comparing with element on same row](comparing_with_element_on_same_row.png)
+
+```MATLAB
+function A = row2explicit(A) 
+    for ii = 1:size(A,1) 
+        for jj = 1:size(A,2)
+            if A(ii,jj) < A(ii,2) 
+                A(ii,jj) = 0; 
+            end
+        end
+    end
+end
+```
+
+![repmat](repmat.png)
+
+```MATLAB
+>> A = randi(99,4,5)
+>> Title_column_2 = repmat(A(:,2),1,size(A,2))
+>> A(A<Title_column_2) = 0
+```
+
+```MATLAB
+>> mod(7,2)
+>> mod(8,2)
+>> mod(12,3)
+>> mod(48,7)
+>> rng(0); v = randi(99,1,10)
+>> ones_zeros = mod(v,2)
+>> true_false = ones_zeros == 1
+>> idx_odd = find(true_false)
+>> find(mod(v,2)==1)
+>> rng(0); A = randi(99, 3, 4)
+>> [row col] = find(mod(A,2) == 1);
+>> [row col]
+>> 
+```
+
+![First Stop: Recursion](stop_recursion.png)
+
+![Modes of Passing Arguments](modes_of_passing_arguments.png)
+
+```MATLAB
+function mx = input_mod_test(A)
+    mx = max(A(:));
+end
+```
+
+```MATLAB
+>> rng(0); X = randi(1e6, 2e4);
+>> timeit(@() input_mod_test(X))
+```
+
+```MATLAB
+function mx = input_mod_test(A)
+    mx = max(A(:));
+    A(1) = 0; % changes introduced
+end
+```
+
+```MATLAB
+>> timeit(@() input_mod_test(X)) % takes more time
+```
+
+![index Re-ordering](index_re_ordering.png)
+
+```MATLAB
+function A = not_preallocatable_v1(N)
+% from COMPUTER PROGRAMMING WITH MATLAB, 3rd Edition, 2015
+% by J. M. Fitzpatrick and A. Ledeczi
+% Chapter 2, Section 4.9
+ii = 0;
+while rand > 1/N
+   ii = ii + 1;
+   for jj = 1:N
+      A(ii,jj) = ii + jj^2;
+   end
+end
+```
+
+```MATLAB
+>> rng(0);tic;A1 = not_preallocatable_v1(3000);toc
+```
+
+```MATLAB
+function A = not_preallocatable_v2(N)
+% from COMPUTER PROGRAMMING WITH MATLAB, 3rd Edition, 2015
+% by J. M. Fitzpatrick and A. Ledeczi
+% Chapter 2, Section 4.9
+ii = 0;
+while rand > 1/N
+   ii = ii + 1;
+   for jj = 1:N
+      A(jj,ii) = ii + jj^2;
+   end
+end
+A = A';
+```
+
+```MATLAB
+>> rng(0);tic;A2 = not_preallocatable_v2(3000);toc
+>> isequal(A1,A2)
+```
+
+![Index Reordering](index_reordering2.png)
+
+![Index Reordering](index_reordering3.png)
+
+![Index Reordering](index_reordering4.png)
+
+```MATLAB
+>> size(A1,1)-1
+```
+
+![Index Reordering](index_reordering5.png)
+
+```MATLAB
+function A = stride_right(M,N,col_major,preallocate)
+    if preallocate, A = zeros(M,N); end
+    if col_major
+        for ii = 1:N 
+            for jj = 1:M
+                A(jj,ii) = 11*jj + 123*ii;
+            end
+        end
+    else % row major
+        for ii = 1:M
+            for jj = 1:N
+                A(ii,jj) = 11*ii + 123*jj;
+            end
+        end
+    end
+end
+```
+
+```MATLAB
+>> timeit(@() stride_right(1e4,2e4,false,true))
+>> timeit(@() stride_right(1e4,2e4,true,true)) % faster
+```
+
+![FORTRAN](fortran.png)
+
+![parfor](parfor.png)
+
+
+```MATLAB
+function a= eigen_for(A3D)
+a = zeros(1,size(A3D,1));
+for ii = 1:length(a)
+    a(ii) = max(abs(eig(squeeze(A3D(ii,:,:)))));
+end
+```
+
+```MATLAB
+function a= eigen_parfor(A3D)
+a = zeros(1,size(A3D,1));
+parfor ii = 1:length(a)
+    a(ii) = max(abs(eig(squeeze(A3D(ii,:,:)))));
+end
+```
+
+```MATLAB
+>> A3D = rand(5e4,50,50);
+>> tic; af = eigen_for(A3D); toc
+>> tic; ap = eigen_parfor(A3D); toc
+>> isequal(af,ap)
+```
+
+![Lesson 4](lesson_4.png)
+
