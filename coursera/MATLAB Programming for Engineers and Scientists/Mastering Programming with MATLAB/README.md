@@ -2498,3 +2498,4 @@ end
 
 ![Lesson 4](lesson_4.png)
 
+![Vectorization Quiz 1](vectorization_quiz1.png)
