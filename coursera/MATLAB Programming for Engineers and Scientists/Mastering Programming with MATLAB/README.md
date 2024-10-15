@@ -2498,6 +2498,8 @@ end
 
 ![Lesson 4](lesson_4.png)
 
+### Vectorizatin Quiz
+
 ![Vectorization Quiz 1](vectorization_quiz1.png)
 
 ![Vectorization Quiz 2](vectorization_quiz2.png)
@@ -2789,3 +2791,8 @@ end
 
 ![Class Definition](class_defintion5.png)
 
+### Intro to OOP Quiz
+
+![OOP Quiz 1](oop_quiz1.png)
+
+![OOP Quiz 2](oop_quiz2.png)
