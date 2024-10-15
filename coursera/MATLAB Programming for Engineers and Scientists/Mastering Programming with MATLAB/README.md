@@ -2499,3 +2499,293 @@ end
 ![Lesson 4](lesson_4.png)
 
 ![Vectorization Quiz 1](vectorization_quiz1.png)
+
+![Vectorization Quiz 2](vectorization_quiz2.png)
+
+## Module 5
+
+### Introduction to Object Oriented Programming
+
+![Object Oriented Programming](OOP.png)
+
+```MATLAB
+>> VeryCoolGuy = struct('name', [])
+>> VeryCoolGuy.name = 'Harshdeep Kanhai'
+>> VeryCoolGuy.game = 'Engineer'
+>> 
+```
+
+![Object Oriented Programming](OOP2.png)
+
+
+```MATLAB
+classdef Contact
+    properties
+        FirstName
+        LastName
+        PhoneNumber
+    end
+end
+```
+
+```MATLAB
+>> person = Contact
+>> person.FirstName = "Harshdeep"
+>> person.LastName = "Kanhai"
+>> person.PhoneNumbe = "392373939"
+
+```
+
+![Class Definition](class_definition.png)
+
+![Class Definition](class_definition2.png)
+
+```MATLAB
+classdef Contact 
+    properties 
+        FirstName
+        LastName
+        PhoneNumber
+    end
+    methods
+        function obj = Contact(lname,fname,phone)
+            obj.LastName = string(lname);
+            obj.FirstName = string(fname);
+            obj.PhoneNumber = string(phone);
+        end
+    end
+end
+```
+
+```MATLAB
+>> person2 = Contact("Shantanu", "Singh", 3424335345)
+>> person2.LastNme = pi
+
+```
+
+```MATLAB
+classdef Contact 
+    properties
+        FirstName
+        LastName
+        PhoneNumber
+    end
+    methods
+        function obj = Contact(lname,fname,phone)
+            obj.LastName = string(lname);
+            obj.FirstName = string(fname);
+            obj.PhoneNumber = string(phone);
+        end
+        function obj = set.LastName(obj,lname)
+            obj.LastName = string(lname);
+        end
+        function obj = set.FirstName(obj,fname)
+            obj.FirstName = string(fname);
+        end
+        function obj = set.PhoneNumber(obj,phone)
+            obj.PhoneNumber = string(phone);
+        end
+    end
+end
+```
+
+```MATLAB
+>> person2.set.LastName("Smith") % gives error can't access set method directly
+>> person2.LastNme = "Smith" % correct way
+>> person2.LastNme = pi % converts to a string
+
+ 
+```
+
+![Class Definition](class_definition3.png)
+
+
+```MATLAB
+classdef Contact 
+    properties
+        FirstName
+        LastName
+        PhoneNumber
+    end
+    methods
+        function obj = Contact(lname,fname,phone)
+            obj.LastName = string(lname);
+            obj.FirstName = string(fname);
+            obj.PhoneNumber = string(phone);
+        end
+        function obj = set.LastName(obj,lname)
+            obj.LastName = string(lname);
+        end
+        function obj = set.FirstName(obj,fname)
+            obj.FirstName = string(fname);
+        end
+        function obj = set.PhoneNumber(obj,phone)
+            obj.PhoneNumber = string(phone);
+        end
+        function lname = get.LastName(obj)
+            lname = obj.LastName;
+        end
+    end
+end
+```
+
+```MATLAB
+>> person2.LastNme
+```
+
+![Inheritance](inheritance.png)
+
+```MATLAB
+classdef BusinessContact < Contact
+    properties
+        Company
+        Fax
+    end
+end
+```
+
+```MATLAB
+>> b = BusinessContact % gives error
+>> b = BusinessContact("Bill", "Gates", 324354234)
+```
+
+```MATLAB
+classdef BusinessContact < Contact
+    properties
+        Company
+        Fax
+    end
+    methods
+        function obj = BusinessContact(cname,lname,fname,phone,f)
+            obj.LastName = string(lname);
+            obj.FirstName = string(fname);
+            obj.PhoneNumber = string(phone);
+            obj.Company = string(cname);
+            obj.Fax = string(f);
+        end
+end
+```
+
+```MATLAB
+>> b = BusinessContact("MS","Bill", "Gates", 324354234, 23423423) % gives error
+```
+
+- final `Contact` class Update to accept variable arguments
+```MATLAB
+classdef Contact 
+    properties
+        FirstName
+        LastName
+        PhoneNumber
+    end
+    methods
+        function obj = Contact(lname,fname,phone)
+            if nargin < 3, phone = ""; end
+            if nargin < 2, fname = ""; end
+            if nargin < 1, lname = ""; end
+            obj.LastName = string(lname);
+            obj.FirstName = string(fname);
+            obj.PhoneNumber = string(phone);
+        end
+        function obj = set.LastName(obj,lname)
+            obj.LastName = string(lname);
+        end
+        function obj = set.FirstName(obj,fname)
+            obj.FirstName = string(fname);
+        end
+        function obj = set.PhoneNumber(obj,phone)
+            obj.PhoneNumber = string(phone);
+        end
+        function printName(obj)
+            fprintf('%s %s\n',obj.FirstName,obj.LastName)
+        end
+    end
+end      
+```
+
+```MATLAB
+>> b = BusinessContact("MS","Bill", "Gates", 324354234, 23423423) % Now this works
+```
+
+- super class contstructor call
+```MATLAB
+classdef BusinessContact < Contact
+    properties
+        Company
+        Fax
+    end
+    methods
+       function obj = BusinessContact(cname,lname,fname,phone,f)
+            obj@Contact(lname,fname,phone);
+            obj.Company = string(cname);
+            obj.Fax = string(f);
+       end
+    end
+end
+```
+- make BusinessContact class accept variable number of arguments
+
+```MATLAB
+classdef BusinessContact < Contact
+    properties
+        Company
+        Fax
+    end
+    methods
+       function obj = BusinessContact(cname,lname,fname,phone,f)
+            if nargin < 5 f = ""; end
+            if nargin < 4 phone = ""; end
+            if nargin < 3 fname = ""; end
+            if nargin < 2 lname = ""; end
+            if nargin < 1 cname = ""; end
+            obj@Contact(lname,fname,phone);
+            obj.Company = string(cname);
+            obj.Fax = string(f);
+       end
+    end
+end
+```
+
+- Add set access method final update
+```MATLAB
+classdef BusinessContact < Contact
+    properties
+        Company
+        Fax
+    end
+    methods
+       function obj = BusinessContact(cname,lname,fname,phone,f)
+            if nargin < 5, f = ""; end
+            if nargin < 4, phone = ""; end
+            if nargin < 3, fname = ""; end
+            if nargin < 2, lname = ""; end
+            if nargin < 1, cname = ""; end
+            obj@Contact(lname,fname,phone);
+            obj.Company = string(cname);
+            obj.Fax = string(f);
+       end
+        function obj = set.Company(obj,cname)
+            obj.Company = string(cname);
+        end
+        function obj = set.Fax(obj,f)
+            obj.Fax = string(f);
+        end
+    end
+end
+```
+
+```MATLAB
+>> person.printName % used user defined function
+>> person2.printName
+>> b.printName
+>> 
+```
+
+![OOP 3](OOP.png)
+
+![Class Definition](class_definition4.png)
+
+![SubClass Defintion](sub_class_definition.png)
+
+![Class Definition](class_defintion5.png)
+
