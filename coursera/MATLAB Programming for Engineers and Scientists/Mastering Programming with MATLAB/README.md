@@ -2797,7 +2797,7 @@ end
 
 ![OOP Quiz 2](oop_quiz2.png)
 
-## Module 6
+### Handle Classes
 
 ![Linked List](linked_list.png)
 
@@ -3266,3 +3266,8 @@ end
 >> length(mylist)
 ```
 
+### Handle CLasses Quiz
+
+![Handle Classes Quiz 1](handle_classes_quiz_1.png)
+
+![Handle Classes Quiz 2](handle_classes_quiz_2.png)
