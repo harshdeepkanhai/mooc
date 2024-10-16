@@ -2796,3 +2796,107 @@ end
 ![OOP Quiz 1](oop_quiz1.png)
 
 ![OOP Quiz 2](oop_quiz2.png)
+
+## Module 6
+
+![Linked List](linked_list.png)
+
+![Doubly Linked List](doubly_linked_list.png)
+
+![Inserting a New Node](insert_a_new_node.png)
+
+![Update the Node's pointer](update_the_node_pointer.png)
+
+![Update A's next pointer](update_a_next_pointer.png)
+
+![Update C's prev pointer](update_c_prev_pointer.png)
+
+![The Updated List](the_updated_list.png)
+
+```MATLAB
+>> cell_a = {'Jack of Spades'}
+>> cell_b = cell_a
+>> cell_a{1}
+>> cell_b{1}
+>> isequal(cell_a, cell_b)
+>> cell_b{1}{1:4} = 'King'
+>> cell_a{1} % returns old data as it is copied
+
+```
+
+![Handle Objects](handle_objects.png)
+
+![Handle Class](handle_class.png)
+
+```MATLAB
+classdef Akos < handle
+    properties
+        card = 'Jack of Spades'
+    end   
+end
+```
+
+![Handle Objects](handle_objects2.png)
+
+```MATLAB
+classdef TestClass
+    properties
+        Value
+    end
+    methods
+        function obj = TestClass(val)
+            if nargin < 1
+                obj.Value = 0;
+            else
+                obj.Value = val;
+            end
+        end
+        function set_value(obj,val)
+            obj.Value = val;
+        end
+    end
+end
+```
+
+```MATLAB
+>> brandon = TestClass(2)
+>> brandon.set_value(3)
+>> brandon.Value % returns old value
+>> set_value(brandon, 3)
+>> brandon.Value % returns old value
+>> 
+
+>> x = 5;
+>> x = sqrt(x)
+
+```
+
+```MATLAB
+classdef TestClass
+    properties
+        Value
+    end
+    methods
+        function obj = TestClass(val)
+            if nargin < 1
+                obj.Value = 0;
+            else
+                obj.Value = val;
+            end
+        end
+        function obj = set_value(obj,val)
+            obj.Value = val;
+        end
+    end
+end
+```
+
+```MATLAB
+>> brandon = TestClass(2)
+>> brandon = brandon.set_value(3)
+>> brandon.set_value(4)
+>> brandon.Value % returns 3
+>> brandon = set_value(brandon,4)
+
+
+```
