@@ -2900,3 +2900,369 @@ end
 
 
 ```
+
+- `handle` class
+```MATLAB
+classdef TestClass < handle
+    properties
+        Value
+    end
+    methods
+        function obj = TestClass(val)
+            if nargin < 1
+                obj.Value = 0;
+            else
+                obj.Value = val;
+            end
+        end
+        function set_value(obj,val)
+            obj.Value = val;
+        end
+    end
+end
+```
+
+```MATLAB
+>> brandon = TestClass(2)
+>> brandon.set_value(3)
+```
+
+- Implementation Of LinkedList
+- `LinkedNode` class
+
+```MATLAB
+classdef LinkedNode < handle
+    properties
+        Prev
+        Next
+        Owner
+    end
+    methods
+        function node = LinkedNode()
+            node.Prev = [];
+            node.Next = [];
+            node.Owner = [];
+        end
+    end
+end
+```
+
+- `DList` class
+
+```MATLAB
+classdef DList < handle
+    properties 
+        Head
+        Tail
+        Length
+    end
+    methods
+        
+        function list = DList()
+            list.Head = [];
+            list.Tail = [];
+            list.Length = 0;
+        end
+        
+        function insert(list,node)
+            if ~isempty(node.Owner)
+                if node.Owner ~= list           % New node is in another list, 
+                    node.Owner.remove(node);    % so we need to remove it.
+                else
+                    return;                     % New node is already in this list,
+                end                             % so do nothing.
+            end
+            if list.Length == 0                 % If the list is empty,
+                list.Head = node;               % put new node at the head,
+            else
+                list.Tail.Next = node;          % else, point tail node at it.
+            end
+            node.Next = [];                     % New node is at the end.
+            node.Prev = list.Tail;              % Previous node is old tail node.
+            list.Tail = node;                   % Make Tail node point at new node.
+            list.Length = list.Length + 1;      
+            node.Owner = list;                  
+        end % insert
+        
+        function remove(list,node)
+            if isempty(node) || node.Owner ~= list
+                error('node is not in the list');
+            end
+            if ~isempty(node.Prev)              % If a node precedes the current node,
+                node.Prev.Next = node.Next;     % make preceding node point to the node
+            else                                % that follows the current node,
+                list.Head = node.Next;          % else make Head point to it.
+            end                                 
+            if ~isempty(node.Next)              % If a node follows the current node,
+                node.Next.Prev = node.Prev;     % make its prev point to the node that
+            else                                % that precedes the current node
+                list.Tail = node.Prev;          % else make previous node be the tail.
+            end
+            list.Length = list.Length - 1;      
+            node.Next = [];
+            node.Prev = [];
+            node.Owner = [];
+        end % remove
+                
+        function displayList(list)
+            item = list.Head;
+            while ~isempty(item)
+                item.disp
+                item = item.Next;
+            end
+        end
+    end
+end
+```
+
+
+```MATLAB
+classdef LetterNode < LinkedNode
+    properties
+        Letter
+    end
+    methods
+        function obj = LetterNode(input)
+            if nargin < 1
+                obj.Letter = ' ';
+            else
+                obj.Letter = input;
+            end
+        end
+    end
+end
+```
+
+```MATLAB
+% Live scripts
+
+clear
+mylist = DList
+a = LetterNode('A')
+b = LetterNode('B')
+c = LetterNode('C')
+mylist.insert(a)
+mylist.insert(b)
+mylist.insert(c)
+mylist
+mylist.Head
+mylist.Head.Next
+mylist.Head.Next.Next
+mylist.Head.Next.Next.Next
+mylist.Head.Next.Next.Prev
+mylist.Head.Next.Next.Prev.Prev
+mylist.Head.Next.Next.Prev.Prev.Prev
+mylist.remove(a)
+mylist.Head
+mylist.Head.Prev
+mylist.Head.Next
+mylist.remove(c)
+mylist
+mylist.Head
+mylist.Head.Next
+mylist.Head.Prev
+mylist.remove(b)
+mylist
+a
+b
+c
+
+```
+- making access `private`
+```MATLAB
+classdef DList < handle
+    properties (Access = private)
+        Head
+        Tail
+        Length
+    end
+    methods
+        
+        function list = DList()
+            list.Head = [];
+            list.Tail = [];
+            list.Length = 0;
+        end
+        
+        function insert(list,node)
+            if ~isempty(node.Owner)
+                if node.Owner ~= list           % New node is in another list, 
+                    node.Owner.remove(node);    % so we need to remove it.
+                else
+                    return;                     % New node is already in this list,
+                end                             % so do nothing.
+            end
+            if list.Length == 0                 % If the list is empty,
+                list.Head = node;               % put new node at the head,
+            else
+                list.Tail.Next = node;          % else, point tail node at it.
+            end
+            node.Next = [];                     % New node is at the end.
+            node.Prev = list.Tail;              % Previous node is old tail node.
+            list.Tail = node;                   % Make Tail node point at new node.
+            list.Length = list.Length + 1;      
+            node.Owner = list;                  
+        end % insert
+        
+        function remove(list,node)
+            if isempty(node) || node.Owner ~= list
+                error('node is not in the list');
+            end
+            if ~isempty(node.Prev)              % If a node precedes the current node,
+                node.Prev.Next = node.Next;     % make preceding node point to the node
+            else                                % that follows the current node,
+                list.Head = node.Next;          % else make Head point to it.
+            end                                 
+            if ~isempty(node.Next)              % If a node follows the current node,
+                node.Next.Prev = node.Prev;     % make its prev point to the node that
+            else                                % that precedes the current node
+                list.Tail = node.Prev;          % else make previous node be the tail.
+            end
+            list.Length = list.Length - 1;      
+            node.Next = [];
+            node.Prev = [];
+            node.Owner = [];
+        end % remove
+                
+        function displayList(list)
+            item = list.Head;
+            while ~isempty(item)
+                item.disp
+                item = item.Next;
+            end
+        end
+    end
+end
+            
+```
+
+```MATLAB
+>> mylist.Head % gives error
+>> mylist
+>> mylist.insert(a)
+>> mylist.insert(b)
+>> mylist.insert(c)
+>> mylist
+>> mylist.displayList
+>> 
+```
+
+```MATLAB
+classdef LinkedNode < handle
+    properties (Access = private)
+        Prev
+        Next
+        Owner
+    end
+    methods
+        function node = LinkedNode()
+            node.Prev = [];
+            node.Next = [];
+            node.Owner = [];
+        end
+    end
+end
+```
+
+```MATLAB
+>> a
+>> mylist.displayList % gives error
+```
+
+```MATLAB
+classdef LinkedNode < handle
+    properties (Access = ?DList)
+        Prev
+        Next
+        Owner
+    end
+    methods
+        function node = LinkedNode()
+            node.Prev = [];
+            node.Next = [];
+            node.Owner = [];
+        end
+    end
+end
+```
+
+```MATLAB
+>> mylist.displayList
+```
+
+```MATLAB
+classdef DList < handle
+    properties (Access = private)
+        Head
+        Tail
+        Length
+    end
+    methods
+        
+        function lng  = length(list)
+            lng = list.Length;
+        end
+        
+        function list = DList()
+            list.Head = [];
+            list.Tail = [];
+            list.Length = 0;
+        end
+        
+        function insert(list,node)
+            if ~isempty(node.Owner)
+                if node.Owner ~= list           % New node is in another list, 
+                    node.Owner.remove(node);    % so we need to remove it.
+                else
+                    return;                     % New node is already in this list,
+                end                             % so do nothing.
+            end
+            if list.Length == 0                 % If the list is empty,
+                list.Head = node;               % put new node at the head,
+            else
+                list.Tail.Next = node;          % else, point tail node at it.
+            end
+            node.Next = [];                     % New node is at the end.
+            node.Prev = list.Tail;              % Previous node is old tail node.
+            list.Tail = node;                   % Make Tail node point at new node.
+            list.Length = list.Length + 1;      
+            node.Owner = list;                  
+        end % insert
+        
+        function remove(list,node)
+            if isempty(node) || node.Owner ~= list
+                error('node is not in the list');
+            end
+            if ~isempty(node.Prev)              % If a node precedes the current node,
+                node.Prev.Next = node.Next;     % make preceding node point to the node
+            else                                % that follows the current node,
+                list.Head = node.Next;          % else make Head point to it.
+            end                                 
+            if ~isempty(node.Next)              % If a node follows the current node,
+                node.Next.Prev = node.Prev;     % make its prev point to the node that
+            else                                % that precedes the current node
+                list.Tail = node.Prev;          % else make previous node be the tail.
+            end
+            list.Length = list.Length - 1;      
+            node.Next = [];
+            node.Prev = [];
+            node.Owner = [];
+        end % remove
+                
+        function displayList(list)
+            item = list.Head;
+            while ~isempty(item)
+                item.disp
+                item = item.Next;
+            end
+        end
+    end
+end
+            
+```
+
+```MATLAB
+>> mylist.length
+>> length(mylist)
+```
+
