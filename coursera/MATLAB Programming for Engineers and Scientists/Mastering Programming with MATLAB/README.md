@@ -3271,3 +3271,926 @@ end
 ![Handle Classes Quiz 1](handle_classes_quiz_1.png)
 
 ![Handle Classes Quiz 2](handle_classes_quiz_2.png)
+
+### More on OOP
+
+![Operator Overloading](operator_overloading.png)
+
+```MATLAB
+classdef LinkedNode < handle       % LinkedNode_v4
+    properties (Access = ?DList)
+        Prev
+        Next
+        Owner
+    end
+    methods (Abstract)
+        gt(a,b)
+    end
+    methods
+        function node = LinkedNode()
+            node.Prev = [];
+            node.Next = [];
+            node.Owner = [];
+        end
+    end
+end
+            
+```
+
+```MATLAB
+>> 6 > 5
+>> gt(6,5)
+```
+
+![Ways to make class Abstract](ways_abstract.png)
+
+```MATLAB
+>> A = LinkedNode % gives error made after abstract
+```
+
+subclass of LinkedNode
+
+```MATLAB
+classdef SortedNumber_v1 < LinkedNode       % SortedNumber_v1 
+    properties
+        Value
+    end
+    methods
+        function node = SortedNumber(n)
+            if ~isscalar(n) || ~isnumeric(n)
+                error('Expected numeric scalar Value');
+            end
+            node.Value = n;
+        end
+        function res = gt(node1,node2)
+            res = node1.Value > node2.Value;
+        end
+    end
+end
+```
+
+- better way to ensure numeric `validation function`
+```MATLAB
+classdef SortedNumber < LinkedNode       % SortedNumber_v2 
+    properties
+        Value
+    end
+    methods
+        function node = SortedNumber(n)
+            arguments
+                n (1,1) {mustBeNumeric} = 0
+            end
+            node.Value = n;
+        end
+        function res = gt(node1,node2)
+            res = node1.Value > node2.Value;
+        end
+    end
+end
+```
+
+![MATLAB keywords](matlab_keywords.png)
+
+![Arguments](arguments.png)
+
+![Argument-Block Rule](arguments2.png)
+
+![Argument Blocks](arguments3.png)
+
+```MATLAB
+% Matlab Script
+SortedNumber(3) > SortedNumber(4)
+SortedNumber(4) > SortedNumber(3)
+
+SortedNumber(3) > SortedNumber(4)
+
+SortedNumber(3) < SortedNumber(4)
+SortedNumber(4) < SortedNumber(3)
+
+SortedNumber(5) < SortedNumber(4)
+SortedNumber(4) < SortedNumber(5)
+```
+
+```MATLAB
+classdef LinkedNode < handle       % LinkedNode_v5
+    properties (Access = ?DList)
+        Prev
+        Next
+        Owner
+    end
+    methods (Abstract)
+        gt(a,b)
+        ge(a,b)
+        lt(a,b)
+        le(a,b)
+        eq(a,b)
+        ne(a,b)
+    end
+    methods
+        function node = LinkedNode()
+            node.Prev = [];
+            node.Next = [];
+            node.Owner = [];
+        end
+    end
+end
+```
+
+```MATLAB
+classdef SortedNumber < LinkedNode       % SortedNumber_v3 
+    properties
+        Value
+    end
+    methods
+        function node = SortedNumber(n)
+            arguments
+                n (1,1) {mustBeNumeric} = 0
+            end
+            node.Value = n;
+        end
+        function res = gt(node1,node2)          % >
+            res = node1.Value > node2.Value;
+        end
+        function res = ge(node1,node2)          % >=
+            res = node1.Value >= node2.Value;
+        end        
+        function res = lt(node1,node2)          % <
+            res = node1.Value < node2.Value;
+        end        
+        function res = le(node1,node2)          % <=
+            res = node1.Value <= node2.Value;
+        end        
+        function res = eq(node1,node2)          % ==
+            res = node1.Value == node2.Value;
+        end        
+        function res = ne(node1,node2)          % ~=
+            res = node1.Value ~= node2.Value;
+        end           
+    end
+end
+```
+
+```MATLAB
+% MATLAB scripts
+(SortedNumber(3) <= SortedNumber(4)) == (3 <= 4)
+(SortedNumber(3) >  SortedNumber(4)) == (3 >  4)
+(SortedNumber(3) == SortedNumber(4)) == (3 == 4)
+(SortedNumber(3) == SortedNumber(3)) == (3 == 3)
+(SortedNumber(3) ~= SortedNumber(4)) == (3 ~= 4)
+(SortedNumber(3) <= SortedNumber(3)) == (3 <= 3)
+(SortedNumber(3) <  SortedNumber(3)) == (3 <  3)
+```
+
+```MATLAB
+classdef DList < handle       % DList_v3
+    properties (Access = private)
+        Head
+        Tail
+        Length
+    end
+    methods
+        function lng  = length(list)
+            lng = list.Length;
+        end
+        
+        function list = DList()
+            list.Head = [];
+            list.Tail = [];
+            list.Length = 0;
+        end
+        
+        function insert(list,node)
+            if ~isempty(node.Owner)
+                if node.Owner ~= list           % New node is in another list, 
+                    node.Owner.remove(node);    % so we need to remove it.
+                else
+                    return;                     % New node is already in this list,
+                end                             % so do nothing.
+            end
+            if list.Length == 0                 % If the list is empty,
+                list.Head = node;               % put new node at the head,
+            else
+                list.Tail.Next = node;          % else, point tail node at it.
+            end
+            node.Next = [];                     % New node is at the end.
+            node.Prev = list.Tail;              % Previous node is old tail node.
+            list.Tail = node;                   % Make Tail node point at new node.
+            list.Length = list.Length + 1;      
+            node.Owner = list;                  
+        end % insert
+        
+        function remove(list,node)
+            if isempty(node) || node.Owner ~= list
+                error('node is not in the list');
+            end
+            if ~isempty(node.Prev)              % If a node precedes the current node,
+                node.Prev.Next = node.Next;     % make preceding node point to the node
+            else                                % that follows the current node,
+                list.Head = node.Next;          % else make Head point to it.
+            end                                 
+            if ~isempty(node.Next)              % If a node follows the current node,
+                node.Next.Prev = node.Prev;     % make its prev point to the node that
+            else                                % that precedes the current node
+                list.Tail = node.Prev;          % else make previous node be the tail.
+            end
+            list.Length = list.Length - 1;      
+            node.Next = [];
+            node.Prev = [];
+            node.Owner = [];
+        end % remove
+                
+        function displayList(list)
+            item = list.Head;
+            while ~isempty(item)
+                item.disp
+                item = item.Next;
+            end
+        end
+    end
+end
+```
+
+```MATLAB
+classdef OrderedList < DList       % OrderedList_v1
+    methods        
+        function insert(list,node)
+            if ~isempty(node.Owner)
+                if node.Owner ~= list
+                    node.Owner.remove(node);
+                else
+                    return;
+                end
+            end
+            node.Owner = list;
+            list.Length = list.Length + 1;
+            if isempty(list.Head)
+                list.Head = node;
+                list.Tail = node;
+                node.Prev = [];
+                node.Next = [];
+            else
+                cur = list.Head;
+                prev = [];
+                while ~isempty(cur) && node > cur
+                    prev = cur;
+                    cur = cur.Next;
+                end
+                if isempty(prev)
+                    node.Next = list.Head;
+                    node.Prev = [];
+                    list.Head.Prev = node;
+                    list.Head = node;
+                else
+                    prev.Next = node;
+                    node.Prev = prev;
+                    node.Next = cur;
+                    if isempty(cur)
+                        list.Tail = node;
+                    else
+                        cur.Prev = node;
+                    end
+                end
+            end
+        end         
+    end
+end
+```
+
+- use `protected` access specifier
+```MATLAB
+classdef DList < handle       % DList_v4
+    properties (Access = protected)
+        Head
+        Tail
+        Length
+    end
+    methods
+        function lng  = length(list)
+            lng = list.Length;
+        end
+        
+        function list = DList()
+            list.Head = [];
+            list.Tail = [];
+            list.Length = 0;
+        end
+        
+        function insert(list,node)
+            if ~isempty(node.Owner)
+                if node.Owner ~= list           % New node is in another list, 
+                    node.Owner.remove(node);    % so we need to remove it.
+                else
+                    return;                     % New node is already in this list,
+                end                             % so do nothing.
+            end
+            if list.Length == 0                 % If the list is empty,
+                list.Head = node;               % put new node at the head,
+            else
+                list.Tail.Next = node;          % else, point tail node at it.
+            end
+            node.Next = [];                     % New node is at the end.
+            node.Prev = list.Tail;              % Previous node is old tail node.
+            list.Tail = node;                   % Make Tail node point at new node.
+            list.Length = list.Length + 1;      
+            node.Owner = list;                  
+        end % insert
+        
+        function remove(list,node)
+            if isempty(node) || node.Owner ~= list
+                error('node is not in the list');
+            end
+            if ~isempty(node.Prev)              % If a node precedes the current node,
+                node.Prev.Next = node.Next;     % make preceding node point to the node
+            else                                % that follows the current node,
+                list.Head = node.Next;          % else make Head point to it.
+            end                                 
+            if ~isempty(node.Next)              % If a node follows the current node,
+                node.Next.Prev = node.Prev;     % make its prev point to the node that
+            else                                % that precedes the current node
+                list.Tail = node.Prev;          % else make previous node be the tail.
+            end
+            list.Length = list.Length - 1;      
+            node.Next = [];
+            node.Prev = [];
+            node.Owner = [];
+        end % remove
+                
+        function displayList(list)
+            item = list.Head;
+            while ~isempty(item)
+                item.disp
+                item = item.Next;
+            end
+        end
+    end
+end
+```
+
+```MATLAB
+% Matlab Scripts
+x = SortedNumber(1)
+y = SortedNumber(11)
+z = SortedNumber(111)
+
+mylist = OrderedList
+mylist.insert(y)
+mylist.insert(x) % out of order!
+mylist.insert(z)
+
+mylist.displayList();
+
+mylist.insert(SortedNumber(2))
+mylist.insert(SortedNumber(-22))
+mylist.insert(SortedNumber(222))
+mylist.displayList();
+
+x.Value = 1000
+
+mylist.displayList
+```
+
+- It broke directly adding the value
+
+```MATLAB
+classdef SortedNumber < LinkedNode       % SortedNumber_v4 
+    properties
+        Value
+    end
+    methods
+        function node = SortedNumber(n)
+            arguments
+                n (1,1) {mustBeNumeric} = 0
+            end
+            node.Value = n;
+        end
+        function set.Value(node,newValue)
+            arguments
+                node
+                newValue (1,1) {mustBeNumeric}
+            end
+            if isempty(node.Owner)
+                node.Value = newValue; 
+            else
+                list = node.Owner;
+                list.remove(node);
+                node.Value = newValue;
+                list.insert(node)                
+            end
+        end 
+        function res = gt(node1,node2)          % >
+            res = node1.Value > node2.Value;
+        end
+        function res = ge(node1,node2)          % >=
+            res = node1.Value >= node2.Value;
+        end        
+        function res = lt(node1,node2)          % <
+            res = node1.Value < node2.Value;
+        end        
+        function res = le(node1,node2)          % <=
+            res = node1.Value <= node2.Value;
+        end        
+        function res = eq(node1,node2)          % ==
+            res = node1.Value == node2.Value;
+        end        
+        function res = ne(node1,node2)          % ~=
+            res = node1.Value ~= node2.Value;
+        end 
+    end
+end
+```
+
+```MATLAB
+classdef LinkedNode < handle       % LinkedNode_v6
+    properties (Access = {?DList, ?LinkedNode})
+        Prev
+        Next
+        Owner
+    end
+    methods (Abstract)
+        gt(a,b)
+        ge(a,b)
+        lt(a,b)
+        le(a,b)
+        eq(a,b)
+        ne(a,b)
+    end
+    methods
+        function node = LinkedNode()
+            node.Prev = [];
+            node.Next = [];
+            node.Owner = [];
+        end
+    end
+end
+```
+
+- Now the below scripts work
+
+```MATLAB
+% Matlab Scripts
+x = SortedNumber(1)
+y = SortedNumber(11)
+z = SortedNumber(111)
+
+mylist = OrderedList
+mylist.insert(y)
+mylist.insert(x) % out of order!
+mylist.insert(z)
+
+mylist.displayList();
+
+mylist.insert(SortedNumber(2))
+mylist.insert(SortedNumber(-22))
+mylist.insert(SortedNumber(222))
+mylist.displayList();
+
+x.Value = 1000
+
+mylist.displayList
+```
+
+```MATLAB
+% Delete from list scripts
+mylist = OrderedList
+
+x = SortedNumber(1);
+y = SortedNumber(2);
+z = SortedNumber(3);
+mylist.insert(x); mylist.insert(y); mylist.insert(z);
+mylist.displayList
+
+foo = 1;
+c = 2 + 3i;
+whos
+
+x.delete
+whos
+
+mylist.displayList % gives error
+```
+
+![Requirements of Delete Method](delete_method.png)
+
+```MATLAB
+classdef LinkedNode < handle       % LinkedNode_v7
+    properties (Access = {?DList ?LinkedNode})
+        Prev
+        Next
+        Owner
+    end
+    methods (Abstract)
+        gt(a,b)
+        ge(a,b)
+        lt(a,b)
+        le(a,b)
+        eq(a,b)
+        ne(a,b)
+    end
+    methods
+        function node = LinkedNode()
+            node.Prev = [];
+            node.Next = [];
+            node.Owner = [];
+        end
+        function delete(node)
+            if ~isempty(node.Owner)
+                node.Owner.remove(node);
+            end
+        end
+    end
+end
+```
+
+```MATLAB
+% Live script to check memory leak
+x = SortedNumber(1)
+
+y = x
+
+z = x
+
+clear x
+
+clear y
+
+clear z
+```
+
+```MATLAB
+classdef DList < handle       % DList_v5
+    properties (Access = protected)
+        Head
+        Tail
+        Length
+    end
+    methods
+        function lng  = length(list)
+            lng = list.Length;
+        end
+        
+        function list = DList()
+            list.Head = [];
+            list.Tail = [];
+            list.Length = 0;
+        end
+                
+        function delete(list)
+            while ~isempty(list.Head)
+                list.Head.delete();
+            end
+        end
+              
+        function insert(list,node)
+            if ~isempty(node.Owner)
+                if node.Owner ~= list           % New node is in another list, 
+                    node.Owner.remove(node);    % so we need to remove it.
+                else
+                    return;                     % New node is already in this list,
+                end                             % so do nothing.
+            end
+            if list.Length == 0                 % If the list is empty,
+                list.Head = node;               % put new node at the head,
+            else
+                list.Tail.Next = node;          % else, point tail node at it.
+            end
+            node.Next = [];                     % New node is at the end.
+            node.Prev = list.Tail;              % Previous node is old tail node.
+            list.Tail = node;                   % Make Tail node point at new node.
+            list.Length = list.Length + 1;      
+            node.Owner = list;                  
+        end % insert
+        
+        function remove(list,node)
+            if isempty(node) || node.Owner ~= list
+                error('node is not in the list');
+            end
+            if ~isempty(node.Prev)              % If a node precedes the current node,
+                node.Prev.Next = node.Next;     % make preceding node point to the node
+            else                                % that follows the current node,
+                list.Head = node.Next;          % else make Head point to it.
+            end                                 
+            if ~isempty(node.Next)              % If a node follows the current node,
+                node.Next.Prev = node.Prev;     % make its prev point to the node that
+            else                                % that precedes the current node
+                list.Tail = node.Prev;          % else make previous node be the tail.
+            end
+            list.Length = list.Length - 1;      
+            node.Next = [];
+            node.Prev = [];
+            node.Owner = [];
+        end % remove
+                
+        function displayList(list)
+            item = list.Head;
+            while ~isempty(item)
+                item.disp
+                item = item.Next;
+            end
+        end
+    end
+end
+            
+```
+
+```MATLAB
+% Scripts
+mylist = OrderedList
+
+x = SortedNumber(10)
+
+mylist.insert(x)
+mylist.insert(SortedNumber(0))
+mylist.insert(SortedNumber(20))
+mylist.insert(SortedNumber(-10))
+mylist.displayList
+
+mylist.delete
+mylist
+x
+```
+- Adding `disp` and overloading it
+```MATLAB
+classdef LinkedNode < handle       % LinkedNode_v8
+    properties (Access = {?DList ?LinkedNode})
+        Prev
+        Next
+        Owner
+    end
+    methods (Abstract)
+        gt(a,b)
+        ge(a,b)
+        lt(a,b)
+        le(a,b)
+        eq(a,b)
+        ne(a,b)
+        disp(a)
+    end
+    methods
+        function node = LinkedNode()
+            node.Prev = [];
+            node.Next = [];
+            node.Owner = [];
+        end
+        function delete(node)
+            if ~isempty(node.Owner)
+                node.Owner.remove(node);
+            end
+        end
+    end
+end
+            
+```
+
+```MATLAB
+classdef SortedNumber < LinkedNode       % SortedNumber_v5 
+    properties
+        Value
+    end
+    methods
+        function node = SortedNumber(n)
+            arguments
+                n (1,1) {mustBeNumeric} = 0
+            end
+            node.Value = n;
+        end
+        function set.Value(node,newValue)
+            arguments
+                node
+                newValue (1,1) {mustBeNumeric}
+            end
+            if isempty(node.Owner)
+                node.Value = newValue; 
+            else
+                list = node.Owner;
+                list.remove(node);
+                node.Value = newValue;
+                list.insert(node)                
+            end
+        end 
+        function res = gt(node1,node2)          % >
+            res = node1.Value > node2.Value;
+        end
+        function res = ge(node1,node2)          % >=
+            res = node1.Value >= node2.Value;
+        end        
+        function res = lt(node1,node2)          % <
+            res = node1.Value < node2.Value;
+        end        
+        function res = le(node1,node2)          % <=
+            res = node1.Value <= node2.Value;
+        end        
+        function res = eq(node1,node2)          % ==
+            res = node1.Value == node2.Value;
+        end        
+        function res = ne(node1,node2)          % ~=
+            res = node1.Value ~= node2.Value;
+        end 
+        function disp(node)
+            disp(node.Value);
+        end
+    end
+end        
+```
+
+```MATLAB
+classdef OrderedList < DList       % OrderedList_v2
+    methods        
+        function insert(list,node)
+            if ~isempty(node.Owner)
+                if node.Owner ~= list
+                    node.Owner.remove(node);
+                else
+                    return;
+                end
+            end
+            node.Owner = list;
+            list.Length = list.Length + 1;
+            if isempty(list.Head)
+                list.Head = node;
+                list.Tail = node;
+                node.Prev = [];
+                node.Next = [];
+            else
+                cur = list.Head;
+                prev = [];
+                while ~isempty(cur) && node > cur
+                    prev = cur;
+                    cur = cur.Next;
+                end
+                if isempty(prev)
+                    node.Next = list.Head;
+                    node.Prev = [];
+                    list.Head.Prev = node;
+                    list.Head = node;
+                else
+                    prev.Next = node;
+                    node.Prev = prev;
+                    node.Next = cur;
+                    if isempty(cur)
+                        list.Tail = node;
+                    else
+                        cur.Prev = node;
+                    end
+                end
+            end
+        end
+        function disp(list)
+            disp('OrderedList containing:');
+            item = list.Head;
+            while ~isempty(item)
+                item.disp();
+                item = item.Next;
+            end
+        end
+    end
+end
+
+```
+
+```MATLAB
+classdef DList < handle       % DList_v6
+    properties (Access = protected)
+        Head
+        Tail
+        Length
+    end
+    methods
+        function lng  = length(list)
+            lng = list.Length;
+        end
+        
+        function list = DList()
+            list.Head = [];
+            list.Tail = [];
+            list.Length = 0;
+        end
+                
+        function delete(list)
+            while ~isempty(list.Head)
+                list.Head.delete();
+            end
+        end
+              
+        function insert(list,node)
+            if ~isempty(node.Owner)
+                if node.Owner ~= list           % New node is in another list, 
+                    node.Owner.remove(node);    % so we need to remove it.
+                else
+                    return;                     % New node is already in this list,
+                end                             % so do nothing.
+            end
+            if list.Length == 0                 % If the list is empty,
+                list.Head = node;               % put new node at the head,
+            else
+                list.Tail.Next = node;          % else, point tail node at it.
+            end
+            node.Next = [];                     % New node is at the end.
+            node.Prev = list.Tail;              % Previous node is old tail node.
+            list.Tail = node;                   % Make Tail node point at new node.
+            list.Length = list.Length + 1;      
+            node.Owner = list;                  
+        end % insert
+        
+        function remove(list,node)
+            if isempty(node) || node.Owner ~= list
+                error('node is not in the list');
+            end
+            if ~isempty(node.Prev)              % If a node precedes the current node,
+                node.Prev.Next = node.Next;     % make preceding node point to the node
+            else                                % that follows the current node,
+                list.Head = node.Next;          % else make Head point to it.
+            end                                 
+            if ~isempty(node.Next)              % If a node follows the current node,
+                node.Next.Prev = node.Prev;     % make its prev point to the node that
+            else                                % that precedes the current node
+                list.Tail = node.Prev;          % else make previous node be the tail.
+            end
+            list.Length = list.Length - 1;      
+            node.Next = [];
+            node.Prev = [];
+            node.Owner = [];
+        end % remove
+                
+        function disp(list)
+            item = list.Head;
+            while ~isempty(item)
+                item.disp();
+                item = item.Next;
+            end
+        end
+    end
+end
+```
+
+- Property Validation
+
+```MATLAB
+classdef SortedNumber < LinkedNode       % SortedNumber_v6 
+    properties
+        Value (1,1) {mustBeNumeric} = 0
+    end
+    methods
+        function node = SortedNumber(n)
+            arguments
+                n = 0
+            end
+            node.Value = n;
+        end
+        function set.Value(node,newValue)
+            if isempty(node.Owner)
+                node.Value = newValue; 
+            else
+                list = node.Owner;
+                list.remove(node);
+                node.Value = newValue;
+                list.insert(node)                
+            end
+        end 
+        function res = gt(node1,node2)          % >
+            res = node1.Value > node2.Value;
+        end
+        function res = ge(node1,node2)          % >=
+            res = node1.Value >= node2.Value;
+        end        
+        function res = lt(node1,node2)          % <
+            res = node1.Value < node2.Value;
+        end        
+        function res = le(node1,node2)          % <=
+            res = node1.Value <= node2.Value;
+        end        
+        function res = eq(node1,node2)          % ==
+            res = node1.Value == node2.Value;
+        end        
+        function res = ne(node1,node2)          % ~=
+            res = node1.Value ~= node2.Value;
+        end   
+        function disp(node)
+            disp(node.Value);
+        end
+    end
+end
+            
+```
+
+```MATLAB
+% Scripts
+mylist = OrderedList
+
+mylist.insert(SortedNumber(20))
+mylist.insert(SortedNumber(0))
+mylist.insert(SortedNumber(20))
+mylist.insert(SortedNumber(-10))
+
+mylist.disp
+```
+
+```MATLAB
+% scripts
+a = SortedNumber(8645)
+
+a.disp
+
+a = SortedNumber("Doing great so far!") % gives error
+
+a = SortedNumber([4;4]) % gives error
+```
