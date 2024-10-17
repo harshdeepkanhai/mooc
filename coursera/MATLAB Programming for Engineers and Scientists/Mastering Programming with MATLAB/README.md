@@ -4194,3 +4194,11 @@ a = SortedNumber("Doing great so far!") % gives error
 
 a = SortedNumber([4;4]) % gives error
 ```
+
+### More on OOP Quiz
+
+![More on OOP Quiz 1](more_on_oop_quiz1.png)
+
+![More on OOP Quiz 2](more_on_oop_quiz2.png)
+
+![More on OOP Quiz 3](more_on_oop_quiz3.png)
