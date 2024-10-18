@@ -4769,3 +4769,9 @@ properties("LinkedNode")
 
 web('https://www.mathworks.com/help/matlab/matlab_oop/subclass-syntax.html')
 ```
+
+### Tying It All Together Quiz
+
+![Tying It All Together Quiz1](tying_it_all_together_quiz1.png)
+
+![Tying It All Together Quiz2](tying_it_all_together_quiz2.png)
