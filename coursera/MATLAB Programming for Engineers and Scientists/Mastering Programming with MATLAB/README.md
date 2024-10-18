@@ -4731,3 +4731,41 @@ rolodex.disp
 
 ![OOP High-Level concepts](oop_high_level_concepts8.png)
 
+```MATLAB
+clear all
+x = -1.2
+y = uint8(3)
+name = "Mike"
+
+Hermione = Contact
+
+whos
+
+double_methods = methods("double")
+
+string_methods = methods("string")
+
+"Mike" > "Akos"
+
+name
+upper(name)
+
+name.upper
+
+name
+
+abs(x)
+
+x.abs % gives error
+
+upper(name)
+
+properties("BusinessContact")
+
+properties("string")
+properties("double")
+
+properties("LinkedNode")
+
+web('https://www.mathworks.com/help/matlab/matlab_oop/subclass-syntax.html')
+```
