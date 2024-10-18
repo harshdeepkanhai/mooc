@@ -4202,3 +4202,532 @@ a = SortedNumber([4;4]) % gives error
 ![More on OOP Quiz 2](more_on_oop_quiz2.png)
 
 ![More on OOP Quiz 3](more_on_oop_quiz3.png)
+
+### Tying It All Together
+
+```MATLAB
+classdef Contact       % Contact_v4  
+    properties
+        FirstName
+        LastName
+        PhoneNumber
+    end
+    methods
+        function obj = Contact(lname,fname,phone)
+            if nargin < 3, phone = ""; end
+            if nargin < 2, fname = ""; end
+            if nargin < 1, lname = ""; end
+            obj.LastName = string(lname);
+            obj.FirstName = string(fname);
+            obj.PhoneNumber = string(phone);
+        end
+        function obj = set.LastName(obj,lname)
+            obj.LastName = string(lname);
+        end
+        function obj = set.FirstName(obj,fname)
+            obj.FirstName = string(fname);
+        end
+        function obj = set.PhoneNumber(obj,phone)
+            obj.PhoneNumber = string(phone);
+        end
+    end
+end
+```
+
+```MATLAB
+classdef Contact < LinkedNode       % Contact_v5  
+    properties
+        FirstName
+        LastName
+        PhoneNumber
+    end
+    methods
+        function obj = Contact(lname,fname,phone)
+            if nargin < 3, phone = ""; end
+            if nargin < 2, fname = ""; end
+            if nargin < 1, lname = ""; end
+            obj.LastName = string(lname);
+            obj.FirstName = string(fname);
+            obj.PhoneNumber = string(phone);
+        end
+        function obj = set.LastName(obj,lname)
+            obj.LastName = string(lname);
+        end
+        function obj = set.FirstName(obj,fname)
+            obj.FirstName = string(fname);
+        end
+        function obj = set.PhoneNumber(obj,phone)
+            obj.PhoneNumber = string(phone);
+        end
+    end
+end
+```
+
+```MATLAB
+classdef Contact < LinkedNode      % Contact_v6  
+    properties
+        FirstName   (1,1) string 
+        LastName    (1,1) string 
+        PhoneNumber (1,1) string
+    end
+    methods
+        function obj = Contact(lname,fname,phone)
+            arguments
+                lname = ""
+                fname = ""
+                phone = ""
+            end
+            obj.LastName = lname;
+            obj.FirstName = fname;
+            obj.PhoneNumber = phone;
+        end
+        function set.LastName(obj,lname)
+            obj.LastName = lname;
+        end
+        function set.FirstName(obj,fname)
+            obj.FirstName = fname;
+        end
+        function set.PhoneNumber(obj,phone)
+            obj.PhoneNumber = phone;
+        end
+    end
+end
+```
+
+```MATLAB
+classdef Contact < LinkedNode       % Contact_v7
+    properties
+        FirstName   (1,1) string 
+        LastName    (1,1) string 
+        PhoneNumber (1,1) string
+    end
+    methods
+        function obj = Contact(lname,fname,phone)
+            arguments
+                lname = ""
+                fname = ""
+                phone = ""
+            end
+            obj.LastName = lname;
+            obj.FirstName = fname;
+            obj.PhoneNumber = phone;
+        end
+        function set.LastName(obj,lname)
+            obj.LastName = lname;
+        end
+        function set.FirstName(obj,fname)
+            obj.FirstName = fname;
+        end
+        function set.PhoneNumber(obj,phone)
+            obj.PhoneNumber = phone;
+        end
+        function disp(node)
+            fprintf('   Name:    %s %s\n',node.FirstName,node.LastName);
+            fprintf('   Tel:     %s\n\n', node.PhoneNumber);
+        end
+    end
+end
+```
+
+```MATLAB
+classdef LinkedNode < handle       % LinkedNode_v8
+    properties (Access = {?DList ?LinkedNode})
+        Prev
+        Next
+        Owner
+    end
+    methods (Abstract)
+        gt(a,b)
+        ge(a,b)
+        lt(a,b)
+        le(a,b)
+        eq(a,b)
+        ne(a,b)
+        disp(a)
+    end
+    methods
+        function node = LinkedNode()
+            node.Prev = [];
+            node.Next = [];
+            node.Owner = [];
+        end
+        function delete(node)
+            if ~isempty(node.Owner)
+                node.Owner.remove(node);
+            end
+        end
+    end
+end
+```
+
+```MATLAB
+% scripts
+serf = Contact("Fitzpatrick","Mike",123)
+
+lord = Contact("Ledeczi","Akos",456)
+
+serf.disp
+lord.disp
+```
+
+
+```MATLAB
+classdef Contact < LinkedNode       % Contact_v8
+    properties
+        FirstName   (1,1) string 
+        LastName    (1,1) string 
+        PhoneNumber (1,1) string
+    end
+    methods (Access = protected)
+        function name = nameToCompare(obj)
+            name = upper(append(obj.LastName, " ", obj.FirstName));
+        end
+    end
+    methods
+        function obj = Contact(lname,fname,phone)
+            arguments
+                lname = ""
+                fname = ""
+                phone = ""
+            end
+            obj.LastName = lname;
+            obj.FirstName = fname;
+            obj.PhoneNumber = phone;
+        end
+        function set.LastName(obj,lname)
+            obj.LastName = lname;
+        end
+        function set.FirstName(obj,fname)
+            obj.FirstName = fname;
+        end
+        function set.PhoneNumber(obj,phone)
+            obj.PhoneNumber = phone;
+        end
+        function a = gt(o1,o2)
+            a = o1.nameToCompare() > o2.nameToCompare();
+        end
+        function a = ge(o1,o2)
+            a = o1.nameToCompare() >= o2.nameToCompare();
+        end
+        function a = lt(o1,o2)
+            a = o1.nameToCompare() < o2.nameToCompare();
+        end
+        function a = le(o1,o2)
+            a = o1.nameToCompare() <= o2.nameToCompare();
+        end
+        function a = eq(o1,o2)
+            a = o1.nameToCompare() == o2.nameToCompare();
+        end
+        function a = ne(o1,o2)
+            a = o1.nameToCompare() ~= o2.nameToCompare();
+        end
+        function disp(node)
+            fprintf('   Name:    %s %s\n',node.FirstName,node.LastName);
+            fprintf('   Tel:     %s\n\n', node.PhoneNumber);
+        end
+    end
+
+end
+```
+
+```MATLAB
+classdef BusinessContact < Contact       % BusinessContact_v5
+    properties
+        Company
+        Fax
+    end
+    methods
+        function obj = BusinessContact(cname,lname,fname,phone,f)
+            if nargin < 5 f = ""; end
+            if nargin < 4 phone = ""; end
+            if nargin < 3 fname = ""; end
+            if nargin < 2 lname = ""; end
+            if nargin < 1 cname = ""; end
+            obj@Contact(lname,fname,phone);
+            obj.Company = string(cname);
+            obj.Fax = string(f);
+        end
+        function obj = set.Company(obj,cname)
+            obj.Company = string(cname);
+        end
+        function obj = set.Fax(obj,f)
+            obj.Fax = string(f);
+        end
+    end
+end
+```
+
+```MATLAB
+classdef BusinessContact < Contact       % BusinessContact_v6
+    properties
+        Company (1,1) string 
+        Fax     (1,1) string 
+    end
+    methods
+        function obj = BusinessContact(cname,lname,fname,phone,f)
+            arguments
+                cname = ""
+                lname = ""
+                fname = ""
+                phone = ""
+                    f = ""
+            end
+            obj@Contact(lname,fname,phone);
+            obj.Company = cname;
+            obj.Fax = f;
+        end
+        function set.Company(obj,cname)
+            obj.Company = cname;
+        end
+        function set.Fax(obj,f)
+            obj.Fax = f;
+        end
+    end
+end
+```
+
+```MATLAB
+classdef BusinessContact < Contact       % BusinessContact_v7
+    properties
+        Company (1,1) string 
+        Fax     (1,1) string 
+    end
+    methods (Access = protected)
+        function name = nameToCompare(obj)
+            name = upper(append(obj.Company, " ", obj.LastName, " ", obj.FirstName));
+        end
+    end    
+    methods
+        function obj = BusinessContact(cname,lname,fname,phone,f)
+            arguments
+                cname = ""
+                lname = ""
+                fname = ""
+                phone = ""
+                    f = ""
+            end
+            obj@Contact(lname,fname,phone);
+            obj.Company = cname;
+            obj.Fax = f;
+        end
+        function set.Company(obj,cname)
+            obj.Company = cname;
+        end
+        function set.Fax(obj,f)
+            obj.Fax = f;
+        end
+        function disp(node)
+            fprintf('   Company: %s\n',node.Company);
+            fprintf('   Name:    %s %s\n',node.FirstName,node.LastName);
+            fprintf('   Tel:     %s\n',node.PhoneNumber);
+            fprintf('   Fax:     %s\n\n',node.Fax);
+        end
+    end
+end
+```
+
+```MATLAB
+% scripts
+rolodex = OrderedList
+
+card = cell(1,5);
+card{1} = Contact("Fitzpatrick","Mike",123);
+card{2} = Contact("Ledeczi","Akos",456);
+card{3} = BusinessContact("Microsoft","Gates","Bill",789,555);
+card{4} = BusinessContact("Plumbers R Us","Smith","Joe",111,222);
+card{5} = BusinessContact("A1 Exterminators","Doe","Jane",222,333);
+
+for ii = 1:length(card)
+    rolodex.insert(card{ii});
+end
+
+rolodex.disp
+
+card{4}.Company = "Carpenters R Us";
+
+rolodex.disp
+```
+
+```MATLAB
+classdef LinkedNode < handle       % LinkedNode_v9
+    properties (Access = {?DList ?LinkedNode})
+        Prev
+        Next
+        Owner
+    end
+    methods (Abstract)
+        gt(a,b)
+        ge(a,b)
+        lt(a,b)
+        le(a,b)
+        eq(a,b)
+        ne(a,b)
+        disp(a)
+    end
+    methods
+        function node = LinkedNode()
+            node.Prev = [];
+            node.Next = [];
+            node.Owner = [];
+        end
+        function delete(node)
+            if ~isempty(node.Owner)
+                node.Owner.remove(node);
+            end
+        end
+    end
+    methods (Access = protected)
+        function reposition(obj)
+            if ~isempty(obj.Owner)
+                list = obj.Owner;
+                list.remove(obj);
+                list.insert(obj);
+            end
+        end
+    end
+end
+```
+
+```MATLAB
+classdef Contact < LinkedNode       % Contact_v9
+    properties
+        FirstName   (1,1) string 
+        LastName    (1,1) string 
+        PhoneNumber (1,1) string
+    end
+    methods (Access = protected)
+        function name = nameToCompare(obj)
+            name = upper(append(obj.LastName, " ", obj.FirstName));
+        end
+    end
+    methods
+        function obj = Contact(lname,fname,phone)
+            arguments
+                lname = ""
+                fname = ""
+                phone = ""
+            end
+            obj.LastName = lname;
+            obj.FirstName = fname;
+            obj.PhoneNumber = phone;
+        end
+        function set.LastName(obj,lname)
+            obj.LastName = lname;
+            obj.reposition();
+        end
+        function set.FirstName(obj,fname)
+            obj.FirstName = fname;
+            obj.reposition();
+        end
+        function set.PhoneNumber(obj,phone)
+            obj.PhoneNumber = phone;
+        end
+        function a = gt(o1,o2)
+            a = o1.nameToCompare() > o2.nameToCompare();
+        end
+        function a = ge(o1,o2)
+            a = o1.nameToCompare() >= o2.nameToCompare();
+        end
+        function a = lt(o1,o2)
+            a = o1.nameToCompare() < o2.nameToCompare();
+        end
+        function a = le(o1,o2)
+            a = o1.nameToCompare() <= o2.nameToCompare();
+        end
+        function a = eq(o1,o2)
+            a = o1.nameToCompare() == o2.nameToCompare();
+        end
+        function a = ne(o1,o2)
+            a = o1.nameToCompare() ~= o2.nameToCompare();
+        end
+        function disp(node)
+            fprintf('   Name:    %s %s\n',node.FirstName,node.LastName);
+            fprintf('   Tel:     %s\n\n', node.PhoneNumber);
+        end
+    end
+
+end
+```
+
+```MATLAB
+classdef BusinessContact < Contact       % BusinessContact_v8
+    properties
+        Company (1,1) string 
+        Fax     (1,1) string 
+    end
+    methods (Access = protected)
+        function name = nameToCompare(obj)
+            name = upper(append(obj.Company, " ", obj.LastName, " ", obj.FirstName));
+        end
+    end
+    methods
+        function obj = BusinessContact(cname,lname,fname,phone,f)
+            arguments
+                cname = ""
+                lname = ""
+                fname = ""
+                phone = ""
+                    f = ""
+            end
+            obj@Contact(lname,fname,phone);
+            obj.Company = cname;
+            obj.Fax = f;
+        end
+        function set.Company(obj,cname)
+            obj.Company = cname;
+            obj.reposition();
+        end
+        function set.Fax(obj,f)
+            obj.Fax = f;
+        end
+        function disp(node)
+            fprintf('   Company: %s\n',node.Company);
+            fprintf('   Name:    %s %s\n',node.FirstName,node.LastName);
+            fprintf('   Tel:     %s\n',node.PhoneNumber);
+            fprintf('   Fax:     %s\n\n',node.Fax);
+        end
+    end
+ 
+end
+```
+
+```MATLAB
+% scripts
+rolodex = OrderedList
+
+card = cell(1,5);
+card{1} = Contact("Fitzpatrick","Mike",123);
+card{2} = Contact("Ledeczi","Akos",456);
+card{3} = BusinessContact("Microsoft","Gates","Bill",789,555);
+card{4} = BusinessContact("Plumbers R Us","Smith","Joe",111,222);
+card{5} = BusinessContact("A1 Exterminators","Doe","Jane",222,333);
+
+for ii = 1:length(card)
+    rolodex.insert(card{ii});
+end
+
+rolodex.disp
+
+card{4}.Company = "Carpenters R Us";
+
+rolodex.disp
+```
+
+![OOP High-Level concepts](oop_high_level_concepts.png)
+
+![OOP High-Level concepts](oop_high_level_concepts2.png)
+
+![OOP High-Level concepts](oop_high_level_concepts3.png)
+
+![OOP High-Level concepts](oop_high_level_concepts4.png)
+
+![OOP High-Level concepts](oop_high_level_concepts5.png)
+
+![OOP High-Level concepts](oop_high_level_concepts6.png)
+
+![OOP High-Level concepts](oop_high_level_concepts7.png)
+
+![Polymorphic functions](polymorphic_fn.png)
+
+![OOP High-Level concepts](oop_high_level_concepts8.png)
+
