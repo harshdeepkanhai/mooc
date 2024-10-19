@@ -4775,3 +4775,18 @@ web('https://www.mathworks.com/help/matlab/matlab_oop/subclass-syntax.html')
 ![Tying It All Together Quiz1](tying_it_all_together_quiz1.png)
 
 ![Tying It All Together Quiz2](tying_it_all_together_quiz2.png)
+
+## Module 6
+
+### Graphical User Interfaces Part 1
+
+![Text Based User Interface](text_based_user_interface.png)
+
+https://berkeleyearth.org/
+
+```MATLAB
+>> load GlobalTemp.mat
+>> whos
+>> data(1:12,:)
+>> plot(data(:,1),data(:,2))
+```
