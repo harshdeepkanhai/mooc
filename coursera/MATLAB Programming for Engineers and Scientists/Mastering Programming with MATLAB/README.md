@@ -4790,3 +4790,9 @@ https://berkeleyearth.org/
 >> data(1:12,:)
 >> plot(data(:,1),data(:,2))
 ```
+
+
+### GUI Quiz
+![GUI quiz 1](gui_quiz_1.png)
+
+![GUI quiz 2](gui_quiz_2.png)
