@@ -1098,3 +1098,3701 @@ plot([-5 5],a*[-5 5]+b,'lineWidth',2);
 #### Live Scripts Quiz
 
 ![Live Scripts Quiz](live_scripts_quiz.png)
+
+
+### Error Handling
+
+```MATLAB
+function diff = indexing(N)
+    rng(0);
+    v = randi(100, 1, N);
+    diff = [];
+    for ii = 1: length(v)
+        diff(end+1) = v(ii+1) - v(ii);
+    end
+end
+```
+
+```MATLAB
+>> indexing(10) % gives error
+```
+
+```MATLAB
+function diff = indexing(N)
+    rng(0);
+    v = randi(100, 1, N);
+    diff = [];
+    for ii = 1: length(v) - 1
+        diff(end+1) = v(ii+1) - v(ii);
+    end
+end
+```
+
+```MATLAB
+>> indexing(10) % gives error
+```
+
+```MATLAB
+function h = my_harmonic(n)
+    if ~isscalar(n) || n < 1 || n ~= floor(n)
+        error('Positive integer input expected...');
+    end
+    h = 1;
+    for ii = 2:n
+        h = h + 1/ii;
+    end
+end
+```
+
+```MATLAB
+>> my_harmonic(0) % gives error
+>> my_harmonic(2.3) % gives error
+>> my_harmonic([2, 3]) % gives error
+>> 
+```
+
+
+```MATLAB
+function h = harmonic_chain(n)
+    h = sub_harmonic(n);
+end
+
+function h = sub_harmonic(n)
+    h = my_harmonic(n);
+end
+```
+
+```MATLAB
+>> harmonic_chain(2.3) % gives error
+```
+
+```MATLAB
+function h = my_harmonic_v2(n)
+    if ~isscalar(n)
+        n = n(1)l % convert to scalar
+    end
+    n = max(1, round(abs(n))); % convert to integer
+    h = 1;
+    for ii = 2:n
+        h = h + 1/ii;
+    end
+end
+```
+
+```MATLAB
+>> my_harmonic_v2(2.3)
+>> my_harmonic_v2([2,3])
+```
+
+![Exception Handling](exception_handling.png)
+
+```MATLAB
+function h = robust_harmonic_chain(n)
+    h = sub_harmonic(n);
+end
+
+function h = sub_harmonic(n)
+    try
+        h = my_harmonic(n);
+    catch
+        h = [];
+    end
+end
+```
+
+```MATLAB
+>> harmonic_chain(2.3) % gives error
+>> robust_harmonic_chain(2.3)
+```
+
+```MATLAB
+function h = robust_harmonic_chain(n)
+    h = sub_harmonic(n);
+end
+
+function h = sub_harmonic(n)
+    try
+        h = my_harmonic(n);
+    catch
+        h = [];
+        warning('Wrong input provided');
+    end
+end
+```
+
+```MATLAB
+>> robust_harmonic_chain_v2(2.3) % gives output and a warning
+```
+
+```MATLAB
+>> rng(0); x = randi(10,5,4), y = randi(10,4,6)
+>> x*y
+```
+
+```MATLAB
+functon out = element_prod(X,Y,r,n,c)
+    % ELEMENT_PROD two-element product for matrix multiplication
+    %   element_prod(X,Y,r,n,c) = X(r,n)*Y(n,c), where n is the index that
+    %   must be summed over to produce the element at row r and column c
+    %   of the product of matrices X and Y.
+
+    % Version 1
+    out = X(r,n) * Y(n,c);
+end
+```
+
+```MATLAB
+function C = matmul(A,B)
+    [rowA, colA] = size(A);
+    [rowB, colB] = size(B);
+    if ~ismatrix(A) || ~ismatrix(B)
+        error('Function matmul requires matrices...')
+    elseif colA ~= rowB
+        error('Inner dimensions must agree!')
+    end
+    C = zeros(rowA, colB);
+    for ii = 1:rowA
+        for jj = 1:colB
+            for kk = 1:colA
+                C(ii,jj) = C(ii,jj) + element_prod(A,   B, ii, jj, kk);
+            end
+        end
+    end
+end
+```
+
+```MATLAB
+>> matmul(x,y) % gives error
+```
+
+```MATLAB
+functon out = element_prod(X,Y,r,n,c)
+    % ELEMENT_PROD two-element product for matrix multiplication
+    %   element_prod(X,Y,r,n,c) = X(r,n)*Y(n,c), where n is the index that
+    %   must be summed over to produce the element at row r and column c
+    %   of the product of matrices X and Y.
+
+    % Version 2
+    try
+        out = X(r,n) * Y(n,c);
+    catch ME
+        if isequal(ME.identifier, 'MATLAB:badsubscript')
+            [Xsize] = size(X); [Ysize] = size(Y);
+            m1 = sprintf('Accessed X(%d,%d) and Y(%d,%d), but\n',r,n,n,c);
+            m2 = sprintf(' sizes = X[%d,%d] and Y[%d,%d], but\n',Xsize, Ysize);
+            error([m1, m2]);
+        end
+    end
+end
+```
+
+
+```MATLAB
+>> matmul(x,y) % gives error
+>> MException.last % shows the last exception type
+>> matmul(x,y) % shows our created error message
+```
+
+```MATLAB
+functon out = element_prod(X,Y,r,n,c)
+    % ELEMENT_PROD two-element product for matrix multiplication
+    %   element_prod(X,Y,r,n,c) = X(r,n)*Y(n,c), where n is the index that
+    %   must be summed over to produce the element at row r and column c
+    %   of the product of matrices X and Y.
+
+    % Version 3
+    try
+        out = X(r,n) * Y(n,c);
+    catch ME
+        if isequal(ME.identifier, 'MATLAB:badsubscript')
+            [Xsize] = size(X); [Ysize] = size(Y);
+            m1 = sprintf('Accessed X(%d,%d) and Y(%d,%d), but\n',r,n,n,c);
+            m2 = sprintf(' sizes = X[%d,%d] and Y[%d,%d], but\n',Xsize, Ysize);
+            error('HDK:element_prod:badsubscript',[m1, m2]);
+        end
+    end
+end
+```
+
+```MATLAB
+>> matmul(x,y) % throws an error
+>> MException.last % shows the correct identifier
+```
+
+
+```MATLAB
+functon out = element_prod(X,Y,r,n,c)
+    % ELEMENT_PROD two-element product for matrix multiplication
+    %   element_prod(X,Y,r,n,c) = X(r,n)*Y(n,c), where n is the index that
+    %   must be summed over to produce the element at row r and column c
+    %   of the product of matrices X and Y.
+
+    % Version 4
+    try
+        out = X(r,n) * Y(n,c);
+    catch ME
+        if isequal(ME.identifier, 'MATLAB:badsubscript')
+            [Xsize] = size(X); [Ysize] = size(Y);
+            m1 = sprintf('Accessed X(%d,%d) and Y(%d,%d), but\n',r,n,n,c);
+            m2 = sprintf(' sizes = X[%d,%d] and Y[%d,%d], but\n',Xsize, Ysize);
+            MyE = MException('HDK:element_prod:badsubscript',[m1, m2]);
+            thow(MyE);
+        end
+    end
+end
+```
+
+```MATLAB
+>> matmul(x,y) % throws an error
+>> MException.last % shows the correct identifier
+```
+
+```MATLAB
+>> Xcell = {1,2;3,4}, Ycell ={5,6;7,8}
+>> Xcell(1,2) * Ycell(2,1) % gives an error
+>> element_prod(Xcell,Ycell,1,2,1)
+>> 
+```
+
+```MATLAB
+functon out = element_prod(X,Y,r,n,c)
+    % ELEMENT_PROD two-element product for matrix multiplication
+    %   element_prod(X,Y,r,n,c) = X(r,n)*Y(n,c), where n is the index that
+    %   must be summed over to produce the element at row r and column c
+    %   of the product of matrices X and Y.
+
+    % Version 5
+    try
+        out = X(r,n) * Y(n,c);
+    catch ME
+        if isequal(ME.identifier, 'MATLAB:badsubscript')
+            [Xsize] = size(X); [Ysize] = size(Y);
+            m1 = sprintf('Accessed X(%d,%d) and Y(%d,%d), but\n',r,n,n,c);
+            m2 = sprintf(' sizes = X[%d,%d] and Y[%d,%d], but\n',Xsize, Ysize);
+            MyE = MException('HDK:element_prod:badsubscript',[m1, m2]);
+            thow(MyE);
+        else
+            rethrow(ME); % when error is not caught above
+        end
+    end
+end
+```
+
+```MATLAB
+>> Xcell = {1,2;3,4}, Ycell ={5,6;7,8}
+>> Xcell(1,2) * Ycell(2,1) % gives an error
+>> element_prod(Xcell,Ycell,1,2,1) % now throws an error
+```
+Assertions
+
+```MATLAB
+function assert_example
+    % do some computation
+    x = abs(randn);
+    % do some more computation
+    assert(x >= 0);
+    % keep working
+end
+```
+
+```MATLAB
+>> assert_example
+```
+
+```MATLAB
+function assert_example
+    % do some computation
+    x = abs(randn);
+    % do some more computation
+    assert(x >= 0);
+    % keep working
+end
+
+function x = abs(x)
+    x = -1 * x; % incorrect implementation
+end
+```
+
+```MATLAB
+>> assert_example % Assertion failed error
+```
+
+![Sumamry of Error Handling](summary_of_error_handling1.png)
+
+![Sumamry of Error Handling2](summary_of_error_handling2.png)
+
+
+## Module 4
+
+### Algorithmic Complexity 1
+
+![Fibonacci Series](fibonacci_series.png)
+
+```MATLAB
+function f = fibo(n)
+    if n <= 2
+        f = 1;
+    else
+        f = fibo(n-2) + fibo(n-1);
+    end
+end
+```
+
+```MATLAB
+>> for ii = 1:6, fibo(ii), end
+>> fibo(10)
+>> fibo(20)
+>> fibo(30)
+>> fibo(38)
+>> fibo(39)
+>> fibo(50)
+```
+
+```MATLAB
+function [f, cnt] = fibocnt(n)
+    persistent count;   % must specify persistent
+    if isempty(count)   % first time it is set to [] by MATLAB
+        count = 1;      % so we set it to 1
+    else
+        count = count + 1;  % subsequent times, we increment by 1
+    end
+    if n <= 2
+        f = 1;
+    else
+        f = fibocnt(n-2) + fibocnt(n-1);
+    end
+    cnt = count;       % a pesistent variable cannot be an output argument
+end
+```
+
+```MATLAB
+>> [f c] = fibocnt(2)
+>> clear fibocnt
+>> [f c] = fibocnt(3)
+>> clear fibocnt
+>> [f c] = fibocnt(5)
+>> clear fibocnt
+>> [f c] = fibocnt(25)
+>> clear fibocnt
+>> [f c] = fibocnt(35)
+>> clear fibocnt
+```
+
+```MATLAB
+function f = fibo_list(n)
+    if n <= 2
+        f = ones(1,n);
+    else
+        f = fibo_list(n-1);
+        f = [f f(end-1)+f(end)];
+    end
+end
+```
+
+```MATLAB
+>> fibo_list(42)
+```
+
+```MATLAB
+function f = fibo_last(n)
+    f = fibo_list(n);
+    f = f(end);
+end
+
+function f = fibo_list(n)
+    if n <= 2
+        f = ones(1,n);
+    else
+        f = fibo_list(n-1);
+        f = [f f(end-1)+f(end)];
+    end
+end
+```
+
+```MATLAB
+>> fibo_last(50)
+>> tic;fibo_last(50), toc
+```
+
+### Algorithmic Complexity 2
+
+```MATLAB
+>> v = 1:10
+>> v_reversed = v(end:-1:1)
+>> v_reversed = flip(v)
+
+```
+
+![Reversing a Vector](reverse_vector.png)
+
+In-Place Reverse a Vector
+
+```MATLAB
+function v = my_flip(v)
+    for ii = 2:length(v)
+        tmp = v(ii);
+        for jj = ii:-1:2
+            v(jj) = v(jj-1);
+        end
+        v(1) = tmp;
+    end
+end
+```
+
+```MATLAB
+>> my_flip(1:10)
+>> my_flip(1:100)
+>> tic; my_flip(1e4); toc
+>> timeit(@() my_flip(1:1e4))
+>> t10 = timeit(@() my_flip(1:1e4))
+>> t100 = timeit(@() my_flip(1:1e5))
+>> t100/t10
+>> t20 = timeit(@() my_flip(1:2e4))
+>> t40 = timeit(@() my_flip(1:4e4))
+>> t20/t10
+>> t40/t10
+```
+![Reversing Vector2](reverse_vector2.png)
+
+Swap 1st and last element
+
+```MATLAB
+function v = fast_flip(v)
+    for ii = 1:ceil(length(v)/2)
+        tmp = v(ii);
+        v(ii) = v(end-ii+1);
+        v(end-ii+1) = tmp;
+    end
+end
+```
+
+```MATLAB
+function test_fast_flip
+% Make a list of vector lengths:
+N = 1e6*(1:10);
+% Measure fast_flip time for a vector of each length: 
+for ii = 1:length(N)
+    t(ii) = timeit(@() fast_flip(1:N(ii)));
+    fprintf('Time for %8d elements = %.4f\n',N(ii),t(ii));
+end
+% Plot time versus input size with a line and asterisks:
+plot(N,t,N,t,'r*');
+```
+
+```MATLAB
+>> test_fast_flip
+>> timeit(@() flip(1:1e7))
+>> edit flip
+```
+
+MATLAB inbuilt function flip is implemented in another language
+
+![Algorithm Complexity2](algorithmic_complexity2.png)
+
+
+### Algorithm Complexity 3
+
+![Complexity](complexity.png)
+
+The branch of Computer Science dedicated to the study of algorithmic complexity:
+    
+- Complexity Theory
+- Analysis of Algorithms
+- Algorithms
+
+```MATLAB
+>> sum(1:100)
+```
+![MATLAB sum function](matlab_sum_function.png)
+
+![Gauss sum solution](gauss_sum_solution.png)
+
+```MATLAB
+>> n = 100
+>> (n + 1) * n /2
+```
+
+![Searching for a number in a vector](searching_for_a_number_in_a_vector.png)
+
+![Searching for a number in a vector 2](searching_for_a_number_in_a_vector2.png)
+
+```MATLAB
+>> v = randi(100, 1, 20)
+>> find(v==28,1)
+```
+
+```MATLAB
+function index = my_search(v,e)
+    index = 0;
+    for ii = 1:length(v)
+        if v(ii) == e
+            index = ii;
+            return;
+        end
+    end
+end
+```
+
+```MATLAB
+>> my_search(v,98)
+>> my_search(v,900)
+```
+
+![Phone Book](phone_book.png)
+
+![Phone Book](phone_book2.png)
+
+![Binary Search](binary_search.png)
+
+![Binary Search 2](binary_search2.png)
+
+```MATLAB
+function index = binary_search(v,e,first,last)
+    if nargin < 3
+        first = 1;
+        last = length(v);
+    end
+    mid = fix( (first + last)/2 );
+    if ~(first <= last) 
+        index = 0;
+    elseif e == v(mid)
+        index = mid; 
+    elseif e < v(mid)
+        index = binary_search(v,e,first, mid-1);
+    else
+        index = binary_search(v,e,mid+1, last);
+    end
+end
+```
+
+```MATLAB
+>> v = 1:1e8;
+>> t_my_search = timeit(@() my_search(v,0))
+>> t_binary_search = timeit(@() binary_search(v,0))
+>> ratio = t_my_search/t_binary_search
+>> v = 1:1e9;
+>> t_my_search = timeit(@() my_search(v,0))
+>> t_binary_search = timeit(@() binary_search(v,0))
+>> ratio = t_my_search/t_binary_search
+```
+
+![Traveling Salesman Problem](traveling_salesman_problem.png)
+
+![Complexity](complexity2.png)
+
+![Complexity](complexity3.png)
+
+![Complexity](complexity4.png)
+
+![Matrix Multiplication](matrix_multiplication.png)
+
+![Matrix Multiplication](matrix_multiplication2.png)
+
+![Matrix Multiplication](matrix_multiplication3.png)
+
+![Matrix Multiplication](matrix_multiplication4.png)
+
+![Complexity](complexity5.png)
+
+```MATLAB
+function C = matmul(A,B)
+    [rowA, colA] = size(A);
+    [rowB, colB] = size(B);
+    if ~ismatrix(A) || ~ismatrix(B)
+        error('Function matmul works with matrices...');
+    elseif colA ~= rowB
+        error('Inner dimensions must agree!');
+    end
+ 
+    C = zeros(rowA, colB);  
+    for ii = 1:rowA
+         for jj = 1:colB
+             for kk = 1:colA
+                 C(ii,jj) = C(ii,jj) + A(ii,kk) * B(kk,jj);
+             end
+         end
+    end
+end
+```
+
+```MATLAB
+function t = test_matmul(M,matrix_class)
+%TEST_MATMUL matmul run time for MxM matrices
+%   TEST_MATMUL(M) M is a vector of matrix 
+%   dimensions. Run times are returned and
+%   are plotted versus M-cubed along with 
+%   a fit line of the form: a*M^3 + b.
+%
+%   TEST_MATMUL(...,MATRIX_CLASS) MATRIX_CLASS
+%   is a string giving the class of matrices
+%   constructed as input to matmul. Default
+%   is double.
+%
+
+if nargin < 1, M = 100*(1:10); end
+if nargin < 2, matrix_class = "double"; end
+
+max_val = 99; % <= 2 digits for inspecting small matrices
+t = zeros(length(M),1);
+    for ii = 1:length(M)
+        A = randi(max_val,M(ii),matrix_class);
+        B = randi(max_val,M(ii),matrix_class);
+        t(ii) = timeit(@() matmul(A,B));
+        fprintf('M = %d, t = %.4d\n',M(ii),t(ii));
+    end
+    % Fit data to M^3 dependence
+    p = polyfit(M.^3,t,1); % straight-line fit
+    t_fit = polyval(p,M.^3);
+    % Plot time points and straight-line fit
+    plot(M.^3,t,'b*',M.^3,t_fit,'--');
+    grid on
+    title_str = ...
+        sprintf('MxM-matrix-multiplication run time vs M-cubed for %ss',matrix_class);
+    title(title_str);
+    xlabel('M^3');
+    ylabel('time (s)');
+    legend('data','fit','Location','SouthEast')
+end
+```
+
+```MATLAB
+>> test_matmul(100*(1:7));
+>> A = randi(99,700);
+>> B = randi(99,700);
+>> timeit(@() A*B)
+```
+
+```MATLAB
+function t = test_matmul(M,matrix_class)
+%TEST_MATMUL matmul run time for MxM matrices
+%   TEST_MATMUL(M) M is a vector of matrix 
+%   dimensions. Run times are returned and
+%   are plotted versus M-cubed along with 
+%   a fit line of the form: a*M^3 + b.
+%
+%   TEST_MATMUL(...,MATRIX_CLASS) MATRIX_CLASS
+%   is a string giving the class of matrices
+%   constructed as input to matmul. Default
+%   is double.
+%
+
+if nargin < 1, M = 100*(1:10); end
+if nargin < 2, matrix_class = "double"; end
+
+max_val = 99; % <= 2 digits for inspecting small matrices
+t = zeros(length(M),1);
+    for ii = 1:length(M)
+        A = randi(max_val,M(ii),matrix_class);
+        B = randi(max_val,M(ii),matrix_class);
+        t(ii) = timeit(@() A*B);
+        fprintf('M = %d, t = %.4d\n',M(ii),t(ii));
+    end
+    % Fit data to M^3 dependence
+    p = polyfit(M.^3,t,1); % straight-line fit
+    t_fit = polyval(p,M.^3);
+    % Plot time points and straight-line fit
+    plot(M.^3,t,'b*',M.^3,t_fit,'--');
+    grid on
+    title_str = ...
+        sprintf('MxM-matrix-multiplication run time vs M-cubed for %ss',matrix_class);
+    title(title_str);
+    xlabel('M^3');
+    ylabel('time (s)');
+    legend('data','fit','Location','SouthEast')
+end
+```
+
+```MATLAB
+>> test_matmul(100*(1:7));
+```
+
+#### Problem 1: Recursion revisited
+
+We spent some time on the my_flip problem, the one about flipiing the elements of a vector. Earlier in this course, you had to solve it recursively. There we called it reversal. Your code may have looked like this:
+```MATLAB
+function v = reversal(v)
+    if length(v) > 1
+        v = [v(end) reversal(v(1:end-1))];
+    end
+end
+```
+This works well for smaller inputs but what if we have a really long vector? MATLAB may run out of stack space and even if not, it will be relatively slow due to the many many function calls. Your mission, should you choose to accept it, is to improve this recursive implementation to make it fast and to make it work on long vectors too. Again, it needs to stay recursive; it just cannot have as many nested recursive calls as the number of elements the list has! (Hint: one of the algorithms we looked at this lesson, even though it is seemingly unrelated, may give you an idea...)
+
+```MATLAB
+function v = reversal(v)
+    if length(v) > 1
+        i = ceil(length(v)/2);
+        v = [reversal(v(i+1:end)) reversal(v(1:i))];
+    end
+end
+```
+
+```MATLAB
+function v = sol_reversal2(v)
+    if length(v) > 1
+        ii = round(length(v) / 2);
+        v = [reversal2(v(ii+1:end)) reversal2(v(1:ii))];
+    end
+end
+```
+
+```MATLAB
+>> y = reversal(1:1e6);
+```
+
+#### Problem 2: Fibonacci profiler
+
+Remember our absolutely inefficient recursive Fibonacci implementation that made many unnecessary recursive calls? Here it is:
+```MATLAB
+function f = fibo(n)
+    if n <= 2
+        f = 1;
+    else
+        f = fibo(n-2) + fibo(n-1);
+    end
+end
+```
+We showed an "instrumented" version that computed the number of recursive function calls using a persistent variable. Another way to try to profile the function calls you make is to save a trace. For example, it can be a vector whose elements capture the order the function was called with the various input arguments. In this problem, you need to modify the function above, so that it  has an additional input argument, a vector v. The vector needs to store the input arguments of the recursive function calls in the order they were made. Let's call the function **fibo_trace**, Here is an example run:
+```MATLAB
+>> [f trace] = fibo_trace(6,[])
+f =
+     8
+trace =
+     6     4     2     3     1     2     5     3     1     2     4     2     3     1     2
+```
+
+The output shows that the function was first called with input argument 6, then it was called again with 4 and then with 2. Is this correct? Yes, because we initially called it with 6, then it called itself with n-2, that is 4, and that instance of the function called itself with (n-2), that is 2. At that point there are no further recursive calls, it simply returned the solution 2 to the previous call (with 4) and it called the function again with (n-1), that is, 3. And so on. 
+Once you have a trace like this, you can identify if the function works as intended or not. You can also use the trace to plot a histogram. See below. Disregard the first bar, but see what the heights of the other bars are and try to figure out what the pattern is. Once you solved the problem, make the histogram yourself with a larger input like 10 or 15. It is fascinating indeed!
+```MATLAB
+>> [f trace] = fibo_trace(10,[]);
+>> histogram(trace)
+```
+![plot](https://lcms-files.mathworks.com/content/images/594aa21f-1fe0-4eca-8530-eae96f768aa7.png)
+
+
+```MATLAB
+function [f, v] = fibo_trace(n,v)
+    v(end+1) = n;
+    if n == 1 || n == 2
+        f = 1;
+    else
+        [f1, v] = fibo_trace(n-2,v); 
+        [f2, v] = fibo_trace(n-1,v);
+        f = f1+f2;
+    end
+end
+```
+
+```MATLAB
+function [f, v] = sol_fibo_trace(n,v)
+    v(end+1) = n;
+    if n == 1 || n == 2
+        f = 1;
+    else
+        [f1, v] = sol_fibo_trace(n-2,v); 
+        [f2, v] = sol_fibo_trace(n-1,v);
+        f = f1+f2;
+    end
+end
+```
+
+
+```MATLAB
+>> [f trace] = fibo_trace(6,[])
+```
+
+#### Problem 3: Maximum clique
+
+Given a social network, find the largest clique, that is, the largest subset of people who all follow each other. The data structure that contains the social network is set up as follows:
+
+People in the social network are identified by unique IDs, consecutive integers from 1 to N. Who follows who is captured in a cell array called sn: the iith element of sn is a vector that contains a list of IDs the person with ID ii follows. You may assume that these lists are ordered in ascending order by ID. Note that the follows relationship is not necessarily symmetrical: if person A follows person B, person B may or may not follow person A. Here is one possible (recursive) implementation:
+
+```MATLAB
+function clique = max_clique(graph,clique)
+    if nargin < 2                                       % originaly we call the function with just the graph
+        clique = [];                                    % hence, the clique is initialized to an empty vector
+    end
+    max_clq = clique;                                   % max_clq will store the current largest clique
+    if isempty(clique)                                  % when we first call the function
+        for ii = 1:length(graph)                        % we need to test potential cliques starting from every possible node
+            clq = max_clique(graph,ii);
+             if length(clq) > length(max_clq)           % if the new one is larger than the current
+                max_clq = clq;                          % we store the new one
+             end
+        end
+    else
+        for node = 1:length(graph)                              % we are in a recursive call now: we test every node as a new member
+            if isempty(find(node == clique))                    % unless it is already in the clique
+                if check_clique(clique,node,graph)              % if adding this node is still a clique
+                    clq = max_clique(graph,[clique node]);      % we call ourself with the new expanded clique
+                    if length(clq) > length(max_clq)            % if what we get is larger the curent max
+                        max_clq = clq;                          % we store the new one
+                    end
+                end
+            end
+        end
+    end
+    clique = max_clq;                                           % return the largest one
+end
+        
+function ok = check_clique(clq,node,graph)                      % adding node to clq still a clique?
+    ok = false;
+    for ii = 1:length(clq)                                      % for every current member
+        if isempty(find(clq(ii) == graph{node})) || ...         % the member must be on the follows list of the new guy
+                isempty(find(node == graph{clq(ii)}))           % the new guy must be on the follows list of the member
+            return;
+        end
+    end
+    ok = true;
+end
+```
+
+Unfortunately, it is too slow and the grader will time out. Your task is to modify the code to speed it up. Remember, the question to ask: am I doing any unncessary work? Call the modified function **max_clique**. (Hint: when we try to expand the current clique, do we really need to consider all the nodes?)
+Here is the original function: [max_clique_orig.m](https://lcms-files.mathworks.com/content/file/8b9a6648-ce9a-4125-b2b8-06884917b367/max_clique_orig.m?versionId=DZf1nIenUab2UuMk7QW7KNBCGf0IqJiq)  And here is the mat file with the example social network: [sn.mat](https://lcms-files.mathworks.com/content/file/14f74f4b-b874-4374-a9cf-eeaba1b11fa7/sn.mat?versionId=vSKliK3WMy1WBvZEUNckbFPraeOYj_qS)
+
+```MATLAB
+function clique = max_clique_orig(graph,clique)
+    if nargin < 2                                       % originaly we call the function with just the graph
+        clique = [];                                    % hence, the clique is initialized to an empty vector
+    end
+    max_clq = clique;                                   % max_clq will store the current largest clique
+    if isempty(clique)                                  % when we first call the function
+        for ii = 1:length(graph)                        % we need to test potential cliques starting from every possible node
+            clq = max_clique(graph,ii);
+             if length(clq) > length(max_clq)           % if the new one is larger than the current
+                max_clq = clq;                          % we store the new one
+             end
+        end
+    else
+        for node = 1:length(graph)                              % we are in a recursive call now: we test every node as a new member
+            if isempty(find(node == clique))                    % unless it is already in the clique
+                if check_clique(clique,node,graph)              % if adding this node is still a clique
+                    clq = max_clique(graph,[clique node]);      % we call ourself with the new expanded clique
+                    if length(clq) > length(max_clq)            % if what we get is larger the curent max
+                        max_clq = clq;                          % we store the new one
+                    end
+                end
+            end
+        end
+    end
+    clique = max_clq;                                           % return the largest one
+end
+        
+function ok = check_clique(clq,node,graph)                      % adding node to clq still a clique?
+    ok = false;
+    for ii = 1:length(clq)                                      % for every current member
+        if isempty(find(clq(ii) == graph{node})) || ...         % the member must be on the follows list of the new guy
+                isempty(find(node == graph{clq(ii)}))           % the new guy must be on the follows list of the member
+            return;
+        end
+    end
+    ok = true;
+end
+```
+
+```MATLAB
+function clique = max_clique(g,clique)
+if nargin < 2
+    clique = [];
+end
+max_clq = clique;
+if isempty(clique)
+    for ii = 1:length(g)
+        clq = max_clique(g,ii);
+        if length(clq) > length(max_clq)
+            max_clq = clq;
+        end
+    end
+else
+    candidates = g{clique(1)};                           % it is enough to check nodes that the first member of the clique follows
+    candidates = candidates(g{clique(1)} > max(clique)); % since nodes are ordered, a potential new member must have a greater ID than current members
+    for ii = 1:length(candidates)
+        if check_clq(clique,candidates(ii),g)
+            clq = max_clique(g,[clique candidates(ii)]);
+            if length(clq) > length(max_clq)
+                max_clq = clq;
+            end
+        end
+    end
+end
+clique = max_clq;
+end
+function ok = check_clq(clq,id,g)
+ok = false;
+if ~isempty(find(id == clq))
+    return;
+end
+for ii = 1:length(clq)
+    if isempty(find(clq(ii) == g{id})) || isempty(find(id == g{clq(ii)}))
+        return;
+    end
+end
+ok = true;
+end
+```
+
+```MATLAB
+function clique = sol_max_clique(g,clique)
+    if nargin < 2
+        clique = [];
+    end
+    max_clq = clique;
+    if isempty(clique)
+        for ii = 1:length(g)
+            clq = sol_max_clique(g,ii);
+             if length(clq) > length(max_clq)
+                max_clq = clq;
+             end
+        end
+    else
+        candidates = g{clique(1)};                           % it is enough to check nodes that the first member of the clique follows
+        candidates = candidates(g{clique(1)} > max(clique)); % since nodes are ordered, a potential new member must have a greater ID than current members
+        for ii = 1:length(candidates)
+            if check_clq(clique,candidates(ii),g)
+                clq = sol_max_clique(g,[clique candidates(ii)]);
+                if length(clq) > length(max_clq)
+                    max_clq = clq;
+                end
+            end
+        end
+    end
+    clique = max_clq;
+end
+        
+function ok = check_clq(clq,id,g)
+    ok = false;
+    if ~isempty(find(id == clq))
+        return;
+    end
+    for ii = 1:length(clq)
+        if isempty(find(clq(ii) == g{id})) || isempty(find(id == g{clq(ii)}))
+            return;
+        end
+    end
+    ok = true;
+end
+```
+
+```MATLAB
+load sn;
+max_clique(sn)
+```
+### Efficiency in Practice
+
+![Efficiency in Practice](efficiency_in_practice.png)
+
+```MATLAB
+function A = rooting_v1(v,w)
+    A = zeros(length(v),length(w));
+    for ii = 1:length(v)
+        for jj = 1:length(w)
+            A(ii,jj) = nthroot(v(ii),ii) * nthroot(w(jj),jj);
+        end
+    end
+end
+```
+
+![Efficiency in Practice](efficiency_in_practice2.png)
+
+```MATLAB
+>> v = randi(1e6, 1, 1e3);
+>> w = randi(1e6, 1, 1e3);
+>> tic; A1 = rooting_v1(v,w); toc
+```
+
+```MATLAB
+function A = rooting_v2(v,w)
+    A = zeros(length(v),length(w));
+    for ii = 1:length(v)
+        x = nthroot(v(ii),ii);
+        for jj = 1:length(w)
+            A(ii,jj) = x * nthroot(w(jj),jj);
+        end
+    end
+end
+```
+
+```MATLAB
+>> isequal(A1,A2)
+>> tic; A2 = rooting_v2(v,w); toc
+```
+
+```MATLAB
+function A = rooting_v3(v,w)
+    A = zeros(length(v),length(w));  % commenting this line will take more time (Preallocation)
+    rw = zeros(1,length(w));
+    for jj = 1:length(w)
+        rw(jj) = nthroot(w(jj),jj);
+    end
+    for ii = 1:length(v)
+        x = nthroot(v(ii),ii);
+        for jj = 1:length(w)
+            A(ii,jj) = x * rw(jj);
+        end
+    end
+end
+```
+
+```MATLAB
+>> isequal(A1,A3)
+>> tic; A3 = rooting_v3(v,w); toc
+```
+
+```MATLAB
+>> v = randi(1e6, 1, 1e4);
+>> w = randi(1e6, 1, 1e4);
+>> tic; A3 = rooting_v3(v,w); toc
+```
+
+
+```MATLAB
+>> v = randi(1e6, 1, 1e3);
+>> w = randi(1e6, 1, 1e3);
+>> profile off
+>> profile on
+>> A2 =rooting_v2(v,w);
+>> profile viewer
+```
+
+![Efficiency in Practice](efficiency_in_practice3.png)
+
+Social Network
+
+![follows](follows.png)
+
+![follows2](follows2.png)
+
+```MATLAB
+>> clear
+>> load follows
+>> whos
+>> 3000*2999/2
+```
+
+```MATLAB
+function [people, follows] = max_same_follows_v1(following)
+    people = [];
+    num_follows = 0;
+    for ii = 1:length(following)-1
+        for jj = ii+1:length(following)
+            tmp_follows = intersect(following{ii},following{jj});
+            n = length(tmp_follows);
+            if n > num_follows
+                num_follows = n;
+                people = [ii jj];
+                follows = tmp_follows;
+            end
+        end
+    end
+end
+```
+
+```MATLAB
+>> tic; [p1, f1] = max_same_follows_v1(follows);toc
+>> p1, f1
+```
+
+```MATLAB
+function [people, follows] = max_same_follows_v2(following)
+    people = [];
+    num_follows = 0;
+    for ii = 1:length(following)-1
+        if length(following{ii}) <= num_follows  % skip if list
+            continue;                            % is too short
+        end
+        for jj = ii+1:length(following)
+            if length(following{jj}) <= num_follows % skip if list
+                continue;                           % is too short
+            end
+            tmp_follows = intersect(following{ii},following{jj});
+            n = length(tmp_follows);
+            if n > num_follows
+                num_follows = n;
+                people = [ii jj];
+                follows = tmp_follows;
+            end
+        end
+    end
+end
+```
+
+```MATLAB
+>> tic; [p2, f2] = max_same_follows_v2(follows);toc
+>> isequal(p1,p2) && isequal(f1,f2)
+```
+
+![Efficiency in Practice](efficiency_in_practice4.png)
+
+![Efficiency in Practice Quiz](efficiency_in_practice_quiz1.png)
+
+![Efficiency in Practice Quiz](efficiency_in_practice_quiz2.png)
+
+### Vectorization and Other Speed-Ups
+
+![MATLAB and Implicit Looping](matlab_and_implicit_looping.png)
+
+![Vectorization](vectorization.png)
+
+```MATLAB
+function A = rooting_v3(v,w)
+    A = zeros(length(v),length(w)); % commenting this line will take more time
+    rw = zeros(1,length(w));
+    for jj = 1:length(w)
+        rw(jj) = nthroot(w(jj),jj);
+    end
+    for ii = 1:length(v)
+        x = nthroot(v(ii),ii);
+        for jj = 1:length(w)
+            A(ii,jj) = x * rw(jj);
+        end
+    end
+end
+```
+
+```MATLAB
+>> v = randi(1e6, 1, 1e4);
+>> w = randi(1e6, 1, 1e4);
+>> timeit(@() rooting_v3(v,w))
+```
+
+```MATLAB
+function A = rooting_v4(v,w)
+    A = zeros(length(v),length(w));
+    rv = nthroot(v,1:length(v));
+    rw = nthroot(w,1:length(v));
+    for ii = 1:length(v)
+        for jj = 1:length(w)
+            A(ii,jj) = rv(ii) * rw(jj);
+        end
+    end
+end
+```
+
+```MATLAB
+>> timeit(@() rooting_v4(v,w))
+>> profile on;
+>> rooting_v3(v,w);
+>> profile viewer
+```
+
+```MATLAB
+function A = rooting_v5(v,w)
+    rv = nthroot(v,1:length(v));
+    rw = nthroot(w,1:length(v));
+    A = rv' * rw;
+end
+```
+
+```MATLAB
+>> timeit(@() rooting_v5(v,w))
+>> isequal(rooting_v3(v,w), rooting_v5(v,w))
+```
+
+```MATLAB
+function A = small2zero_v1(A,limit)
+    for ii = 1:size(A,1)
+        for jj = 1:size(A,2)
+            if A(ii,jj) < limit
+                A(ii,jj) = 0;
+            end
+        end
+    end
+end
+```
+
+```MATLAB
+>> A = randi(1e6,1e4);
+>> timeit(@() small2zero_v1(A,50)) 
+```
+
+```MATLAB
+function A = small2zero_v2(A,limit)
+    A(A<limit) = 0;
+end
+```
+
+```MATLAB
+>> timeit(@() small2zero_v2(A,50))
+>> tic; A(A<50)=0;toc
+```
+
+```MATLAB
+>> clc
+>> profile off
+>> profile on
+>>  small2zero_v2(A,50);
+>> profile viewer
+```
+
+![M-File Translation](m_file_translation.png)
+
+![Just-in-Time Compiling](jit.png)
+
+![Comparing with element on same row](comparing_with_element_on_same_row.png)
+
+```MATLAB
+function A = row2explicit(A) 
+    for ii = 1:size(A,1) 
+        for jj = 1:size(A,2)
+            if A(ii,jj) < A(ii,2) 
+                A(ii,jj) = 0; 
+            end
+        end
+    end
+end
+```
+
+![repmat](repmat.png)
+
+```MATLAB
+>> A = randi(99,4,5)
+>> Title_column_2 = repmat(A(:,2),1,size(A,2))
+>> A(A<Title_column_2) = 0
+```
+
+```MATLAB
+>> mod(7,2)
+>> mod(8,2)
+>> mod(12,3)
+>> mod(48,7)
+>> rng(0); v = randi(99,1,10)
+>> ones_zeros = mod(v,2)
+>> true_false = ones_zeros == 1
+>> idx_odd = find(true_false)
+>> find(mod(v,2)==1)
+>> rng(0); A = randi(99, 3, 4)
+>> [row col] = find(mod(A,2) == 1);
+>> [row col]
+>> 
+```
+
+![First Stop: Recursion](stop_recursion.png)
+
+![Modes of Passing Arguments](modes_of_passing_arguments.png)
+
+```MATLAB
+function mx = input_mod_test(A)
+    mx = max(A(:));
+end
+```
+
+```MATLAB
+>> rng(0); X = randi(1e6, 2e4);
+>> timeit(@() input_mod_test(X))
+```
+
+```MATLAB
+function mx = input_mod_test(A)
+    mx = max(A(:));
+    A(1) = 0; % changes introduced
+end
+```
+
+```MATLAB
+>> timeit(@() input_mod_test(X)) % takes more time
+```
+
+![index Re-ordering](index_re_ordering.png)
+
+```MATLAB
+function A = not_preallocatable_v1(N)
+% from COMPUTER PROGRAMMING WITH MATLAB, 3rd Edition, 2015
+% by J. M. Fitzpatrick and A. Ledeczi
+% Chapter 2, Section 4.9
+ii = 0;
+while rand > 1/N
+   ii = ii + 1;
+   for jj = 1:N
+      A(ii,jj) = ii + jj^2;
+   end
+end
+```
+
+```MATLAB
+>> rng(0);tic;A1 = not_preallocatable_v1(3000);toc
+```
+
+```MATLAB
+function A = not_preallocatable_v2(N)
+% from COMPUTER PROGRAMMING WITH MATLAB, 3rd Edition, 2015
+% by J. M. Fitzpatrick and A. Ledeczi
+% Chapter 2, Section 4.9
+ii = 0;
+while rand > 1/N
+   ii = ii + 1;
+   for jj = 1:N
+      A(jj,ii) = ii + jj^2;
+   end
+end
+A = A';
+```
+
+```MATLAB
+>> rng(0);tic;A2 = not_preallocatable_v2(3000);toc
+>> isequal(A1,A2)
+```
+
+![Index Reordering](index_reordering2.png)
+
+![Index Reordering](index_reordering3.png)
+
+![Index Reordering](index_reordering4.png)
+
+```MATLAB
+>> size(A1,1)-1
+```
+
+![Index Reordering](index_reordering5.png)
+
+```MATLAB
+function A = stride_right(M,N,col_major,preallocate)
+    if preallocate, A = zeros(M,N); end
+    if col_major
+        for ii = 1:N 
+            for jj = 1:M
+                A(jj,ii) = 11*jj + 123*ii;
+            end
+        end
+    else % row major
+        for ii = 1:M
+            for jj = 1:N
+                A(ii,jj) = 11*ii + 123*jj;
+            end
+        end
+    end
+end
+```
+
+```MATLAB
+>> timeit(@() stride_right(1e4,2e4,false,true))
+>> timeit(@() stride_right(1e4,2e4,true,true)) % faster
+```
+
+![FORTRAN](fortran.png)
+
+![parfor](parfor.png)
+
+
+```MATLAB
+function a= eigen_for(A3D)
+a = zeros(1,size(A3D,1));
+for ii = 1:length(a)
+    a(ii) = max(abs(eig(squeeze(A3D(ii,:,:)))));
+end
+```
+
+```MATLAB
+function a= eigen_parfor(A3D)
+a = zeros(1,size(A3D,1));
+parfor ii = 1:length(a)
+    a(ii) = max(abs(eig(squeeze(A3D(ii,:,:)))));
+end
+```
+
+```MATLAB
+>> A3D = rand(5e4,50,50);
+>> tic; af = eigen_for(A3D); toc
+>> tic; ap = eigen_parfor(A3D); toc
+>> isequal(af,ap)
+```
+
+![Lesson 4](lesson_4.png)
+
+### Vectorizatin Quiz
+
+![Vectorization Quiz 1](vectorization_quiz1.png)
+
+![Vectorization Quiz 2](vectorization_quiz2.png)
+
+## Module 5
+
+### Introduction to Object Oriented Programming
+
+![Object Oriented Programming](OOP.png)
+
+```MATLAB
+>> VeryCoolGuy = struct('name', [])
+>> VeryCoolGuy.name = 'Harshdeep Kanhai'
+>> VeryCoolGuy.game = 'Engineer'
+>> 
+```
+
+![Object Oriented Programming](OOP2.png)
+
+
+```MATLAB
+classdef Contact
+    properties
+        FirstName
+        LastName
+        PhoneNumber
+    end
+end
+```
+
+```MATLAB
+>> person = Contact
+>> person.FirstName = "Harshdeep"
+>> person.LastName = "Kanhai"
+>> person.PhoneNumbe = "392373939"
+
+```
+
+![Class Definition](class_definition.png)
+
+![Class Definition](class_definition2.png)
+
+```MATLAB
+classdef Contact 
+    properties 
+        FirstName
+        LastName
+        PhoneNumber
+    end
+    methods
+        function obj = Contact(lname,fname,phone)
+            obj.LastName = string(lname);
+            obj.FirstName = string(fname);
+            obj.PhoneNumber = string(phone);
+        end
+    end
+end
+```
+
+```MATLAB
+>> person2 = Contact("Shantanu", "Singh", 3424335345)
+>> person2.LastNme = pi
+
+```
+
+```MATLAB
+classdef Contact 
+    properties
+        FirstName
+        LastName
+        PhoneNumber
+    end
+    methods
+        function obj = Contact(lname,fname,phone)
+            obj.LastName = string(lname);
+            obj.FirstName = string(fname);
+            obj.PhoneNumber = string(phone);
+        end
+        function obj = set.LastName(obj,lname)
+            obj.LastName = string(lname);
+        end
+        function obj = set.FirstName(obj,fname)
+            obj.FirstName = string(fname);
+        end
+        function obj = set.PhoneNumber(obj,phone)
+            obj.PhoneNumber = string(phone);
+        end
+    end
+end
+```
+
+```MATLAB
+>> person2.set.LastName("Smith") % gives error can't access set method directly
+>> person2.LastNme = "Smith" % correct way
+>> person2.LastNme = pi % converts to a string
+
+ 
+```
+
+![Class Definition](class_definition3.png)
+
+
+```MATLAB
+classdef Contact 
+    properties
+        FirstName
+        LastName
+        PhoneNumber
+    end
+    methods
+        function obj = Contact(lname,fname,phone)
+            obj.LastName = string(lname);
+            obj.FirstName = string(fname);
+            obj.PhoneNumber = string(phone);
+        end
+        function obj = set.LastName(obj,lname)
+            obj.LastName = string(lname);
+        end
+        function obj = set.FirstName(obj,fname)
+            obj.FirstName = string(fname);
+        end
+        function obj = set.PhoneNumber(obj,phone)
+            obj.PhoneNumber = string(phone);
+        end
+        function lname = get.LastName(obj)
+            lname = obj.LastName;
+        end
+    end
+end
+```
+
+```MATLAB
+>> person2.LastNme
+```
+
+![Inheritance](inheritance.png)
+
+```MATLAB
+classdef BusinessContact < Contact
+    properties
+        Company
+        Fax
+    end
+end
+```
+
+```MATLAB
+>> b = BusinessContact % gives error
+>> b = BusinessContact("Bill", "Gates", 324354234)
+```
+
+```MATLAB
+classdef BusinessContact < Contact
+    properties
+        Company
+        Fax
+    end
+    methods
+        function obj = BusinessContact(cname,lname,fname,phone,f)
+            obj.LastName = string(lname);
+            obj.FirstName = string(fname);
+            obj.PhoneNumber = string(phone);
+            obj.Company = string(cname);
+            obj.Fax = string(f);
+        end
+end
+```
+
+```MATLAB
+>> b = BusinessContact("MS","Bill", "Gates", 324354234, 23423423) % gives error
+```
+
+- final `Contact` class Update to accept variable arguments
+```MATLAB
+classdef Contact 
+    properties
+        FirstName
+        LastName
+        PhoneNumber
+    end
+    methods
+        function obj = Contact(lname,fname,phone)
+            if nargin < 3, phone = ""; end
+            if nargin < 2, fname = ""; end
+            if nargin < 1, lname = ""; end
+            obj.LastName = string(lname);
+            obj.FirstName = string(fname);
+            obj.PhoneNumber = string(phone);
+        end
+        function obj = set.LastName(obj,lname)
+            obj.LastName = string(lname);
+        end
+        function obj = set.FirstName(obj,fname)
+            obj.FirstName = string(fname);
+        end
+        function obj = set.PhoneNumber(obj,phone)
+            obj.PhoneNumber = string(phone);
+        end
+        function printName(obj)
+            fprintf('%s %s\n',obj.FirstName,obj.LastName)
+        end
+    end
+end      
+```
+
+```MATLAB
+>> b = BusinessContact("MS","Bill", "Gates", 324354234, 23423423) % Now this works
+```
+
+- super class contstructor call
+```MATLAB
+classdef BusinessContact < Contact
+    properties
+        Company
+        Fax
+    end
+    methods
+       function obj = BusinessContact(cname,lname,fname,phone,f)
+            obj@Contact(lname,fname,phone);
+            obj.Company = string(cname);
+            obj.Fax = string(f);
+       end
+    end
+end
+```
+- make BusinessContact class accept variable number of arguments
+
+```MATLAB
+classdef BusinessContact < Contact
+    properties
+        Company
+        Fax
+    end
+    methods
+       function obj = BusinessContact(cname,lname,fname,phone,f)
+            if nargin < 5 f = ""; end
+            if nargin < 4 phone = ""; end
+            if nargin < 3 fname = ""; end
+            if nargin < 2 lname = ""; end
+            if nargin < 1 cname = ""; end
+            obj@Contact(lname,fname,phone);
+            obj.Company = string(cname);
+            obj.Fax = string(f);
+       end
+    end
+end
+```
+
+- Add set access method final update
+```MATLAB
+classdef BusinessContact < Contact
+    properties
+        Company
+        Fax
+    end
+    methods
+       function obj = BusinessContact(cname,lname,fname,phone,f)
+            if nargin < 5, f = ""; end
+            if nargin < 4, phone = ""; end
+            if nargin < 3, fname = ""; end
+            if nargin < 2, lname = ""; end
+            if nargin < 1, cname = ""; end
+            obj@Contact(lname,fname,phone);
+            obj.Company = string(cname);
+            obj.Fax = string(f);
+       end
+        function obj = set.Company(obj,cname)
+            obj.Company = string(cname);
+        end
+        function obj = set.Fax(obj,f)
+            obj.Fax = string(f);
+        end
+    end
+end
+```
+
+```MATLAB
+>> person.printName % used user defined function
+>> person2.printName
+>> b.printName
+>> 
+```
+
+![OOP 3](OOP.png)
+
+![Class Definition](class_definition4.png)
+
+![SubClass Defintion](sub_class_definition.png)
+
+![Class Definition](class_defintion5.png)
+
+### Intro to OOP Quiz
+
+![OOP Quiz 1](oop_quiz1.png)
+
+![OOP Quiz 2](oop_quiz2.png)
+
+### Handle Classes
+
+![Linked List](linked_list.png)
+
+![Doubly Linked List](doubly_linked_list.png)
+
+![Inserting a New Node](insert_a_new_node.png)
+
+![Update the Node's pointer](update_the_node_pointer.png)
+
+![Update A's next pointer](update_a_next_pointer.png)
+
+![Update C's prev pointer](update_c_prev_pointer.png)
+
+![The Updated List](the_updated_list.png)
+
+```MATLAB
+>> cell_a = {'Jack of Spades'}
+>> cell_b = cell_a
+>> cell_a{1}
+>> cell_b{1}
+>> isequal(cell_a, cell_b)
+>> cell_b{1}{1:4} = 'King'
+>> cell_a{1} % returns old data as it is copied
+
+```
+
+![Handle Objects](handle_objects.png)
+
+![Handle Class](handle_class.png)
+
+```MATLAB
+classdef Akos < handle
+    properties
+        card = 'Jack of Spades'
+    end   
+end
+```
+
+![Handle Objects](handle_objects2.png)
+
+```MATLAB
+classdef TestClass
+    properties
+        Value
+    end
+    methods
+        function obj = TestClass(val)
+            if nargin < 1
+                obj.Value = 0;
+            else
+                obj.Value = val;
+            end
+        end
+        function set_value(obj,val)
+            obj.Value = val;
+        end
+    end
+end
+```
+
+```MATLAB
+>> brandon = TestClass(2)
+>> brandon.set_value(3)
+>> brandon.Value % returns old value
+>> set_value(brandon, 3)
+>> brandon.Value % returns old value
+>> 
+
+>> x = 5;
+>> x = sqrt(x)
+
+```
+
+```MATLAB
+classdef TestClass
+    properties
+        Value
+    end
+    methods
+        function obj = TestClass(val)
+            if nargin < 1
+                obj.Value = 0;
+            else
+                obj.Value = val;
+            end
+        end
+        function obj = set_value(obj,val)
+            obj.Value = val;
+        end
+    end
+end
+```
+
+```MATLAB
+>> brandon = TestClass(2)
+>> brandon = brandon.set_value(3)
+>> brandon.set_value(4)
+>> brandon.Value % returns 3
+>> brandon = set_value(brandon,4)
+
+
+```
+
+- `handle` class
+```MATLAB
+classdef TestClass < handle
+    properties
+        Value
+    end
+    methods
+        function obj = TestClass(val)
+            if nargin < 1
+                obj.Value = 0;
+            else
+                obj.Value = val;
+            end
+        end
+        function set_value(obj,val)
+            obj.Value = val;
+        end
+    end
+end
+```
+
+```MATLAB
+>> brandon = TestClass(2)
+>> brandon.set_value(3)
+```
+
+- Implementation Of LinkedList
+- `LinkedNode` class
+
+```MATLAB
+classdef LinkedNode < handle
+    properties
+        Prev
+        Next
+        Owner
+    end
+    methods
+        function node = LinkedNode()
+            node.Prev = [];
+            node.Next = [];
+            node.Owner = [];
+        end
+    end
+end
+```
+
+- `DList` class
+
+```MATLAB
+classdef DList < handle
+    properties 
+        Head
+        Tail
+        Length
+    end
+    methods
+        
+        function list = DList()
+            list.Head = [];
+            list.Tail = [];
+            list.Length = 0;
+        end
+        
+        function insert(list,node)
+            if ~isempty(node.Owner)
+                if node.Owner ~= list           % New node is in another list, 
+                    node.Owner.remove(node);    % so we need to remove it.
+                else
+                    return;                     % New node is already in this list,
+                end                             % so do nothing.
+            end
+            if list.Length == 0                 % If the list is empty,
+                list.Head = node;               % put new node at the head,
+            else
+                list.Tail.Next = node;          % else, point tail node at it.
+            end
+            node.Next = [];                     % New node is at the end.
+            node.Prev = list.Tail;              % Previous node is old tail node.
+            list.Tail = node;                   % Make Tail node point at new node.
+            list.Length = list.Length + 1;      
+            node.Owner = list;                  
+        end % insert
+        
+        function remove(list,node)
+            if isempty(node) || node.Owner ~= list
+                error('node is not in the list');
+            end
+            if ~isempty(node.Prev)              % If a node precedes the current node,
+                node.Prev.Next = node.Next;     % make preceding node point to the node
+            else                                % that follows the current node,
+                list.Head = node.Next;          % else make Head point to it.
+            end                                 
+            if ~isempty(node.Next)              % If a node follows the current node,
+                node.Next.Prev = node.Prev;     % make its prev point to the node that
+            else                                % that precedes the current node
+                list.Tail = node.Prev;          % else make previous node be the tail.
+            end
+            list.Length = list.Length - 1;      
+            node.Next = [];
+            node.Prev = [];
+            node.Owner = [];
+        end % remove
+                
+        function displayList(list)
+            item = list.Head;
+            while ~isempty(item)
+                item.disp
+                item = item.Next;
+            end
+        end
+    end
+end
+```
+
+
+```MATLAB
+classdef LetterNode < LinkedNode
+    properties
+        Letter
+    end
+    methods
+        function obj = LetterNode(input)
+            if nargin < 1
+                obj.Letter = ' ';
+            else
+                obj.Letter = input;
+            end
+        end
+    end
+end
+```
+
+```MATLAB
+% Live scripts
+
+clear
+mylist = DList
+a = LetterNode('A')
+b = LetterNode('B')
+c = LetterNode('C')
+mylist.insert(a)
+mylist.insert(b)
+mylist.insert(c)
+mylist
+mylist.Head
+mylist.Head.Next
+mylist.Head.Next.Next
+mylist.Head.Next.Next.Next
+mylist.Head.Next.Next.Prev
+mylist.Head.Next.Next.Prev.Prev
+mylist.Head.Next.Next.Prev.Prev.Prev
+mylist.remove(a)
+mylist.Head
+mylist.Head.Prev
+mylist.Head.Next
+mylist.remove(c)
+mylist
+mylist.Head
+mylist.Head.Next
+mylist.Head.Prev
+mylist.remove(b)
+mylist
+a
+b
+c
+
+```
+- making access `private`
+```MATLAB
+classdef DList < handle
+    properties (Access = private)
+        Head
+        Tail
+        Length
+    end
+    methods
+        
+        function list = DList()
+            list.Head = [];
+            list.Tail = [];
+            list.Length = 0;
+        end
+        
+        function insert(list,node)
+            if ~isempty(node.Owner)
+                if node.Owner ~= list           % New node is in another list, 
+                    node.Owner.remove(node);    % so we need to remove it.
+                else
+                    return;                     % New node is already in this list,
+                end                             % so do nothing.
+            end
+            if list.Length == 0                 % If the list is empty,
+                list.Head = node;               % put new node at the head,
+            else
+                list.Tail.Next = node;          % else, point tail node at it.
+            end
+            node.Next = [];                     % New node is at the end.
+            node.Prev = list.Tail;              % Previous node is old tail node.
+            list.Tail = node;                   % Make Tail node point at new node.
+            list.Length = list.Length + 1;      
+            node.Owner = list;                  
+        end % insert
+        
+        function remove(list,node)
+            if isempty(node) || node.Owner ~= list
+                error('node is not in the list');
+            end
+            if ~isempty(node.Prev)              % If a node precedes the current node,
+                node.Prev.Next = node.Next;     % make preceding node point to the node
+            else                                % that follows the current node,
+                list.Head = node.Next;          % else make Head point to it.
+            end                                 
+            if ~isempty(node.Next)              % If a node follows the current node,
+                node.Next.Prev = node.Prev;     % make its prev point to the node that
+            else                                % that precedes the current node
+                list.Tail = node.Prev;          % else make previous node be the tail.
+            end
+            list.Length = list.Length - 1;      
+            node.Next = [];
+            node.Prev = [];
+            node.Owner = [];
+        end % remove
+                
+        function displayList(list)
+            item = list.Head;
+            while ~isempty(item)
+                item.disp
+                item = item.Next;
+            end
+        end
+    end
+end
+            
+```
+
+```MATLAB
+>> mylist.Head % gives error
+>> mylist
+>> mylist.insert(a)
+>> mylist.insert(b)
+>> mylist.insert(c)
+>> mylist
+>> mylist.displayList
+>> 
+```
+
+```MATLAB
+classdef LinkedNode < handle
+    properties (Access = private)
+        Prev
+        Next
+        Owner
+    end
+    methods
+        function node = LinkedNode()
+            node.Prev = [];
+            node.Next = [];
+            node.Owner = [];
+        end
+    end
+end
+```
+
+```MATLAB
+>> a
+>> mylist.displayList % gives error
+```
+
+```MATLAB
+classdef LinkedNode < handle
+    properties (Access = ?DList)
+        Prev
+        Next
+        Owner
+    end
+    methods
+        function node = LinkedNode()
+            node.Prev = [];
+            node.Next = [];
+            node.Owner = [];
+        end
+    end
+end
+```
+
+```MATLAB
+>> mylist.displayList
+```
+
+```MATLAB
+classdef DList < handle
+    properties (Access = private)
+        Head
+        Tail
+        Length
+    end
+    methods
+        
+        function lng  = length(list)
+            lng = list.Length;
+        end
+        
+        function list = DList()
+            list.Head = [];
+            list.Tail = [];
+            list.Length = 0;
+        end
+        
+        function insert(list,node)
+            if ~isempty(node.Owner)
+                if node.Owner ~= list           % New node is in another list, 
+                    node.Owner.remove(node);    % so we need to remove it.
+                else
+                    return;                     % New node is already in this list,
+                end                             % so do nothing.
+            end
+            if list.Length == 0                 % If the list is empty,
+                list.Head = node;               % put new node at the head,
+            else
+                list.Tail.Next = node;          % else, point tail node at it.
+            end
+            node.Next = [];                     % New node is at the end.
+            node.Prev = list.Tail;              % Previous node is old tail node.
+            list.Tail = node;                   % Make Tail node point at new node.
+            list.Length = list.Length + 1;      
+            node.Owner = list;                  
+        end % insert
+        
+        function remove(list,node)
+            if isempty(node) || node.Owner ~= list
+                error('node is not in the list');
+            end
+            if ~isempty(node.Prev)              % If a node precedes the current node,
+                node.Prev.Next = node.Next;     % make preceding node point to the node
+            else                                % that follows the current node,
+                list.Head = node.Next;          % else make Head point to it.
+            end                                 
+            if ~isempty(node.Next)              % If a node follows the current node,
+                node.Next.Prev = node.Prev;     % make its prev point to the node that
+            else                                % that precedes the current node
+                list.Tail = node.Prev;          % else make previous node be the tail.
+            end
+            list.Length = list.Length - 1;      
+            node.Next = [];
+            node.Prev = [];
+            node.Owner = [];
+        end % remove
+                
+        function displayList(list)
+            item = list.Head;
+            while ~isempty(item)
+                item.disp
+                item = item.Next;
+            end
+        end
+    end
+end
+            
+```
+
+```MATLAB
+>> mylist.length
+>> length(mylist)
+```
+
+### Handle CLasses Quiz
+
+![Handle Classes Quiz 1](handle_classes_quiz_1.png)
+
+![Handle Classes Quiz 2](handle_classes_quiz_2.png)
+
+### More on OOP
+
+![Operator Overloading](operator_overloading.png)
+
+```MATLAB
+classdef LinkedNode < handle       % LinkedNode_v4
+    properties (Access = ?DList)
+        Prev
+        Next
+        Owner
+    end
+    methods (Abstract)
+        gt(a,b)
+    end
+    methods
+        function node = LinkedNode()
+            node.Prev = [];
+            node.Next = [];
+            node.Owner = [];
+        end
+    end
+end
+            
+```
+
+```MATLAB
+>> 6 > 5
+>> gt(6,5)
+```
+
+![Ways to make class Abstract](ways_abstract.png)
+
+```MATLAB
+>> A = LinkedNode % gives error made after abstract
+```
+
+subclass of LinkedNode
+
+```MATLAB
+classdef SortedNumber_v1 < LinkedNode       % SortedNumber_v1 
+    properties
+        Value
+    end
+    methods
+        function node = SortedNumber(n)
+            if ~isscalar(n) || ~isnumeric(n)
+                error('Expected numeric scalar Value');
+            end
+            node.Value = n;
+        end
+        function res = gt(node1,node2)
+            res = node1.Value > node2.Value;
+        end
+    end
+end
+```
+
+- better way to ensure numeric `validation function`
+```MATLAB
+classdef SortedNumber < LinkedNode       % SortedNumber_v2 
+    properties
+        Value
+    end
+    methods
+        function node = SortedNumber(n)
+            arguments
+                n (1,1) {mustBeNumeric} = 0
+            end
+            node.Value = n;
+        end
+        function res = gt(node1,node2)
+            res = node1.Value > node2.Value;
+        end
+    end
+end
+```
+
+![MATLAB keywords](matlab_keywords.png)
+
+![Arguments](arguments.png)
+
+![Argument-Block Rule](arguments2.png)
+
+![Argument Blocks](arguments3.png)
+
+```MATLAB
+% Matlab Script
+SortedNumber(3) > SortedNumber(4)
+SortedNumber(4) > SortedNumber(3)
+
+SortedNumber(3) > SortedNumber(4)
+
+SortedNumber(3) < SortedNumber(4)
+SortedNumber(4) < SortedNumber(3)
+
+SortedNumber(5) < SortedNumber(4)
+SortedNumber(4) < SortedNumber(5)
+```
+
+```MATLAB
+classdef LinkedNode < handle       % LinkedNode_v5
+    properties (Access = ?DList)
+        Prev
+        Next
+        Owner
+    end
+    methods (Abstract)
+        gt(a,b)
+        ge(a,b)
+        lt(a,b)
+        le(a,b)
+        eq(a,b)
+        ne(a,b)
+    end
+    methods
+        function node = LinkedNode()
+            node.Prev = [];
+            node.Next = [];
+            node.Owner = [];
+        end
+    end
+end
+```
+
+```MATLAB
+classdef SortedNumber < LinkedNode       % SortedNumber_v3 
+    properties
+        Value
+    end
+    methods
+        function node = SortedNumber(n)
+            arguments
+                n (1,1) {mustBeNumeric} = 0
+            end
+            node.Value = n;
+        end
+        function res = gt(node1,node2)          % >
+            res = node1.Value > node2.Value;
+        end
+        function res = ge(node1,node2)          % >=
+            res = node1.Value >= node2.Value;
+        end        
+        function res = lt(node1,node2)          % <
+            res = node1.Value < node2.Value;
+        end        
+        function res = le(node1,node2)          % <=
+            res = node1.Value <= node2.Value;
+        end        
+        function res = eq(node1,node2)          % ==
+            res = node1.Value == node2.Value;
+        end        
+        function res = ne(node1,node2)          % ~=
+            res = node1.Value ~= node2.Value;
+        end           
+    end
+end
+```
+
+```MATLAB
+% MATLAB scripts
+(SortedNumber(3) <= SortedNumber(4)) == (3 <= 4)
+(SortedNumber(3) >  SortedNumber(4)) == (3 >  4)
+(SortedNumber(3) == SortedNumber(4)) == (3 == 4)
+(SortedNumber(3) == SortedNumber(3)) == (3 == 3)
+(SortedNumber(3) ~= SortedNumber(4)) == (3 ~= 4)
+(SortedNumber(3) <= SortedNumber(3)) == (3 <= 3)
+(SortedNumber(3) <  SortedNumber(3)) == (3 <  3)
+```
+
+```MATLAB
+classdef DList < handle       % DList_v3
+    properties (Access = private)
+        Head
+        Tail
+        Length
+    end
+    methods
+        function lng  = length(list)
+            lng = list.Length;
+        end
+        
+        function list = DList()
+            list.Head = [];
+            list.Tail = [];
+            list.Length = 0;
+        end
+        
+        function insert(list,node)
+            if ~isempty(node.Owner)
+                if node.Owner ~= list           % New node is in another list, 
+                    node.Owner.remove(node);    % so we need to remove it.
+                else
+                    return;                     % New node is already in this list,
+                end                             % so do nothing.
+            end
+            if list.Length == 0                 % If the list is empty,
+                list.Head = node;               % put new node at the head,
+            else
+                list.Tail.Next = node;          % else, point tail node at it.
+            end
+            node.Next = [];                     % New node is at the end.
+            node.Prev = list.Tail;              % Previous node is old tail node.
+            list.Tail = node;                   % Make Tail node point at new node.
+            list.Length = list.Length + 1;      
+            node.Owner = list;                  
+        end % insert
+        
+        function remove(list,node)
+            if isempty(node) || node.Owner ~= list
+                error('node is not in the list');
+            end
+            if ~isempty(node.Prev)              % If a node precedes the current node,
+                node.Prev.Next = node.Next;     % make preceding node point to the node
+            else                                % that follows the current node,
+                list.Head = node.Next;          % else make Head point to it.
+            end                                 
+            if ~isempty(node.Next)              % If a node follows the current node,
+                node.Next.Prev = node.Prev;     % make its prev point to the node that
+            else                                % that precedes the current node
+                list.Tail = node.Prev;          % else make previous node be the tail.
+            end
+            list.Length = list.Length - 1;      
+            node.Next = [];
+            node.Prev = [];
+            node.Owner = [];
+        end % remove
+                
+        function displayList(list)
+            item = list.Head;
+            while ~isempty(item)
+                item.disp
+                item = item.Next;
+            end
+        end
+    end
+end
+```
+
+```MATLAB
+classdef OrderedList < DList       % OrderedList_v1
+    methods        
+        function insert(list,node)
+            if ~isempty(node.Owner)
+                if node.Owner ~= list
+                    node.Owner.remove(node);
+                else
+                    return;
+                end
+            end
+            node.Owner = list;
+            list.Length = list.Length + 1;
+            if isempty(list.Head)
+                list.Head = node;
+                list.Tail = node;
+                node.Prev = [];
+                node.Next = [];
+            else
+                cur = list.Head;
+                prev = [];
+                while ~isempty(cur) && node > cur
+                    prev = cur;
+                    cur = cur.Next;
+                end
+                if isempty(prev)
+                    node.Next = list.Head;
+                    node.Prev = [];
+                    list.Head.Prev = node;
+                    list.Head = node;
+                else
+                    prev.Next = node;
+                    node.Prev = prev;
+                    node.Next = cur;
+                    if isempty(cur)
+                        list.Tail = node;
+                    else
+                        cur.Prev = node;
+                    end
+                end
+            end
+        end         
+    end
+end
+```
+
+- use `protected` access specifier
+```MATLAB
+classdef DList < handle       % DList_v4
+    properties (Access = protected)
+        Head
+        Tail
+        Length
+    end
+    methods
+        function lng  = length(list)
+            lng = list.Length;
+        end
+        
+        function list = DList()
+            list.Head = [];
+            list.Tail = [];
+            list.Length = 0;
+        end
+        
+        function insert(list,node)
+            if ~isempty(node.Owner)
+                if node.Owner ~= list           % New node is in another list, 
+                    node.Owner.remove(node);    % so we need to remove it.
+                else
+                    return;                     % New node is already in this list,
+                end                             % so do nothing.
+            end
+            if list.Length == 0                 % If the list is empty,
+                list.Head = node;               % put new node at the head,
+            else
+                list.Tail.Next = node;          % else, point tail node at it.
+            end
+            node.Next = [];                     % New node is at the end.
+            node.Prev = list.Tail;              % Previous node is old tail node.
+            list.Tail = node;                   % Make Tail node point at new node.
+            list.Length = list.Length + 1;      
+            node.Owner = list;                  
+        end % insert
+        
+        function remove(list,node)
+            if isempty(node) || node.Owner ~= list
+                error('node is not in the list');
+            end
+            if ~isempty(node.Prev)              % If a node precedes the current node,
+                node.Prev.Next = node.Next;     % make preceding node point to the node
+            else                                % that follows the current node,
+                list.Head = node.Next;          % else make Head point to it.
+            end                                 
+            if ~isempty(node.Next)              % If a node follows the current node,
+                node.Next.Prev = node.Prev;     % make its prev point to the node that
+            else                                % that precedes the current node
+                list.Tail = node.Prev;          % else make previous node be the tail.
+            end
+            list.Length = list.Length - 1;      
+            node.Next = [];
+            node.Prev = [];
+            node.Owner = [];
+        end % remove
+                
+        function displayList(list)
+            item = list.Head;
+            while ~isempty(item)
+                item.disp
+                item = item.Next;
+            end
+        end
+    end
+end
+```
+
+```MATLAB
+% Matlab Scripts
+x = SortedNumber(1)
+y = SortedNumber(11)
+z = SortedNumber(111)
+
+mylist = OrderedList
+mylist.insert(y)
+mylist.insert(x) % out of order!
+mylist.insert(z)
+
+mylist.displayList();
+
+mylist.insert(SortedNumber(2))
+mylist.insert(SortedNumber(-22))
+mylist.insert(SortedNumber(222))
+mylist.displayList();
+
+x.Value = 1000
+
+mylist.displayList
+```
+
+- It broke directly adding the value
+
+```MATLAB
+classdef SortedNumber < LinkedNode       % SortedNumber_v4 
+    properties
+        Value
+    end
+    methods
+        function node = SortedNumber(n)
+            arguments
+                n (1,1) {mustBeNumeric} = 0
+            end
+            node.Value = n;
+        end
+        function set.Value(node,newValue)
+            arguments
+                node
+                newValue (1,1) {mustBeNumeric}
+            end
+            if isempty(node.Owner)
+                node.Value = newValue; 
+            else
+                list = node.Owner;
+                list.remove(node);
+                node.Value = newValue;
+                list.insert(node)                
+            end
+        end 
+        function res = gt(node1,node2)          % >
+            res = node1.Value > node2.Value;
+        end
+        function res = ge(node1,node2)          % >=
+            res = node1.Value >= node2.Value;
+        end        
+        function res = lt(node1,node2)          % <
+            res = node1.Value < node2.Value;
+        end        
+        function res = le(node1,node2)          % <=
+            res = node1.Value <= node2.Value;
+        end        
+        function res = eq(node1,node2)          % ==
+            res = node1.Value == node2.Value;
+        end        
+        function res = ne(node1,node2)          % ~=
+            res = node1.Value ~= node2.Value;
+        end 
+    end
+end
+```
+
+```MATLAB
+classdef LinkedNode < handle       % LinkedNode_v6
+    properties (Access = {?DList, ?LinkedNode})
+        Prev
+        Next
+        Owner
+    end
+    methods (Abstract)
+        gt(a,b)
+        ge(a,b)
+        lt(a,b)
+        le(a,b)
+        eq(a,b)
+        ne(a,b)
+    end
+    methods
+        function node = LinkedNode()
+            node.Prev = [];
+            node.Next = [];
+            node.Owner = [];
+        end
+    end
+end
+```
+
+- Now the below scripts work
+
+```MATLAB
+% Matlab Scripts
+x = SortedNumber(1)
+y = SortedNumber(11)
+z = SortedNumber(111)
+
+mylist = OrderedList
+mylist.insert(y)
+mylist.insert(x) % out of order!
+mylist.insert(z)
+
+mylist.displayList();
+
+mylist.insert(SortedNumber(2))
+mylist.insert(SortedNumber(-22))
+mylist.insert(SortedNumber(222))
+mylist.displayList();
+
+x.Value = 1000
+
+mylist.displayList
+```
+
+```MATLAB
+% Delete from list scripts
+mylist = OrderedList
+
+x = SortedNumber(1);
+y = SortedNumber(2);
+z = SortedNumber(3);
+mylist.insert(x); mylist.insert(y); mylist.insert(z);
+mylist.displayList
+
+foo = 1;
+c = 2 + 3i;
+whos
+
+x.delete
+whos
+
+mylist.displayList % gives error
+```
+
+![Requirements of Delete Method](delete_method.png)
+
+```MATLAB
+classdef LinkedNode < handle       % LinkedNode_v7
+    properties (Access = {?DList ?LinkedNode})
+        Prev
+        Next
+        Owner
+    end
+    methods (Abstract)
+        gt(a,b)
+        ge(a,b)
+        lt(a,b)
+        le(a,b)
+        eq(a,b)
+        ne(a,b)
+    end
+    methods
+        function node = LinkedNode()
+            node.Prev = [];
+            node.Next = [];
+            node.Owner = [];
+        end
+        function delete(node)
+            if ~isempty(node.Owner)
+                node.Owner.remove(node);
+            end
+        end
+    end
+end
+```
+
+```MATLAB
+% Live script to check memory leak
+x = SortedNumber(1)
+
+y = x
+
+z = x
+
+clear x
+
+clear y
+
+clear z
+```
+
+```MATLAB
+classdef DList < handle       % DList_v5
+    properties (Access = protected)
+        Head
+        Tail
+        Length
+    end
+    methods
+        function lng  = length(list)
+            lng = list.Length;
+        end
+        
+        function list = DList()
+            list.Head = [];
+            list.Tail = [];
+            list.Length = 0;
+        end
+                
+        function delete(list)
+            while ~isempty(list.Head)
+                list.Head.delete();
+            end
+        end
+              
+        function insert(list,node)
+            if ~isempty(node.Owner)
+                if node.Owner ~= list           % New node is in another list, 
+                    node.Owner.remove(node);    % so we need to remove it.
+                else
+                    return;                     % New node is already in this list,
+                end                             % so do nothing.
+            end
+            if list.Length == 0                 % If the list is empty,
+                list.Head = node;               % put new node at the head,
+            else
+                list.Tail.Next = node;          % else, point tail node at it.
+            end
+            node.Next = [];                     % New node is at the end.
+            node.Prev = list.Tail;              % Previous node is old tail node.
+            list.Tail = node;                   % Make Tail node point at new node.
+            list.Length = list.Length + 1;      
+            node.Owner = list;                  
+        end % insert
+        
+        function remove(list,node)
+            if isempty(node) || node.Owner ~= list
+                error('node is not in the list');
+            end
+            if ~isempty(node.Prev)              % If a node precedes the current node,
+                node.Prev.Next = node.Next;     % make preceding node point to the node
+            else                                % that follows the current node,
+                list.Head = node.Next;          % else make Head point to it.
+            end                                 
+            if ~isempty(node.Next)              % If a node follows the current node,
+                node.Next.Prev = node.Prev;     % make its prev point to the node that
+            else                                % that precedes the current node
+                list.Tail = node.Prev;          % else make previous node be the tail.
+            end
+            list.Length = list.Length - 1;      
+            node.Next = [];
+            node.Prev = [];
+            node.Owner = [];
+        end % remove
+                
+        function displayList(list)
+            item = list.Head;
+            while ~isempty(item)
+                item.disp
+                item = item.Next;
+            end
+        end
+    end
+end
+            
+```
+
+```MATLAB
+% Scripts
+mylist = OrderedList
+
+x = SortedNumber(10)
+
+mylist.insert(x)
+mylist.insert(SortedNumber(0))
+mylist.insert(SortedNumber(20))
+mylist.insert(SortedNumber(-10))
+mylist.displayList
+
+mylist.delete
+mylist
+x
+```
+- Adding `disp` and overloading it
+```MATLAB
+classdef LinkedNode < handle       % LinkedNode_v8
+    properties (Access = {?DList ?LinkedNode})
+        Prev
+        Next
+        Owner
+    end
+    methods (Abstract)
+        gt(a,b)
+        ge(a,b)
+        lt(a,b)
+        le(a,b)
+        eq(a,b)
+        ne(a,b)
+        disp(a)
+    end
+    methods
+        function node = LinkedNode()
+            node.Prev = [];
+            node.Next = [];
+            node.Owner = [];
+        end
+        function delete(node)
+            if ~isempty(node.Owner)
+                node.Owner.remove(node);
+            end
+        end
+    end
+end
+            
+```
+
+```MATLAB
+classdef SortedNumber < LinkedNode       % SortedNumber_v5 
+    properties
+        Value
+    end
+    methods
+        function node = SortedNumber(n)
+            arguments
+                n (1,1) {mustBeNumeric} = 0
+            end
+            node.Value = n;
+        end
+        function set.Value(node,newValue)
+            arguments
+                node
+                newValue (1,1) {mustBeNumeric}
+            end
+            if isempty(node.Owner)
+                node.Value = newValue; 
+            else
+                list = node.Owner;
+                list.remove(node);
+                node.Value = newValue;
+                list.insert(node)                
+            end
+        end 
+        function res = gt(node1,node2)          % >
+            res = node1.Value > node2.Value;
+        end
+        function res = ge(node1,node2)          % >=
+            res = node1.Value >= node2.Value;
+        end        
+        function res = lt(node1,node2)          % <
+            res = node1.Value < node2.Value;
+        end        
+        function res = le(node1,node2)          % <=
+            res = node1.Value <= node2.Value;
+        end        
+        function res = eq(node1,node2)          % ==
+            res = node1.Value == node2.Value;
+        end        
+        function res = ne(node1,node2)          % ~=
+            res = node1.Value ~= node2.Value;
+        end 
+        function disp(node)
+            disp(node.Value);
+        end
+    end
+end        
+```
+
+```MATLAB
+classdef OrderedList < DList       % OrderedList_v2
+    methods        
+        function insert(list,node)
+            if ~isempty(node.Owner)
+                if node.Owner ~= list
+                    node.Owner.remove(node);
+                else
+                    return;
+                end
+            end
+            node.Owner = list;
+            list.Length = list.Length + 1;
+            if isempty(list.Head)
+                list.Head = node;
+                list.Tail = node;
+                node.Prev = [];
+                node.Next = [];
+            else
+                cur = list.Head;
+                prev = [];
+                while ~isempty(cur) && node > cur
+                    prev = cur;
+                    cur = cur.Next;
+                end
+                if isempty(prev)
+                    node.Next = list.Head;
+                    node.Prev = [];
+                    list.Head.Prev = node;
+                    list.Head = node;
+                else
+                    prev.Next = node;
+                    node.Prev = prev;
+                    node.Next = cur;
+                    if isempty(cur)
+                        list.Tail = node;
+                    else
+                        cur.Prev = node;
+                    end
+                end
+            end
+        end
+        function disp(list)
+            disp('OrderedList containing:');
+            item = list.Head;
+            while ~isempty(item)
+                item.disp();
+                item = item.Next;
+            end
+        end
+    end
+end
+
+```
+
+```MATLAB
+classdef DList < handle       % DList_v6
+    properties (Access = protected)
+        Head
+        Tail
+        Length
+    end
+    methods
+        function lng  = length(list)
+            lng = list.Length;
+        end
+        
+        function list = DList()
+            list.Head = [];
+            list.Tail = [];
+            list.Length = 0;
+        end
+                
+        function delete(list)
+            while ~isempty(list.Head)
+                list.Head.delete();
+            end
+        end
+              
+        function insert(list,node)
+            if ~isempty(node.Owner)
+                if node.Owner ~= list           % New node is in another list, 
+                    node.Owner.remove(node);    % so we need to remove it.
+                else
+                    return;                     % New node is already in this list,
+                end                             % so do nothing.
+            end
+            if list.Length == 0                 % If the list is empty,
+                list.Head = node;               % put new node at the head,
+            else
+                list.Tail.Next = node;          % else, point tail node at it.
+            end
+            node.Next = [];                     % New node is at the end.
+            node.Prev = list.Tail;              % Previous node is old tail node.
+            list.Tail = node;                   % Make Tail node point at new node.
+            list.Length = list.Length + 1;      
+            node.Owner = list;                  
+        end % insert
+        
+        function remove(list,node)
+            if isempty(node) || node.Owner ~= list
+                error('node is not in the list');
+            end
+            if ~isempty(node.Prev)              % If a node precedes the current node,
+                node.Prev.Next = node.Next;     % make preceding node point to the node
+            else                                % that follows the current node,
+                list.Head = node.Next;          % else make Head point to it.
+            end                                 
+            if ~isempty(node.Next)              % If a node follows the current node,
+                node.Next.Prev = node.Prev;     % make its prev point to the node that
+            else                                % that precedes the current node
+                list.Tail = node.Prev;          % else make previous node be the tail.
+            end
+            list.Length = list.Length - 1;      
+            node.Next = [];
+            node.Prev = [];
+            node.Owner = [];
+        end % remove
+                
+        function disp(list)
+            item = list.Head;
+            while ~isempty(item)
+                item.disp();
+                item = item.Next;
+            end
+        end
+    end
+end
+```
+
+- Property Validation
+
+```MATLAB
+classdef SortedNumber < LinkedNode       % SortedNumber_v6 
+    properties
+        Value (1,1) {mustBeNumeric} = 0
+    end
+    methods
+        function node = SortedNumber(n)
+            arguments
+                n = 0
+            end
+            node.Value = n;
+        end
+        function set.Value(node,newValue)
+            if isempty(node.Owner)
+                node.Value = newValue; 
+            else
+                list = node.Owner;
+                list.remove(node);
+                node.Value = newValue;
+                list.insert(node)                
+            end
+        end 
+        function res = gt(node1,node2)          % >
+            res = node1.Value > node2.Value;
+        end
+        function res = ge(node1,node2)          % >=
+            res = node1.Value >= node2.Value;
+        end        
+        function res = lt(node1,node2)          % <
+            res = node1.Value < node2.Value;
+        end        
+        function res = le(node1,node2)          % <=
+            res = node1.Value <= node2.Value;
+        end        
+        function res = eq(node1,node2)          % ==
+            res = node1.Value == node2.Value;
+        end        
+        function res = ne(node1,node2)          % ~=
+            res = node1.Value ~= node2.Value;
+        end   
+        function disp(node)
+            disp(node.Value);
+        end
+    end
+end
+            
+```
+
+```MATLAB
+% Scripts
+mylist = OrderedList
+
+mylist.insert(SortedNumber(20))
+mylist.insert(SortedNumber(0))
+mylist.insert(SortedNumber(20))
+mylist.insert(SortedNumber(-10))
+
+mylist.disp
+```
+
+```MATLAB
+% scripts
+a = SortedNumber(8645)
+
+a.disp
+
+a = SortedNumber("Doing great so far!") % gives error
+
+a = SortedNumber([4;4]) % gives error
+```
+
+### More on OOP Quiz
+
+![More on OOP Quiz 1](more_on_oop_quiz1.png)
+
+![More on OOP Quiz 2](more_on_oop_quiz2.png)
+
+![More on OOP Quiz 3](more_on_oop_quiz3.png)
+
+### Tying It All Together
+
+```MATLAB
+classdef Contact       % Contact_v4  
+    properties
+        FirstName
+        LastName
+        PhoneNumber
+    end
+    methods
+        function obj = Contact(lname,fname,phone)
+            if nargin < 3, phone = ""; end
+            if nargin < 2, fname = ""; end
+            if nargin < 1, lname = ""; end
+            obj.LastName = string(lname);
+            obj.FirstName = string(fname);
+            obj.PhoneNumber = string(phone);
+        end
+        function obj = set.LastName(obj,lname)
+            obj.LastName = string(lname);
+        end
+        function obj = set.FirstName(obj,fname)
+            obj.FirstName = string(fname);
+        end
+        function obj = set.PhoneNumber(obj,phone)
+            obj.PhoneNumber = string(phone);
+        end
+    end
+end
+```
+
+```MATLAB
+classdef Contact < LinkedNode       % Contact_v5  
+    properties
+        FirstName
+        LastName
+        PhoneNumber
+    end
+    methods
+        function obj = Contact(lname,fname,phone)
+            if nargin < 3, phone = ""; end
+            if nargin < 2, fname = ""; end
+            if nargin < 1, lname = ""; end
+            obj.LastName = string(lname);
+            obj.FirstName = string(fname);
+            obj.PhoneNumber = string(phone);
+        end
+        function obj = set.LastName(obj,lname)
+            obj.LastName = string(lname);
+        end
+        function obj = set.FirstName(obj,fname)
+            obj.FirstName = string(fname);
+        end
+        function obj = set.PhoneNumber(obj,phone)
+            obj.PhoneNumber = string(phone);
+        end
+    end
+end
+```
+
+```MATLAB
+classdef Contact < LinkedNode      % Contact_v6  
+    properties
+        FirstName   (1,1) string 
+        LastName    (1,1) string 
+        PhoneNumber (1,1) string
+    end
+    methods
+        function obj = Contact(lname,fname,phone)
+            arguments
+                lname = ""
+                fname = ""
+                phone = ""
+            end
+            obj.LastName = lname;
+            obj.FirstName = fname;
+            obj.PhoneNumber = phone;
+        end
+        function set.LastName(obj,lname)
+            obj.LastName = lname;
+        end
+        function set.FirstName(obj,fname)
+            obj.FirstName = fname;
+        end
+        function set.PhoneNumber(obj,phone)
+            obj.PhoneNumber = phone;
+        end
+    end
+end
+```
+
+```MATLAB
+classdef Contact < LinkedNode       % Contact_v7
+    properties
+        FirstName   (1,1) string 
+        LastName    (1,1) string 
+        PhoneNumber (1,1) string
+    end
+    methods
+        function obj = Contact(lname,fname,phone)
+            arguments
+                lname = ""
+                fname = ""
+                phone = ""
+            end
+            obj.LastName = lname;
+            obj.FirstName = fname;
+            obj.PhoneNumber = phone;
+        end
+        function set.LastName(obj,lname)
+            obj.LastName = lname;
+        end
+        function set.FirstName(obj,fname)
+            obj.FirstName = fname;
+        end
+        function set.PhoneNumber(obj,phone)
+            obj.PhoneNumber = phone;
+        end
+        function disp(node)
+            fprintf('   Name:    %s %s\n',node.FirstName,node.LastName);
+            fprintf('   Tel:     %s\n\n', node.PhoneNumber);
+        end
+    end
+end
+```
+
+```MATLAB
+classdef LinkedNode < handle       % LinkedNode_v8
+    properties (Access = {?DList ?LinkedNode})
+        Prev
+        Next
+        Owner
+    end
+    methods (Abstract)
+        gt(a,b)
+        ge(a,b)
+        lt(a,b)
+        le(a,b)
+        eq(a,b)
+        ne(a,b)
+        disp(a)
+    end
+    methods
+        function node = LinkedNode()
+            node.Prev = [];
+            node.Next = [];
+            node.Owner = [];
+        end
+        function delete(node)
+            if ~isempty(node.Owner)
+                node.Owner.remove(node);
+            end
+        end
+    end
+end
+```
+
+```MATLAB
+% scripts
+serf = Contact("Fitzpatrick","Mike",123)
+
+lord = Contact("Ledeczi","Akos",456)
+
+serf.disp
+lord.disp
+```
+
+
+```MATLAB
+classdef Contact < LinkedNode       % Contact_v8
+    properties
+        FirstName   (1,1) string 
+        LastName    (1,1) string 
+        PhoneNumber (1,1) string
+    end
+    methods (Access = protected)
+        function name = nameToCompare(obj)
+            name = upper(append(obj.LastName, " ", obj.FirstName));
+        end
+    end
+    methods
+        function obj = Contact(lname,fname,phone)
+            arguments
+                lname = ""
+                fname = ""
+                phone = ""
+            end
+            obj.LastName = lname;
+            obj.FirstName = fname;
+            obj.PhoneNumber = phone;
+        end
+        function set.LastName(obj,lname)
+            obj.LastName = lname;
+        end
+        function set.FirstName(obj,fname)
+            obj.FirstName = fname;
+        end
+        function set.PhoneNumber(obj,phone)
+            obj.PhoneNumber = phone;
+        end
+        function a = gt(o1,o2)
+            a = o1.nameToCompare() > o2.nameToCompare();
+        end
+        function a = ge(o1,o2)
+            a = o1.nameToCompare() >= o2.nameToCompare();
+        end
+        function a = lt(o1,o2)
+            a = o1.nameToCompare() < o2.nameToCompare();
+        end
+        function a = le(o1,o2)
+            a = o1.nameToCompare() <= o2.nameToCompare();
+        end
+        function a = eq(o1,o2)
+            a = o1.nameToCompare() == o2.nameToCompare();
+        end
+        function a = ne(o1,o2)
+            a = o1.nameToCompare() ~= o2.nameToCompare();
+        end
+        function disp(node)
+            fprintf('   Name:    %s %s\n',node.FirstName,node.LastName);
+            fprintf('   Tel:     %s\n\n', node.PhoneNumber);
+        end
+    end
+
+end
+```
+
+```MATLAB
+classdef BusinessContact < Contact       % BusinessContact_v5
+    properties
+        Company
+        Fax
+    end
+    methods
+        function obj = BusinessContact(cname,lname,fname,phone,f)
+            if nargin < 5 f = ""; end
+            if nargin < 4 phone = ""; end
+            if nargin < 3 fname = ""; end
+            if nargin < 2 lname = ""; end
+            if nargin < 1 cname = ""; end
+            obj@Contact(lname,fname,phone);
+            obj.Company = string(cname);
+            obj.Fax = string(f);
+        end
+        function obj = set.Company(obj,cname)
+            obj.Company = string(cname);
+        end
+        function obj = set.Fax(obj,f)
+            obj.Fax = string(f);
+        end
+    end
+end
+```
+
+```MATLAB
+classdef BusinessContact < Contact       % BusinessContact_v6
+    properties
+        Company (1,1) string 
+        Fax     (1,1) string 
+    end
+    methods
+        function obj = BusinessContact(cname,lname,fname,phone,f)
+            arguments
+                cname = ""
+                lname = ""
+                fname = ""
+                phone = ""
+                    f = ""
+            end
+            obj@Contact(lname,fname,phone);
+            obj.Company = cname;
+            obj.Fax = f;
+        end
+        function set.Company(obj,cname)
+            obj.Company = cname;
+        end
+        function set.Fax(obj,f)
+            obj.Fax = f;
+        end
+    end
+end
+```
+
+```MATLAB
+classdef BusinessContact < Contact       % BusinessContact_v7
+    properties
+        Company (1,1) string 
+        Fax     (1,1) string 
+    end
+    methods (Access = protected)
+        function name = nameToCompare(obj)
+            name = upper(append(obj.Company, " ", obj.LastName, " ", obj.FirstName));
+        end
+    end    
+    methods
+        function obj = BusinessContact(cname,lname,fname,phone,f)
+            arguments
+                cname = ""
+                lname = ""
+                fname = ""
+                phone = ""
+                    f = ""
+            end
+            obj@Contact(lname,fname,phone);
+            obj.Company = cname;
+            obj.Fax = f;
+        end
+        function set.Company(obj,cname)
+            obj.Company = cname;
+        end
+        function set.Fax(obj,f)
+            obj.Fax = f;
+        end
+        function disp(node)
+            fprintf('   Company: %s\n',node.Company);
+            fprintf('   Name:    %s %s\n',node.FirstName,node.LastName);
+            fprintf('   Tel:     %s\n',node.PhoneNumber);
+            fprintf('   Fax:     %s\n\n',node.Fax);
+        end
+    end
+end
+```
+
+```MATLAB
+% scripts
+rolodex = OrderedList
+
+card = cell(1,5);
+card{1} = Contact("Fitzpatrick","Mike",123);
+card{2} = Contact("Ledeczi","Akos",456);
+card{3} = BusinessContact("Microsoft","Gates","Bill",789,555);
+card{4} = BusinessContact("Plumbers R Us","Smith","Joe",111,222);
+card{5} = BusinessContact("A1 Exterminators","Doe","Jane",222,333);
+
+for ii = 1:length(card)
+    rolodex.insert(card{ii});
+end
+
+rolodex.disp
+
+card{4}.Company = "Carpenters R Us";
+
+rolodex.disp
+```
+
+```MATLAB
+classdef LinkedNode < handle       % LinkedNode_v9
+    properties (Access = {?DList ?LinkedNode})
+        Prev
+        Next
+        Owner
+    end
+    methods (Abstract)
+        gt(a,b)
+        ge(a,b)
+        lt(a,b)
+        le(a,b)
+        eq(a,b)
+        ne(a,b)
+        disp(a)
+    end
+    methods
+        function node = LinkedNode()
+            node.Prev = [];
+            node.Next = [];
+            node.Owner = [];
+        end
+        function delete(node)
+            if ~isempty(node.Owner)
+                node.Owner.remove(node);
+            end
+        end
+    end
+    methods (Access = protected)
+        function reposition(obj)
+            if ~isempty(obj.Owner)
+                list = obj.Owner;
+                list.remove(obj);
+                list.insert(obj);
+            end
+        end
+    end
+end
+```
+
+```MATLAB
+classdef Contact < LinkedNode       % Contact_v9
+    properties
+        FirstName   (1,1) string 
+        LastName    (1,1) string 
+        PhoneNumber (1,1) string
+    end
+    methods (Access = protected)
+        function name = nameToCompare(obj)
+            name = upper(append(obj.LastName, " ", obj.FirstName));
+        end
+    end
+    methods
+        function obj = Contact(lname,fname,phone)
+            arguments
+                lname = ""
+                fname = ""
+                phone = ""
+            end
+            obj.LastName = lname;
+            obj.FirstName = fname;
+            obj.PhoneNumber = phone;
+        end
+        function set.LastName(obj,lname)
+            obj.LastName = lname;
+            obj.reposition();
+        end
+        function set.FirstName(obj,fname)
+            obj.FirstName = fname;
+            obj.reposition();
+        end
+        function set.PhoneNumber(obj,phone)
+            obj.PhoneNumber = phone;
+        end
+        function a = gt(o1,o2)
+            a = o1.nameToCompare() > o2.nameToCompare();
+        end
+        function a = ge(o1,o2)
+            a = o1.nameToCompare() >= o2.nameToCompare();
+        end
+        function a = lt(o1,o2)
+            a = o1.nameToCompare() < o2.nameToCompare();
+        end
+        function a = le(o1,o2)
+            a = o1.nameToCompare() <= o2.nameToCompare();
+        end
+        function a = eq(o1,o2)
+            a = o1.nameToCompare() == o2.nameToCompare();
+        end
+        function a = ne(o1,o2)
+            a = o1.nameToCompare() ~= o2.nameToCompare();
+        end
+        function disp(node)
+            fprintf('   Name:    %s %s\n',node.FirstName,node.LastName);
+            fprintf('   Tel:     %s\n\n', node.PhoneNumber);
+        end
+    end
+
+end
+```
+
+```MATLAB
+classdef BusinessContact < Contact       % BusinessContact_v8
+    properties
+        Company (1,1) string 
+        Fax     (1,1) string 
+    end
+    methods (Access = protected)
+        function name = nameToCompare(obj)
+            name = upper(append(obj.Company, " ", obj.LastName, " ", obj.FirstName));
+        end
+    end
+    methods
+        function obj = BusinessContact(cname,lname,fname,phone,f)
+            arguments
+                cname = ""
+                lname = ""
+                fname = ""
+                phone = ""
+                    f = ""
+            end
+            obj@Contact(lname,fname,phone);
+            obj.Company = cname;
+            obj.Fax = f;
+        end
+        function set.Company(obj,cname)
+            obj.Company = cname;
+            obj.reposition();
+        end
+        function set.Fax(obj,f)
+            obj.Fax = f;
+        end
+        function disp(node)
+            fprintf('   Company: %s\n',node.Company);
+            fprintf('   Name:    %s %s\n',node.FirstName,node.LastName);
+            fprintf('   Tel:     %s\n',node.PhoneNumber);
+            fprintf('   Fax:     %s\n\n',node.Fax);
+        end
+    end
+ 
+end
+```
+
+```MATLAB
+% scripts
+rolodex = OrderedList
+
+card = cell(1,5);
+card{1} = Contact("Fitzpatrick","Mike",123);
+card{2} = Contact("Ledeczi","Akos",456);
+card{3} = BusinessContact("Microsoft","Gates","Bill",789,555);
+card{4} = BusinessContact("Plumbers R Us","Smith","Joe",111,222);
+card{5} = BusinessContact("A1 Exterminators","Doe","Jane",222,333);
+
+for ii = 1:length(card)
+    rolodex.insert(card{ii});
+end
+
+rolodex.disp
+
+card{4}.Company = "Carpenters R Us";
+
+rolodex.disp
+```
+
+![OOP High-Level concepts](oop_high_level_concepts.png)
+
+![OOP High-Level concepts](oop_high_level_concepts2.png)
+
+![OOP High-Level concepts](oop_high_level_concepts3.png)
+
+![OOP High-Level concepts](oop_high_level_concepts4.png)
+
+![OOP High-Level concepts](oop_high_level_concepts5.png)
+
+![OOP High-Level concepts](oop_high_level_concepts6.png)
+
+![OOP High-Level concepts](oop_high_level_concepts7.png)
+
+![Polymorphic functions](polymorphic_fn.png)
+
+![OOP High-Level concepts](oop_high_level_concepts8.png)
+
+```MATLAB
+clear all
+x = -1.2
+y = uint8(3)
+name = "Mike"
+
+Hermione = Contact
+
+whos
+
+double_methods = methods("double")
+
+string_methods = methods("string")
+
+"Mike" > "Akos"
+
+name
+upper(name)
+
+name.upper
+
+name
+
+abs(x)
+
+x.abs % gives error
+
+upper(name)
+
+properties("BusinessContact")
+
+properties("string")
+properties("double")
+
+properties("LinkedNode")
+
+web('https://www.mathworks.com/help/matlab/matlab_oop/subclass-syntax.html')
+```
+
+### Tying It All Together Quiz
+
+![Tying It All Together Quiz1](tying_it_all_together_quiz1.png)
+
+![Tying It All Together Quiz2](tying_it_all_together_quiz2.png)
+
+## Module 6
+
+### Graphical User Interfaces Part 1
+
+![Text Based User Interface](text_based_user_interface.png)
+
+https://berkeleyearth.org/
+
+```MATLAB
+>> load GlobalTemp.mat
+>> whos
+>> data(1:12,:)
+>> plot(data(:,1),data(:,2))
+```
+
+
+### GUI Quiz
+![GUI quiz 1](gui_quiz_1.png)
+
+![GUI quiz 2](gui_quiz_2.png)
