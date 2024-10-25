@@ -25,5 +25,14 @@ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Null
 
 ## Expressions
 
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/let
 
+
+
+## Arrays
+
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array
+
+
+## Objects
 
