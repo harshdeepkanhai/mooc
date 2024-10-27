@@ -55,3 +55,9 @@ https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/disabled
 
 https://developer.mozilla.org/en-US/docs/Web/API/Element/removeAttribute
 
+
+## Events & Handlers
+
+https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener
+
+https://developer.mozilla.org/en-US/docs/Web/Events
