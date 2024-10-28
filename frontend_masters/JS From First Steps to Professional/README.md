@@ -61,3 +61,11 @@ https://developer.mozilla.org/en-US/docs/Web/API/Element/removeAttribute
 https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener
 
 https://developer.mozilla.org/en-US/docs/Web/Events
+
+
+## Conditionals
+
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for...of
+
+## Map & Filter
+
