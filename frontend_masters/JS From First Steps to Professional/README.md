@@ -81,3 +81,7 @@ https://www.youtube.com/watch?v=8aGhZQkoFbQ
 https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Asynchronous/Introducing
 
 ## Date Fetching & Promises
+
+https://dog.ceo/
+
+https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch
