@@ -69,3 +69,15 @@ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for
 
 ## Map & Filter
 
+
+## Doggos Quiz Game
+
+### while loops
+
+### setTimeout
+### Asynchronous Event loops
+https://www.youtube.com/watch?v=8aGhZQkoFbQ
+
+https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Asynchronous/Introducing
+
+## Date Fetching & Promises
