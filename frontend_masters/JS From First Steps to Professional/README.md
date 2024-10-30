@@ -85,3 +85,9 @@ https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Asynchronous/Introduci
 https://dog.ceo/
 
 https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch
+
+## Destructuring Data
+
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reverse
+
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/trim
