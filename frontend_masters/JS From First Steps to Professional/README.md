@@ -99,3 +99,21 @@ https://developer.mozilla.org/en-US/docs/Web/API/Document/createElement
 https://developer.mozilla.org/en-US/docs/Web/API/Node/appendChild
 
 https://developer.mozilla.org/en-US/docs/Web/API/Node
+
+## Modules
+
+https://anjana.dev/javascript-first-steps/
+
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules
+
+https://www.11ty.dev/
+
+https://astro.build/
+
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/try...catch
+
+## Wrapping Up
+
+https://justjavascript.com/
+
+https://developer.mozilla.org/en-US/
