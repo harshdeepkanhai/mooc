@@ -1,5 +1,3 @@
-
-
 ## Introduction
 
 https://www.typescript-training.com/course/fundamentals-v4
@@ -9,7 +7,6 @@ https://docs.stripe.com/?api=true&shell=true
 https://github.com/mike-north/typescript-courses
 
 https://www.typescriptlang.org/
-
 
 Volta
 
@@ -23,6 +20,4 @@ https://typescript-eslint.io/
 
 ## Union and Intersection Types
 
-
 ## Interfaces and Type Aliases
-
