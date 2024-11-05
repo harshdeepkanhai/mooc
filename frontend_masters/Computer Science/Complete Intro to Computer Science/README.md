@@ -42,7 +42,20 @@ https://www.scheme.org/
 <!-- - Stable -->
 <!-- - Destructive -->
 
+- Divide and Conquer
 - Best Complexity: O(nlogn)
 - Average Complexity: O(nlogn)
 - Worst Complexity: O(nlogn)
 - Space Complexity: O(n)
+
+### Quick Sort
+
+- Non Stable
+- Divide and Conquer
+- Non-Destructive / Destructive
+- Best Complexity: O(nlogn)
+- Average Complexity: O(n^2)
+- Worst Complexity: O(n^2)
+- Space Complexity: O(logn) Destructive
+- Space Complexity: O(n) Non Destructive
+- Variations: quicksort3
