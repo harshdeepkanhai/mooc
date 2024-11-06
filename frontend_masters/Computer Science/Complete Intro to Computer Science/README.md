@@ -80,3 +80,10 @@ https://www.scheme.org/
 
 - replace and lookup: O(1)
 - deletion, insertion: O(n)
+
+### LinkedList
+
+- lookup: O(n)
+- deletion, Insertionition: O(1)
+- variation: doublyLinkedList has head and tail
+- never implemented in JS, but in C/C++ more
