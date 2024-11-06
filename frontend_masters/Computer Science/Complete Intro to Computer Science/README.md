@@ -67,3 +67,9 @@ https://www.scheme.org/
 - use method called bucketing
 - Big O: O(n \_ k)
 - Space Complexity: O(n + k)
+
+## Binary Search
+
+- works on sorted array
+- Big O: O(log n)
+- Space Complexity: O(1)
