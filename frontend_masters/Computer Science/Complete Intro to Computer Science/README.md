@@ -59,3 +59,11 @@ https://www.scheme.org/
 - Space Complexity: O(logn) Destructive
 - Space Complexity: O(n) Non Destructive
 - Variations: quicksort3
+
+## Non-Comparison Sort
+
+### Radix Sort
+
+- use method called bucketing
+- Big O: O(n \_ k)
+- Space Complexity: O(n + k)
