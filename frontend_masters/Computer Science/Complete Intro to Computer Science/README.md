@@ -73,3 +73,10 @@ https://www.scheme.org/
 - works on sorted array
 - Big O: O(log n)
 - Space Complexity: O(1)
+
+## Lists
+
+### ArrayList
+
+- replace and lookup: O(1)
+- deletion, insertion: O(n)
