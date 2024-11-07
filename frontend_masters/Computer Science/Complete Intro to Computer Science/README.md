@@ -87,3 +87,15 @@ https://www.scheme.org/
 - deletion, Insertionition: O(1)
 - variation: doublyLinkedList has head and tail
 - never implemented in JS, but in C/C++ more
+
+## Trees
+
+## Binary Search Tree
+
+- Always sorted
+- Best Case Scenario: Root: O(1)
+- Worst Case Scenario:
+- Add Elements to array
+- Delete Elements to array
+- Lookup Best for Searchability: O(log n)
+- Used in Database indexes, MongoDB
