@@ -90,12 +90,23 @@ https://www.scheme.org/
 
 ## Trees
 
-## Binary Search Tree
+### Binary Search Tree
 
 - Always sorted
 - Best Case Scenario: Root: O(1)
-- Worst Case Scenario:
+- Worst Case Scenario: O(n)
 - Add Elements to array
 - Delete Elements to array
 - Lookup Best for Searchability: O(log n)
 - Used in Database indexes, MongoDB
+
+### Self Balancing AVL Trees
+
+- Everything same as BST except adding it will balance itself
+- Single Rotation
+- Uses Recursive Add
+- Double Rotation
+- Database Indexes is a good use of this
+- ALso there are Red/Black Trees
+
+https://visualgo.net/en/bst?mode=AVL
