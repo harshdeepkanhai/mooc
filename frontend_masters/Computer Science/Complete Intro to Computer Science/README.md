@@ -110,3 +110,9 @@ https://www.scheme.org/
 - ALso there are Red/Black Trees
 
 https://visualgo.net/en/bst?mode=AVL
+
+### Depth First Tree Traversals
+
+- preorder traversal
+- inorder traversal (Good for traversing BST)
+- postorder traversal
