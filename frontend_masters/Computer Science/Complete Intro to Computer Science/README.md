@@ -116,3 +116,12 @@ https://visualgo.net/en/bst?mode=AVL
 - preorder traversal
 - inorder traversal (Good for traversing BST)
 - postorder traversal
+- Recursive
+
+### Breadth First Tree Traversals
+
+- uses a queue
+- Traverses Height Wise
+- Iterative(Mostly Used) or Recursive
+- Find nearest to Height
+- Used for PathFinding
