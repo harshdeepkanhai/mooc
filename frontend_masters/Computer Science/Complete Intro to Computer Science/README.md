@@ -146,7 +146,9 @@ https://visualgo.net/en/bst?mode=AVL
 
 https://www.bigocheatsheet.com/
 
-## Graphs
+## Applying Tree algorithms
+
+### Graphs
 
 - Like Tree but no Hierarchy
 - Edge describes a relationship
@@ -158,3 +160,11 @@ https://www.bigocheatsheet.com/
 https://neo4j.com/
 
 https://frontendmasters.com/courses/databases/
+
+### Pathfinding
+
+- Djikstra Algorithm (https://stackoverflow.com/questions/25449781/what-is-difference-between-bfs-and-dijkstras-algorithms-when-looking-for-shorte)
+
+https://qiao.github.io/PathFinding.js/visual/
+
+-
