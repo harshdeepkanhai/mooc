@@ -167,4 +167,10 @@ https://frontendmasters.com/courses/databases/
 
 https://qiao.github.io/PathFinding.js/visual/
 
+### Tries
+
+- from the word 'retrieve'
+- a Tree optimised for searching, by prefix
+- used to implement Typeahead
+- used for autocomplete suggestions
 -
