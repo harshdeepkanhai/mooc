@@ -173,4 +173,14 @@ https://qiao.github.io/PathFinding.js/visual/
 - a Tree optimised for searching, by prefix
 - used to implement Typeahead
 - used for autocomplete suggestions
--
+
+## Other Data Structures
+
+### Bloom Filters
+
+https://en.wikipedia.org/wiki/Bloom_filter#Examples
+https://blog.medium.com/what-are-bloom-filters-1ec2a50c68ff
+
+- Gives a lookup(have might seen it before or haven't seen it before) from a set for a large datasets 100 million
+- Used in Recommendation Engine
+- modelled as an array of 0 or 1
