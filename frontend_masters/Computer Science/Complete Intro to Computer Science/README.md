@@ -125,3 +125,23 @@ https://visualgo.net/en/bst?mode=AVL
 - Iterative(Mostly Used) or Recursive
 - Find nearest to Height
 - Used for PathFinding
+
+### Heap Sort
+
+- usually Heap is an array that represents a tree like data structure
+- used to represent a priority queue
+- binary heap is an array whereas BST is made up of Node
+- All the numbers underneath the node are smaller in a binary heap
+- Inorder traversal in binary heap doesn't give a sorted array
+- Binary Heap is a complete binary tree
+- Comes into two flavors:
+  - Max Heap : Used for sorting numbers
+  - Min Heap: Used for reverse sorting
+- Max Heap: The top node is the largest number in the heap
+- The way to represent a binary tree as an array is that for any index of an array n, its leff child is stored at 2n+1 and its right child is at 2n+2. The root node will always be 0.
+- Heapify: Move the child node above and so on
+- Space Complexity: O(1)
+- Worst Case Time Complexity: O(n log n)
+- Use case of Heap Sort: where memory is concerned, where array is already sorted use Insertion Sort
+
+https://www.bigocheatsheet.com/
