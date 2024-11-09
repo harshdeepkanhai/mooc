@@ -145,3 +145,16 @@ https://visualgo.net/en/bst?mode=AVL
 - Use case of Heap Sort: where memory is concerned, where array is already sorted use Insertion Sort
 
 https://www.bigocheatsheet.com/
+
+## Graphs
+
+- Like Tree but no Hierarchy
+- Edge describes a relationship
+- Neo4J uses Graph Database
+- Can be Bidirectional or Unidirectional
+- Can use Depth First Traversal or Breadth First Traversal on it
+- Complexity: Depends on Degree of Separation
+
+https://neo4j.com/
+
+https://frontendmasters.com/courses/databases/
