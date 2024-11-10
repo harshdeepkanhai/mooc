@@ -21,3 +21,5 @@ https://typescript-eslint.io/
 ## Union and Intersection Types
 
 ## Interfaces and Type Aliases
+
+## Type Queries, Callables & Constructables

@@ -26,3 +26,5 @@ https://react-v8.holt.courses/
 - useTransition
 - useSyncExternalStore
 - useInsertionEffect
+
+## Tailwind CSS
