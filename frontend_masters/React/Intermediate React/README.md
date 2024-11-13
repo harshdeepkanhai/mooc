@@ -28,3 +28,12 @@ https://react-v8.holt.courses/
 - useInsertionEffect
 
 ## Tailwind CSS
+
+https://tailwindcss.com/docs/configuration
+
+## Advanced React Performance
+
+### Code Splitting
+
+https://frontendmasters.com/courses/?q=remix
+https://frontendmasters.com/topics/progressive-web-apps/
