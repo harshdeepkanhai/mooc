@@ -18,3 +18,10 @@ https://scottmoss.notion.site/scottmoss/Intro-to-Node-js-V3-7c8e4ccaebf94b839f42
 - process.argv
 - process.env.NODE_ENV
 - $env:NODE_ENV="Production"; node .\intro-node\index.js
+
+## Custom CLI Setup
+
+- npm init
+- npm link
+
+## Processing CLI Arguments
