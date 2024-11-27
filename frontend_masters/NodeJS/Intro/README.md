@@ -25,3 +25,9 @@ https://scottmoss.notion.site/scottmoss/Intro-to-Node-js-V3-7c8e4ccaebf94b839f42
 - npm link
 
 ## Processing CLI Arguments
+
+# Modules
+
+## Modules Overview
+
+- `"type": "module",` in `package.json`
